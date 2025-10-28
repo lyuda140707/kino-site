@@ -794,11 +794,6 @@ header {
   to { opacity: 1; transform: translate(-50%, 0); }
 }
 
-/* залишає меню відкритим, поки курсор над ним */
-.dropdown:hover .mega-menu,
-.dropdown .mega-menu:hover {
-  display: block;
-}
 
 
 /* === ЗАГОЛОВОК МЕНЮ === */
@@ -1122,7 +1117,6 @@ header {
 .dropdown .mega-menu:hover {
   display: block;
 }
-
 /* Вміст усередині */
 .mega-menu .genres {
   display: flex;
@@ -1177,6 +1171,7 @@ header {
 .dropdown .mega-cartoons .genres a:hover {
   color: #ff9944;
 }
+
 
 
 
