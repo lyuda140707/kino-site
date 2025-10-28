@@ -745,9 +745,6 @@ header .container {
   position: relative; /* щоб меню трималось у межах шапки */
 }
 
-.dropdown {
-  position: relative;
-}
 
 /* === МЕГА-МЕНЮ "ФІЛЬМИ" — ПІД ЛОГОТИПОМ === */
 header {
@@ -759,10 +756,6 @@ header {
 header {
   position: relative;
   z-index: 2000;
-}
-
-.dropdown {
-  position: static; /* важливо! щоб не обмежувало ширину */
 }
 
 .mega-menu {
@@ -1089,7 +1082,7 @@ header {
   text-shadow: 0 0 4px #00ffff;
   transition: 0.2s;
 }
-/* === Випадаюче меню (ФІКС зникнення при наведенні) === */
+/* === Випадаюче меню (повноширинне, чорне) === */
 .dropdown {
   position: relative;
 }
@@ -1097,21 +1090,43 @@ header {
 .dropdown .mega-menu {
   display: none;
   position: absolute;
-  top: 100%; /* без зазору */
+  top: 100%;
   left: 0;
-  width: 100vw; /* на всю ширину сайту */
-  background: #0b0b0b;
+  width: 100vw; /* тягнеться на всю ширину вікна */
+  background: #000; /* насичений чорний фон */
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 20px 40px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  padding: 25px 60px;
   box-sizing: border-box;
   z-index: 999;
 }
 
-/* Показуємо меню при наведенні на кнопку або сам блок */
+/* Залишає відкрите меню при наведенні */
 .dropdown:hover .mega-menu,
 .dropdown .mega-menu:hover {
   display: block;
 }
+
+/* Вміст усередині */
+.mega-menu .genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 35px;
+}
+
+.mega-menu .genres a {
+  color: #e4e4e4;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.mega-menu .genres a:hover {
+  color: #00fff2;
+  transform: translateY(-1px);
+}
+
 
 
 
