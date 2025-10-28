@@ -849,10 +849,7 @@ header {
   letter-spacing: 1px;
 }
 
-/* показуємо при наведенні */
-.dropdown:hover .mega-cartoons {
-  display: block;
-}
+
 
 /* Сітка жанрів */
 .mega-cartoons .genres {
@@ -1144,6 +1141,7 @@ header .container {
   position: relative;
   z-index: 4000;
 }
+
 
 
 
