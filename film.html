@@ -187,8 +187,7 @@
       <div class="film-right">
         <div class="film-title" id="filmTitle">Назва фільму</div>
         <div class="player-box">
-          <video id="filmPlayer" controls autoplay playsinline muted></video>
-
+          <video id="filmPlayer" controls playsinline muted crossorigin="anonymous"></video>
         </div>
         <div class="film-description">
           <h3>Про що фільм:</h3>
@@ -199,7 +198,7 @@
   </main>
 
   <footer>© 2025 KinoSite • Усі права захищені</footer>
-
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
@@ -237,18 +236,51 @@
     document.getElementById("filmAge").textContent = data.age || "";
     document.getElementById("filmImdb").textContent = data.imdb || "—";
 
-    // 🎬 Плеєр
-    const player = document.getElementById("filmPlayer");
-    player.src = data.stream_url || "";
+    // 🎬 Плеєр (універсально для .m3u8 і .mp4)
+const player = document.getElementById("filmPlayer");
+const url = data.stream_url || "";
 
-    // 🟢 Примусове відтворення
-    try {
-      await player.play();
-    } catch (err) {
-      console.warn("🎬 Автовідтворення заблоковано браузером. Очікується клік користувача.");
-      document.body.addEventListener("click", () => player.play(), { once: true });
-    }
+// Якщо це .m3u8 і браузер підтримує hls.js → використовуємо hls.js
+if (url && url.endsWith(".m3u8")) {
+  if (window.Hls && Hls.isSupported()) {
+    const hls = new Hls({
+      maxBufferLength: 30,
+      enableWorker: true,
+      lowLatencyMode: true,
+    });
+    hls.loadSource(url);
+    hls.attachMedia(player);
+    hls.on(Hls.Events.MANIFEST_PARSED, async () => {
+      try {
+        await player.play();
+      } catch {
+        document.body.addEventListener("click", () => player.play(), { once: true });
+      }
+    });
+  } else if (player.canPlayType("application/vnd.apple.mpegurl")) {
+    // Safari / iOS — нативно
+    player.src = url;
+    player.addEventListener("loadedmetadata", async () => {
+      try {
+        await player.play();
+      } catch {
+        document.body.addEventListener("click", () => player.play(), { once: true });
+      }
+    });
+  } else {
+    console.error("Цей браузер не підтримує HLS без hls.js");
   }
+} else if (url) {
+  // MP4 та інші формати
+  player.src = url;
+  try {
+    await player.play();
+  } catch {
+    document.body.addEventListener("click", () => player.play(), { once: true });
+  }
+} else {
+  console.warn("stream_url порожній");
+}
 
   loadFilm();
 
