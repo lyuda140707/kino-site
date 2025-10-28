@@ -1,46 +1,1040 @@
-/* === ОСНОВНІ СТИЛІ САЙТУ === */
+/* === СТИЛЬ ПІД kinoukr.tv/main === */
 
+/* === НЕОНОВИЙ ТЕМНИЙ ФОН === */
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
-  background: #000;
   color: #fff;
-  overflow-x: hidden;
+  background-color: #000; /* базовий чорний фон */
+
+  /* 💡 м’яке неонове світло зверху і знизу */
+  background-image: radial-gradient(circle at 30% 5%, rgba(0, 255, 242, 0.12) 0%, transparent 60%),
+                    radial-gradient(circle at 70% 95%, rgba(255, 0, 200, 0.18) 0%, transparent 80%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
 }
 
-/* === ХЕДЕР === */
-header {
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-  background: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.95) 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 2px 15px rgba(0, 255, 242, 0.08);
+
+
+/* Контейнер */
+.container {
+  max-width: 1150px; /* 🔹 було 1150px — стало ширше */
+  margin: 0 auto;
+  padding: 0 25px; /* трохи більше простору по боках */
 }
+
 
 header .container {
-  max-width: 1250px;
-  margin: 0 auto;
-  padding: 12px 40px;
+  position: relative;
+}
+
+/* Шапка */
+/* === ПЛАВАЮЧЕ МЕНЮ === */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+  background: rgba(10, 10, 10, 0.7);
+  border-bottom: 1px solid rgba(0, 255, 242, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 255, 242, 0.1);
+}
+
+.topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 52px;
 }
 
-.nav-logo {
-  height: 40px;
+.topbar nav {
+  flex: 1;
+  display: flex;
+  justify-content: center; /* центрує меню всередині хедера */
 }
 
-/* === НАВІГАЦІЯ === */
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+
+nav a:hover {
+  color: #fff;
+}
+
+.search {
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  padding: 5px 10px;
+  color: #ccc;
+}
+
+/* Основний блок */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 2.7fr; /* 🔹 ліва ширше, права трохи вужча */
+  gap: 25px;
+  margin-top: 25px;
+}
+
+
+
+/* Ліва частина */
+.block {
+  background: #2a2a2a;
+  border: 1px solid #000;
+  border-radius: 4px;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+}
+
+.block h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Сітка фільмів */
+.film-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 🔹 було 5, тепер 4 картки в ряд */
+  gap: 20px; /* 🔹 трохи більші відступи між картками */
+}
+@media (max-width: 1100px) {
+  .film-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .film-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+.film {
+  background: #252525;
+  border: 1px solid #000;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+.film:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 10px #000;
+}
+
+.poster {
+  position: relative;
+}
+
+.poster img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+}
+
+.badge {
+  position: absolute;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #fff;
+}
+
+.plus {
+  left: 6px;
+  top: 6px;
+  background: #2f8f2f;
+  font-weight: bold;
+}
+
+.quality {
+  right: 6px;
+  top: 6px;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.meta {
+  left: 6px;
+  bottom: 6px;
+  background: #c0392b;
+}
+
+.title {
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+/* Права колонка */
+.sidebar .pick {
+  position: relative;
+  border: 1px solid #000;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  background: #252525;
+  transition: 0.3s;
+}
+
+.sidebar .pick:hover {
+  box-shadow: 0 0 8px #000;
+}
+
+.sidebar .pick img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+}
+
+.sidebar .pick p {
+  position: absolute;
+  bottom: 5px;
+  left: 8px;
+  right: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Пагінація */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin: 20px 0;
+}
+
+.pagination button {
+  background: #2b2b2b;
+  border: 1px solid #000;
+  color: #ccc;
+  padding: 6px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.pagination button:hover {
+  background: #3aa757;
+  color: #fff;
+}
+
+.pagination .active {
+  background: #3aa757;
+  color: #fff;
+}
+
+/* Футер */
+footer {
+  background: #1b1b1b;
+  border-top: 1px solid #000;
+  color: #aaa;
+  font-size: 12px;
+  text-align: center;
+  padding: 15px 0;
+  margin-top: 40px;
+}
+/* === БАНЕР-СЛАЙДЕР === */
+.banner-slider {
+  background: #242424;
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 25px;
+  overflow: hidden;
+  position: relative;
+}
+
+.banner-slider h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+  color: #fff;
+}
+/* === РУХОМЕ НЕОНОВЕ СВІТЛО НА БАНЕРІ === */
+.banner-slider::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 10%,
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(0, 255, 242, 0.08) 60%,
+    transparent 90%
+  );
+  animation: lightSweep 6s linear infinite;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* Анімація руху світла */
+@keyframes lightSweep {
+  0% {
+    transform: translateX(-100%) rotate(0deg);
+  }
+  100% {
+    transform: translateX(100%) rotate(0deg);
+  }
+}
+
+
+.slider-row {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 5px;
+}
+
+
+.slide {
+  min-width: 160px;
+  flex: 0 0 auto;
+  background: #1e1e1e;
+  border: 1px solid #000;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+.slide:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #00ffa14d;
+}
+
+.slide img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+  display: block;
+}
+
+.slide p {
+  text-align: center;
+  font-size: 13px;
+  padding: 8px;
+  color: #eee;
+  font-weight: 600;
+}
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* === СТИЛЬНІ СТРІЛКИ СЛАЙДЕРА === */
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 48px;
+  height: 48px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #00fff2;
+  border: 1px solid rgba(0, 255, 242, 0.5);
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 0 10px rgba(0, 255, 242, 0.3),
+    inset 0 0 8px rgba(0, 255, 242, 0.15);
+  backdrop-filter: blur(6px);
+}
+
+/* ефект при наведенні */
+.slider-btn:hover {
+  background: rgba(0, 255, 242, 0.1);
+  color: #00fff2;
+  box-shadow:
+    0 0 25px rgba(0, 255, 242, 0.6),
+    0 0 45px rgba(0, 255, 242, 0.4);
+  transform: translateY(-50%) scale(1.15);
+}
+
+/* положення */
+.slider-btn.left {
+  left: 10px;
+}
+
+.slider-btn.right {
+  right: 10px;
+}
+
+
+.slider-btn.left {
+  left: 5px;
+}
+
+.slider-btn.right {
+  right: 5px;
+}
+
+.banner-slider {
+  position: relative;
+}
+/* === ПІДКАТЕГОРІЇ В ПІДБІРКАХ === */
+.sub-category {
+  background: #2a2a2a;
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+}
+
+.sub-category h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #3aa757;
+}
+
+
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px; /* 🔹 трохи більше відстань між картками */
+}
+
+.mini-card {
+  background: #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 242, 0.1);
+}
+
+.mini-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 255, 242, 0.4);
+}
+
+.mini-card img {
+  width: 100%;
+  height: 150px; /* 🔹 було 110px — стало вище */
+  object-fit: cover;
+  display: block;
+  border-radius: 8px 8px 0 0;
+}
+
+.mini-card p {
+  font-size: 13.5px; /* 🔹 текст трішки більший */
+  text-align: center;
+  color: #fff;
+  margin: 8px 0 10px;
+  font-weight: 600;
+}
+
+
+
+.mini-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 8px #00ffa150;
+}
+
+
+
+
+/* === ПРАВА ЧАСТИНА ШАПКИ === */
+
+
+/* === КНОПКА "МІЙ КАБІНЕТ" — чорна з бірюзовим переливом === */
+.profile-btn {
+  position: relative;
+  background: #000;
+  border: 1px solid #00fff2;
+  color: #00fff2;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: 0.3s ease;
+  text-transform: uppercase;
+  box-shadow: 0 0 15px rgba(0, 255, 242, 0.3);
+}
+
+/* Перелив бірюзового неону */
+.profile-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #001111, #00fff2, #001111);
+  background-size: 200%;
+  z-index: 0;
+  opacity: 0.4;
+  animation: blueFlow 3.5s linear infinite;
+  filter: blur(3px);
+}
+
+/* текст поверх ефекту */
+.profile-btn span {
+  position: relative;
+  z-index: 2;
+}
+
+/* ефект при наведенні */
+.profile-btn:hover {
+  background: #000;
+  color: #00fff2;
+  box-shadow:
+    0 0 25px rgba(0, 255, 242, 0.5),
+    0 0 45px rgba(0, 255, 242, 0.3);
+  transform: translateY(-2px);
+}
+
+@keyframes blueFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+
+/* Підсвічування пунктів меню */
+nav a {
+  color: #ccc;
+  margin-right: 18px;
+  font-family: "Poppins", sans-serif; /* 🔹 компактний сучасний шрифт */
+  font-size: 15px; /* 🔹 трохи менше */
+  letter-spacing: 0.3px; /* 🔹 без розтягнення */
+  text-transform: none; /* 🔹 не всі великі літери */
+  text-decoration: none;
+  transition: 0.3s;
+  text-shadow: 0 0 6px #00fff220;
+  font-weight: 500;
+}
+
+
+nav a:hover {
+  color: #00fff2;
+  text-shadow: 0 0 12px #00fff2, 0 0 30px #00fff2;
+}
+
+/* Кнопки пагінації */
+.pagination button.active {
+  background: #00fff2;
+  color: #000;
+  box-shadow: 0 0 15px #00fff2, 0 0 40px #00fff260;
+}
+
+.pagination button:hover {
+  background: #00fff2;
+  color: #000;
+  box-shadow: 0 0 15px #00fff2, 0 0 35px #00fff250;
+}
+
+/* Заголовки підкатегорій */
+.sub-category h3 {
+  color: #00fff2;
+  text-shadow: 0 0 10px #00fff260;
+}
+
+
+/* === ПІДБІРКИ — ПІДСВІЧЕНІ РАМКИ === */
+.pick {
+  position: relative;
+  background: radial-gradient(circle at center, #001d1c 0%, #000 80%); /* ефект глибини */
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 18px;
+  transition: 0.4s ease;
+  border: 1px solid rgba(0, 255, 242, 0.4);
+  box-shadow:
+    0 0 10px rgba(0, 255, 242, 0.15),
+    inset 0 0 25px rgba(0, 255, 242, 0.1), /* внутрішнє світіння */
+    0 0 30px rgba(0, 255, 242, 0.15); /* зовнішнє м’яке сяйво */
+}
+
+.pick img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+  border: 2px solid #000;
+  box-shadow:
+    0 0 15px rgba(0, 255, 242, 0.25), /* ніби зображення світиться */
+    inset 0 0 12px rgba(0, 255, 242, 0.2);
+}
+
+.pick p {
+  text-align: center;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #fff;
+  margin: 8px 0 0;
+}
+
+/* Ефект при наведенні — ще яскравіше світіння */
+.pick:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 25px rgba(0, 255, 242, 0.6),
+    inset 0 0 35px rgba(0, 255, 242, 0.25),
+    0 0 50px rgba(0, 255, 242, 0.5);
+  border-color: #00fff2;
+}
+
+/* === ЛОГОТИП У РЯДКУ МЕНЮ === */
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 35px;
+  justify-content: center;
+  flex: 1;
+  gap: 12px; /* було 20px — стало компактніше */
 }
 
-.main-nav a {
+
+
+/* === ЖИВИЙ НЕОНОВИЙ ЛОГОТИП === */
+@keyframes neonGlow {
+  0% {
+    filter: drop-shadow(0 0 6px #00fff2)
+            drop-shadow(0 0 14px #ff00c8);
+  }
+  50% {
+    filter: drop-shadow(0 0 16px #00fff2)
+            drop-shadow(0 0 30px #ff00c8)
+            drop-shadow(0 0 45px #00fff220);
+  }
+  100% {
+    filter: drop-shadow(0 0 6px #00fff2)
+            drop-shadow(0 0 14px #ff00c8);
+  }
+}
+
+.nav-logo {
+  height: 42px;
+  width: auto;
+  animation: neonGlow 2.8s infinite ease-in-out;
+  transition: transform 0.3s ease;
+}
+
+.nav-logo:hover {
+  transform: scale(1.08);
+}
+
+
+
+.nav-logo:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 12px #00fff2) drop-shadow(0 0 28px #ff00c8);
+}
+/* === АНІМАЦІЯ ПОЯВИ КАРТОК ФІЛЬМІВ === */
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.film {
+  opacity: 0;
+  transform: translateY(25px);
+  animation: fadeUp 0.8s ease forwards;
+}
+
+/* додаємо затримку, щоб фільми з’являлись один за одним */
+.film:nth-child(1) { animation-delay: 0.1s; }
+.film:nth-child(2) { animation-delay: 0.2s; }
+.film:nth-child(3) { animation-delay: 0.3s; }
+.film:nth-child(4) { animation-delay: 0.4s; }
+.film:nth-child(5) { animation-delay: 0.5s; }
+.film:nth-child(6) { animation-delay: 0.6s; }
+.film:nth-child(7) { animation-delay: 0.7s; }
+.film:nth-child(8) { animation-delay: 0.8s; }
+.film:nth-child(9) { animation-delay: 0.9s; }
+.film:nth-child(10){ animation-delay: 1.0s; }
+
+
+
+@keyframes moveGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+/* Плавне зникнення фону */
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Поява логотипу */
+@keyframes logoFade {
+  0% { opacity: 0; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0.9; transform: scale(1); }
+}
+/* === НЕОНОВА РАМКА НАВКОЛО КАРТОК ФІЛЬМІВ === */
+.film {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.film:hover {
+  transform: scale(1.03);
+  box-shadow:
+    0 0 25px rgba(0, 255, 242, 0.4),
+    0 0 55px rgba(255, 0, 200, 0.3);
+}
+
+/* Ефект світіння під час наведення */
+.film::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: linear-gradient(45deg, #00fff2, #ff00c8);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.film:hover::after {
+  opacity: 0.8;
+  filter: blur(2px);
+}
+/* === КНОПКА "ГОЛОВНА" === */
+nav a.active {
+  color: #00fff2;
+  text-shadow: 0 0 12px #00fff2, 0 0 30px #00fff2;
+  font-weight: 700;
+  border-bottom: 2px solid #00fff2;
+  padding-bottom: 2px;
+}
+
+/* === МЕГА-МЕНЮ "ФІЛЬМИ" — ВИПРАВЛЕНЕ, ЯК БАНЕР === */
+header .container {
+  position: relative; /* щоб меню трималось у межах шапки */
+}
+
+
+/* === МЕГА-МЕНЮ "ФІЛЬМИ" — ПІД ЛОГОТИПОМ === */
+header {
+  position: relative;
+  z-index: 2000;
+}
+
+/* === МЕГА-МЕНЮ "ФІЛЬМИ" — ІДЕАЛЬНЕ РІВНЯННЯ ПО БАНЕРУ === */
+header {
+  position: relative;
+  z-index: 2000;
+}
+
+
+/* === Анімація плавної появи меню === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Плавна поява */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -8px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+
+
+/* === ЗАГОЛОВОК МЕНЮ === */
+.mega-menu::before {
+  content: "🎬 Усі жанри фільмів";
+  display: block;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 24px;
+  color: #00fff2;
+  text-shadow: 0 0 15px #00fff2a0;
+  margin-bottom: 25px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* === ЖАНРИ === */
+.genres {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px 40px;
+  justify-items: start;
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+
+
+.genres a:hover {
+  color: #00fff2;
+  text-shadow: 0 0 12px #00fff2;
+}
+
+
+/* Заголовок */
+.mega-series::before {
+  content: "📺 Усі жанри серіалів";
+  display: block;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 24px;
+  color: #ff00c8;
+  text-shadow: 0 0 15px #ff00c880;
+  margin-bottom: 25px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+
+
+/* Сітка жанрів */
+.mega-series .genres {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px 45px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+
+.mega-series .genres a:hover {
+  color: #ff00c8;
+  text-shadow: 0 0 12px #ff00c8;
+}
+
+
+/* Заголовок */
+.mega-cartoons::before {
+  content: "🧸 Усі розділи мультфільмів";
+  display: block;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 24px;
+  color: #ffcc00;
+  text-shadow: 0 0 15px #ffcc0080;
+  margin-bottom: 25px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+
+
+/* Сітка жанрів */
+.mega-cartoons .genres {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px 45px;
+  max-width: 950px;
+  margin: 0 auto;
+}
+/* === ОНОВЛЕНИЙ СТИЛЬ ТЕКСТУ У ВИПАДАЮЧИХ МЕНЮ === */
+.mega-menu .genres a,
+.mega-series .genres a,
+.mega-cartoons .genres a {
+  color: #f5f5f5;
+  font-family: "Poppins", sans-serif;
+  font-size: 18px; /* 🔹 стало більшим */
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  transition: 0.25s ease;
+  text-shadow: 0 0 10px rgba(0, 255, 242, 0.15);
+}
+
+/* Ефект при наведенні — для кожного меню свій неон */
+.mega-menu .genres a:hover {
+  color: #00fff2;
+  text-shadow: 0 0 15px #00fff2, 0 0 30px #00fff2;
+}
+
+.mega-series .genres a:hover {
+  color: #ff00c8;
+  text-shadow: 0 0 15px #ff00c8, 0 0 30px #ff00c8;
+}
+
+.mega-cartoons .genres a:hover {
+  color: #ffcc00;
+  text-shadow: 0 0 15px #ffcc00, 0 0 30px #ffcc00;
+}
+
+
+.mega-cartoons .genres a:hover {
+  color: #ffcc00;
+  text-shadow: 0 0 12px #ffcc00;
+}
+
+
+/* === ВИПРАВЛЕНЕ ВИРІВНЮВАННЯ ШАПКИ === */
+.container.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1350px; /* 🔹 ширше */
+  margin: 0 auto;
+  padding: 10px 25px;
+  box-sizing: border-box;
+}
+
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: nowrap;
+}
+
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* поле пошуку */
+.search {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 242, 0.3);
+  background: #0a0a0a;
+  color: #00fff2;
+  width: 150px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.search:focus {
+  outline: none;
+  box-shadow: 0 0 8px #00fff2;
+}
+
+/* кнопка “Мій кабінет” */
+.profile-btn {
+  background: #000;
+  border: 1px solid #00fff2;
+  color: #00fff2;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 242, 0.3);
+  white-space: nowrap;
+}
+
+.profile-btn:hover {
+  background: #00fff2;
+  color: #000;
+  box-shadow: 0 0 20px #00fff2;
+}
+/* 🧾 Стиль для інформаційного блоку фільму */
+.film-info p {
+  margin: 6px 0;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.15); /* бірюзова лінія */
+}
+
+.film-info p:last-child {
+  border-bottom: none; /* без лінії у кінці */
+}
+
+/* опціонально: зробити легку тінь і фон для всього блоку */
+.film-info {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  padding: 15px 20px;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+}
+/* 🎬 Компактний стиль блоку інформації — кожен пункт у “віконечку” */
+.film-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.film-meta span {
+  background: linear-gradient(145deg, #0a0a0a, #151515);
+  border: 1px solid rgba(0, 255, 255, 0.25);
+  border-radius: 8px;
+  padding: 5px 10px;
+  color: #c9ffff;
+  font-size: 14px;
+  line-height: 1.3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.08);
+  transition: all 0.25s ease;
+}
+
+/* Підсвітка при наведенні */
+.film-meta span:hover {
+  background: rgba(0, 255, 255, 0.05);
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.25);
+  border-color: rgba(0, 255, 255, 0.4);
+}
+
+/* Акцент на назві параметра */
+.film-meta b {
+  color: #00fff2;
+  font-weight: 600;
+}
+
+
+/* Без нижньої лінії у останнього */
+.film-meta span:last-child {
+  border-bottom: none;
+}
+
+/* Легка підсвітка при наведенні */
+.film-meta span:hover {
+  color: #00ffff;
+  text-shadow: 0 0 4px #00ffff;
+  transition: 0.2s;
+}
+
+/* Вміст усередині */
+.mega-menu .genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 35px;
+}
+
+.mega-menu .genres a {
   color: #e4e4e4;
   text-decoration: none;
   font-weight: 500;
@@ -48,100 +1042,14 @@ header .container {
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.main-nav a:hover {
+.mega-menu .genres a:hover {
   color: #00fff2;
-  transform: scale(1.05);
+  transform: translateY(-1px);
 }
 
-.main-nav a.active {
-  color: #00fff2;
-}
+/* === Індивідуальні стилі для підменю === */
 
-/* === ПОШУК + КАБІНЕТ === */
-.top-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.search {
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: none;
-  background: #111;
-  color: #fff;
-  outline: none;
-}
-
-.profile-btn {
-  background: linear-gradient(90deg, #00fff2 0%, #0077ff 100%);
-  color: #000;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 14px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.profile-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(0, 255, 242, 0.5);
-}
-
-/* === ВИПАДАЮЧІ МЕНЮ — ОСНОВНИЙ СТИЛЬ === */
-.dropdown {
-  position: relative;
-}
-
-.dropdown > a {
-  display: inline-block;
-  padding-bottom: 4px;
-}
-
-/* === ВИПАДАЮЧІ МЕНЮ: ФІЛЬМИ / СЕРІАЛИ / МУЛЬТФІЛЬМИ === */
-.mega-menu,
-.mega-series,
-.mega-cartoons {
-  position: absolute;
-  top: calc(100% - 4px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 1150px;
-  padding: 50px 80px 60px;
-  background: rgba(0, 0, 0, 0.98);
-  border-top: 2px solid #00fff2;
-  border-radius: 0 0 16px 16px;
-  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
-  z-index: 5000;
-}
-
-/* Активна зона меню */
-.dropdown:hover .mega-menu,
-.dropdown:hover .mega-series,
-.dropdown:hover .mega-cartoons,
-.mega-menu:hover,
-.mega-series:hover,
-.mega-cartoons:hover {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: all;
-  transition-delay: 0s;
-}
-
-/* Затримка закриття */
-.dropdown:not(:hover) .mega-menu,
-.dropdown:not(:hover) .mega-series,
-.dropdown:not(:hover) .mega-cartoons {
-  transition-delay: 0.3s;
-}
-
-/* Індивідуальні кольори для кожного меню */
+/* 🎬 ФІЛЬМИ */
 .dropdown .mega-menu {
   background: #000;
   box-shadow: 0 4px 15px rgba(0, 255, 255, 0.25);
@@ -152,6 +1060,7 @@ header .container {
   color: #00fff2;
 }
 
+/* 📺 СЕРІАЛИ */
 .dropdown .mega-series {
   background: #0b0015;
   box-shadow: 0 4px 15px rgba(176, 0, 255, 0.25);
@@ -162,6 +1071,7 @@ header .container {
   color: #b34eff;
 }
 
+/* 🧸 МУЛЬТФІЛЬМИ */
 .dropdown .mega-cartoons {
   background: #160400;
   box-shadow: 0 4px 15px rgba(255, 115, 0, 0.25);
@@ -172,35 +1082,61 @@ header .container {
   color: #ff9944;
 }
 
-/* === КОНТЕНТ МЕНЮ === */
-.mega-menu .genres a,
-.mega-series .genres a,
-.mega-cartoons .genres a {
-  color: #e4e4e4;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 15px;
-  transition: color 0.2s ease, transform 0.2s ease;
+/* === ВИПАДАЮЧІ МЕНЮ — ФІКС + ЗАТЕМНЕННЯ ФОНУ === */
+
+/* === ФІНАЛЬНИЙ ФІКС ВИПАДАЮЧИХ МЕНЮ === */
+.mega-menu,
+.mega-series,
+.mega-cartoons {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1150px;
+  padding: 50px 80px 60px;
+  background: rgba(0, 0, 0, 0.98); /* суцільний непрозорий шар */
+  border-top: 2px solid #00fff2;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none; /* вимкнено, доки не наведено */
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  z-index: 3000;
 }
 
-.mega-menu .genres a:hover,
-.mega-series .genres a:hover,
-.mega-cartoons .genres a:hover {
-  transform: scale(1.05);
+/* 🔹 Коли курсор на меню або на сам блок — увімкнути всю площу */
+.dropdown:hover .mega-menu,
+.dropdown:hover .mega-series,
+.dropdown:hover .mega-cartoons,
+.mega-menu:hover,
+.mega-series:hover,
+.mega-cartoons:hover {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all; /* тепер навіть фон реагує */
 }
 
-/* === ДРІБНИЙ ДЕКОР === */
-.fade-in {
-  animation: fadeIn 0.4s ease forwards;
+/* 🔹 Плавна затримка закриття */
+.dropdown:not(:hover) .mega-menu,
+.dropdown:not(:hover) .mega-series,
+.dropdown:not(:hover) .mega-cartoons {
+  transition-delay: 0.3s;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Запобігаємо “відриву” меню */
+header .container {
+  position: relative;
+  z-index: 4000;
 }
+
+
+
+
+
+
+
+
+
+
