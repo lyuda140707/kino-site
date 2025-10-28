@@ -330,6 +330,52 @@
   cursor: not-allowed;
 }
 
+/* ===== 🎬 Рекомендовані фільми ===== */
+.recommended-section {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  background: #0d0d0d;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.recommended-section h3 {
+  color: #00fff2;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.recommended-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.recommended-item {
+  width: 100px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recommended-item:hover {
+  transform: translateY(-4px);
+}
+
+.recommended-item img {
+  width: 100%;
+  height: 145px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.recommended-item p {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #ccc;
+  line-height: 1.3;
+}
     
   </style>
 </head>
@@ -477,6 +523,12 @@
         <h3>Про що фільм:</h3>
         <p id="filmDesc">Опис фільму...</p>
       </div>
+      <!-- 🎬 Рекомендовані фільми -->
+      <div class="recommended-section">
+        <h3>🎞️ Рекомендуємо подивитись</h3>
+        <div id="recommendedList" class="recommended-list"></div>
+      </div>
+
 
       <!-- 💬 Коментарі -->
       <div class="comments-section">
@@ -747,6 +799,50 @@ function getYouTubeId(url) {
 
     // Завантаження сторінки
     loadFilm();
+    // ===== 🎬 Рекомендовані фільми =====
+async function loadRecommendedFilms(title) {
+  const list = document.getElementById("recommendedList");
+  if (!list) return;
+
+  // Очищаємо попередній вміст
+  list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
+
+  // шукаємо фільми, в назві яких є одне слово з поточного
+  const keyword = title.split(" ")[0]; // перше слово (наприклад “Аватар”)
+  const { data, error } = await supabase
+    .from("films") // 🔹 твоя таблиця з фільмами (заміни, якщо інша)
+    .select("id, title, poster")
+    .ilike("title", `%${keyword}%`)
+    .limit(6);
+
+  if (error || !data || data.length === 0) {
+    list.innerHTML = "<p style='color:#888'>Схожих фільмів не знайдено</p>";
+    return;
+  }
+
+  // відображаємо картки
+  list.innerHTML = "";
+  data.forEach(film => {
+    // пропускаємо поточний фільм
+    if (film.title === title) return;
+    const item = document.createElement("div");
+    item.className = "recommended-item";
+    item.innerHTML = `
+      <img src="${film.poster}" alt="${film.title}">
+      <p>${film.title}</p>
+    `;
+    // клік → відкриває сторінку цього фільму
+    item.addEventListener("click", () => {
+      window.location.href = `film.html?id=${film.id}`;
+    });
+    list.appendChild(item);
+  });
+}
+
+// 🔹 Викликати після завантаження поточного фільму
+// після того, як ти вже отримуєш data.title:
+loadRecommendedFilms(data.title);
+
   </script>
 <!-- 🧾 Модальне вікно -->
 <div id="reportModal" class="modal">
