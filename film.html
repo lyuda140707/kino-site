@@ -23,12 +23,23 @@
       max-width: 360px;
     }
 
-    .film-left img {
-      width: 100%;
-      border-radius: 12px;
-      box-shadow: 0 0 25px rgba(0, 255, 242, 0.3);
-      border: 2px solid rgba(0, 255, 242, 0.4);
-    }
+    /* 🖼️ Фото постера фільму (зменшене) */
+.film-left img {
+  width: 90%;              /* було 100%, тепер трохи менше */
+  max-width: 260px;        /* обмежує максимально ширину */
+  border-radius: 10px;
+  margin: 0 auto;
+  display: block;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+  border: 1px solid rgba(0, 255, 255, 0.25);
+  transition: transform 0.3s ease;
+}
+
+/* ефект при наведенні */
+.film-left img:hover {
+  transform: scale(1.05);
+}
+
 
     .film-meta {
       margin-top: 18px;
