@@ -1071,67 +1071,6 @@ header {
   text-shadow: 0 0 4px #00ffff;
   transition: 0.2s;
 }
-/* === ВИПАДАЮЧІ МЕНЮ — ФІКС: НЕ ХОВАЮТЬСЯ ПРИ НАВЕДЕННІ НА ПУСТИЙ ФОН === */
-
-/* Початково приховані */
-.mega-menu,
-.mega-series,
-.mega-cartoons {
-  display: block !important;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 1150px;
-  background: #000;
-  border-top: 2px solid #00fff2;
-  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
-  padding: 50px 80px 60px;
-  z-index: 3000;
-  border-radius: 0 0 16px 16px;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
-}
-
-/* Додаємо головний фікс 👇 */
-.mega-menu:hover,
-.mega-series:hover,
-.mega-cartoons:hover {
-  pointer-events: auto !important;
-  background-color: rgba(0,0,0,0.98) !important;
-}
-
-/* Показуємо меню при наведенні */
-.dropdown:hover .mega-menu,
-.dropdown:hover .mega-series,
-.dropdown:hover .mega-cartoons,
-.dropdown .mega-menu:hover,
-.dropdown .mega-series:hover,
-.dropdown .mega-cartoons:hover {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transition-delay: 0s;
-}
-
-/* Плавна затримка закриття */
-.dropdown:not(:hover) .mega-menu,
-.dropdown:not(:hover) .mega-series,
-.dropdown:not(:hover) .mega-cartoons {
-  transition-delay: 0.3s;
-}
-
-/* Щоб меню не "відривалось" від шапки */
-header .container {
-  position: relative;
-  z-index: 4000;
-}
-
-
-
 
 /* Вміст усередині */
 .mega-menu .genres {
@@ -1188,23 +1127,41 @@ header .container {
   color: #ff9944;
 }
 
+/* === ВИПАДАЮЧІ МЕНЮ — ФІКС + ЗАТЕМНЕННЯ ФОНУ === */
 
-
-
-/* === KEEP-OPEN + DELAY CLOSE для всіх випадаючих меню === */
-/* 1) Ховаємо не "display:none", а через opacity/visibility — щоб працювали плавні переходи */
+/* Базовий стан — меню приховане */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
-  display: block !important;          /* перекриває попереднє display:none */
+  display: block !important;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1150px;
+  background: rgba(0, 0, 0, 0.97); /* 💡 темна напівпрозора підкладка */
+  border-top: 2px solid #00fff2;
+  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
+  padding: 50px 80px 60px;
+  z-index: 3000;
+  border-radius: 0 0 16px 16px;
   transition: opacity 0.25s ease, visibility 0.25s ease;
-  /* решта позиціювання у тебе вже є вище (absolute, top:100%, left:50% ...) */
+  backdrop-filter: blur(2px);
 }
 
-/* 2) Показуємо, коли курсор на .dropdown І/АБО на самому випавшому блоці */
+/* Активна зона — щоб не зникало при наведенні на фон */
+.mega-menu:hover,
+.mega-series:hover,
+.mega-cartoons:hover {
+  pointer-events: auto !important;
+  background: rgba(0, 0, 0, 0.97); /* тримаємо активну зону */
+}
+
+/* Показуємо меню при наведенні на пункт або на сам блок */
 .dropdown:hover .mega-menu,
 .dropdown:hover .mega-series,
 .dropdown:hover .mega-cartoons,
@@ -1214,18 +1171,22 @@ header .container {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transition-delay: 0s; /* відкривається одразу */
+  transition-delay: 0s;
 }
 
-/* 3) Коли курсор пішов з .dropdown, тримаємо меню ще 0.25с */
+/* Трішки затримуємо зникнення, щоб не мигало */
 .dropdown:not(:hover) .mega-menu,
 .dropdown:not(:hover) .mega-series,
 .dropdown:not(:hover) .mega-cartoons {
-  transition-delay: 0.25s; /* ця затримка дає час "потрапити" в меню курсором */
+  transition-delay: 0.35s;
 }
 
-/* (додатково, але безпечно) — щоб контейнер був базою для абсолютних меню */
-header .container { position: relative; }
+/* Щоб не “відривалось” від шапки */
+header .container {
+  position: relative;
+  z-index: 4000;
+}
+
 
 
 
