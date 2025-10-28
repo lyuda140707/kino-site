@@ -787,8 +787,7 @@ function getYouTubeId(url) {
       setupPlayer(trailerUrl);
     }
   });
-  // 🎞️ ПІСЛЯ ВІДОБРАЖЕННЯ ФІЛЬМУ — завантажуємо схожі
-  loadRecommendedFilms(data.title, data.genre);
+  
 }
 
 
@@ -800,18 +799,19 @@ function getYouTubeId(url) {
 
     // Завантаження сторінки
     loadFilm();
-
-// ===== 🎬 Рекомендовані фільми =====
+    // ===== 🎬 Рекомендовані фільми =====
+// 🎬 Рекомендовані фільми — шукає схожі за назвою або жанром
 async function loadRecommendedFilms(title, genre) {
   const list = document.getElementById("recommendedList");
   if (!list) return;
 
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
+  // перше слово з назви (наприклад "Аватар")
   const keyword = title.split(" ")[0];
 
   const { data, error } = await supabase
-    .from("films_site") // ✅ правильна таблиця
+    .from("films_site")                // ✅ твоя таблиця
     .select("id, title, poster, genre")
     .or(`title.ilike.%${keyword}%,genre.ilike.%${genre}%`)
     .limit(6);
@@ -821,6 +821,7 @@ async function loadRecommendedFilms(title, genre) {
     return;
   }
 
+  // очищаємо і створюємо картки
   list.innerHTML = "";
   data.forEach(film => {
     if (film.title === title) return; // не показує поточний фільм
@@ -831,7 +832,7 @@ async function loadRecommendedFilms(title, genre) {
       <p>${film.title}</p>
     `;
     item.addEventListener("click", () => {
-      window.location.href = \`film.html?id=\${film.id}\`;
+      window.location.href = `film.html?id=${film.id}`;
     });
     list.appendChild(item);
   });
@@ -882,69 +883,78 @@ window.onclick = (e) => {
 };
 </script>
 <script type="module">
-<script>
-  // Використовуємо вже створений клієнт supabase
-  const filmId = new URLSearchParams(window.location.search).get("id");
-  const commentsList = document.getElementById("commentsList");
-  const sendBtn = document.getElementById("sendComment");
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-  // 💬 Завантаження коментарів
-  async function loadComments() {
-    commentsList.innerHTML = "<p style='color:#777'>Завантаження...</p>";
+const supabaseUrl = 'https://zerlqvbmqszomlondlte.supabase.co';   // 🔹 заміни на свою адресу
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";                      // 🔹 встав свій anon ключ
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { data, error } = await supabase
-      .from('comments')
-      .select('*')
-      .eq('film_id', filmId)
-      .order('created_at', { ascending: false });
+// Отримуємо ID фільму з URL (наприклад ?id=5)
+const filmId = new URLSearchParams(window.location.search).get("id");
 
-    if (error) {
-      console.error("Помилка коментарів:", error);
-      commentsList.innerHTML = "<p style='color:#c66'>Не вдалося завантажити коментарі</p>";
-      return;
-    }
+// HTML елементи
+const commentsList = document.getElementById("commentsList");
+const sendBtn = document.getElementById("sendComment");
 
-    commentsList.innerHTML = "";
-    if (!data || data.length === 0) {
-      commentsList.innerHTML = "<p style='color:#888'>Ще немає коментарів. Будь першим!</p>";
-      return;
-    }
+// ===== 📥 ЗАВАНТАЖИТИ КОМЕНТАРІ =====
+async function loadComments() {
+  commentsList.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
-    data.forEach(c => {
-      const div = document.createElement("div");
-      div.className = "comment";
-      div.innerHTML = `
-        <strong>${c.username || "Анонім"}</strong>
-        <p>${c.text}</p>
-        <small>${new Date(c.created_at).toLocaleString()}</small>
-      `;
-      commentsList.appendChild(div);
-    });
+  const { data, error } = await supabase
+    .from('comments')
+    .select('*')
+    .eq('film_id', filmId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Помилка завантаження:", error);
+    commentsList.innerHTML = "<p style='color:#c66'>Не вдалося завантажити коментарі 😕</p>";
+    return;
   }
 
-  // 💬 Надіслати коментар
-  sendBtn.addEventListener("click", async () => {
-    const username = document.getElementById("username").value.trim() || "Анонім";
-    const text = document.getElementById("commentText").value.trim();
+  if (!data || data.length === 0) {
+    commentsList.innerHTML = "<p style='color:#888'>Ще немає коментарів. Будь першим!</p>";
+    return;
+  }
 
-    if (!text) return alert("Введи коментар 🙂");
+  // очищуємо і додаємо
+  commentsList.innerHTML = "";
+  for (const c of data) {
+    const div = document.createElement("div");
+    div.className = "comment";
+    div.innerHTML = `
+      <strong>${c.username || "Анонім"}</strong>
+      <p>${c.text}</p>
+      <small>${new Date(c.created_at).toLocaleString()}</small>
+    `;
+    commentsList.appendChild(div);
+  }
+}
 
-    const { error } = await supabase
-      .from('comments')
-      .insert([{ film_id: filmId, username, text }]);
+// ===== 📤 НАДІСЛАТИ КОМЕНТАР =====
+sendBtn.addEventListener("click", async () => {
+  const username = document.getElementById("username").value.trim() || "Анонім";
+  const text = document.getElementById("commentText").value.trim();
 
-    if (error) {
-      alert("Помилка при надсиланні 😕");
-      console.error(error);
-    } else {
-      document.getElementById("commentText").value = "";
-      loadComments();
-    }
-  });
+  if (!text) return alert("Введи коментар 🙂");
 
-  loadComments();
+  // вставляємо в базу
+  const { error } = await supabase
+    .from('comments')
+    .insert([{ film_id: filmId, username, text }]);
+
+  if (error) {
+    console.error("Помилка надсилання:", error);
+    alert("Не вдалося надіслати 😕");
+  } else {
+    document.getElementById("commentText").value = "";
+    loadComments(); // оновити список
+  }
+});
+
+// Запускаємо завантаження при відкритті сторінки
+loadComments();
 </script>
-
 
 </body>
 </html>
