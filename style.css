@@ -1071,9 +1071,14 @@ header {
   text-shadow: 0 0 4px #00ffff;
   transition: 0.2s;
 }
-/* === Випадаюче меню (повноширинне, чорне) === */
-.mega-menu {
-  display: none; /* ⬅️ залишається, але нижче ми зробимо hover */
+/* === ВИПАДАЮЧІ МЕНЮ — ФІКСОВАНА ВЕРСІЯ === */
+.mega-menu,
+.mega-series,
+.mega-cartoons {
+  display: block !important;          /* завжди існує, просто приховане */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
   position: absolute;
   top: 100%;
   left: 50%;
@@ -1086,15 +1091,34 @@ header {
   padding: 50px 80px 60px;
   z-index: 3000;
   border-radius: 0 0 16px 16px;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
   animation: fadeIn 0.25s ease;
-  backdrop-filter: none !important;
-  background-color: #000 !important;
 }
 
-/* ⬇️ додай одразу під ним */
+/* === Показуємо меню при наведенні === */
 .dropdown:hover .mega-menu,
-.dropdown .mega-menu:hover {
-  display: block;
+.dropdown:hover .mega-series,
+.dropdown:hover .mega-cartoons,
+.dropdown .mega-menu:hover,
+.dropdown .mega-series:hover,
+.dropdown .mega-cartoons:hover {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+/* === Плавна затримка зникнення === */
+.dropdown:not(:hover) .mega-menu,
+.dropdown:not(:hover) .mega-series,
+.dropdown:not(:hover) .mega-cartoons {
+  transition-delay: 0.3s;
+}
+
+/* === Базове вирівнювання контейнера === */
+header .container {
+  position: relative;
+  z-index: 4000;
 }
 
 
@@ -1192,6 +1216,7 @@ header {
 
 /* (додатково, але безпечно) — щоб контейнер був базою для абсолютних меню */
 header .container { position: relative; }
+
 
 
 
