@@ -1068,25 +1068,24 @@ header {
   color: #ff9944;
 }
 
-/* === ТОЧНЕ ВИРІВНЮВАННЯ ВИПАДАЮЧИХ МЕНЮ ПІД БАНЕРОМ === */
-header .container {
-  position: relative; /* база для позиціювання */
+/* === ТОЧНЕ ПОЗИЦІЮВАННЯ МЕГА-МЕНЮ ПІД БАНЕРОМ === */
+.container.topbar {
+  position: relative;
+  z-index: 3000;
 }
 
+/* Фільми / Серіали / Мультики — спільні параметри */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 1150px; /* 🔹 така сама ширина, як у .container */
+  top: 100%; /* строго під верхнім меню */
+  left: 50%; /* центр екрана */
+  transform: translateX(-50%); /* центрування */
+  width: 1150px; /* 🔹 точна ширина як у банера (.container) */
   margin-top: -1px;
   padding: 50px 80px 60px;
-  background: #000;
-  border-top: 2px solid #00fff2;
   border-radius: 0 0 16px 16px;
-  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1094,7 +1093,28 @@ header .container {
   z-index: 5000;
 }
 
-/* показуємо */
+/* 🎬 Фільми */
+.mega-menu {
+  background: #000; /* щільний чорний фон */
+  border-top: 2px solid #00fff2;
+  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
+}
+
+/* 📺 Серіали */
+.mega-series {
+  background: #100016; /* темно-фіолетовий */
+  border-top: 2px solid #ff00c8;
+  box-shadow: 0 8px 25px rgba(255, 0, 200, 0.25);
+}
+
+/* 🧸 Мультфільми */
+.mega-cartoons {
+  background: #160800; /* темно-помаранчевий */
+  border-top: 2px solid #ffcc00;
+  box-shadow: 0 8px 25px rgba(255, 204, 0, 0.25);
+}
+
+/* Показуємо при наведенні */
 .dropdown:hover .mega-menu,
 .dropdown:hover .mega-series,
 .dropdown:hover .mega-cartoons,
@@ -1107,14 +1127,14 @@ header .container {
   transform: translateX(-50%) translateY(0);
 }
 
-/* стартова позиція для плавної появи */
+/* Початкове положення (для плавного випливання) */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
   transform: translateX(-50%) translateY(-10px);
 }
 
-/* зона безпеки */
+/* 🚫 Запобігаємо зниканню при русі мишки */
 .dropdown {
   position: relative;
 }
@@ -1135,6 +1155,7 @@ header .container {
 
 
 
+
 /* невелика затримка закриття */
 .dropdown:not(:hover) .mega-menu,
 .dropdown:not(:hover) .mega-series,
@@ -1145,6 +1166,7 @@ header .container {
 .dropdown {
   position: relative;
 }
+
 
 
 
