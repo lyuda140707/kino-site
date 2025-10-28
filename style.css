@@ -19,7 +19,7 @@ body {
 
 /* Контейнер */
 .container {
-  max-width: 1150px; /* 🔹 було 1150px — стало ширше */
+  max-width: 1300px; /* 🔹 було 1150px — стало ширше */
   margin: 0 auto;
   padding: 0 25px; /* трохи більше простору по боках */
 }
@@ -745,6 +745,9 @@ header .container {
   position: relative; /* щоб меню трималось у межах шапки */
 }
 
+.dropdown {
+  position: relative;
+}
 
 /* === МЕГА-МЕНЮ "ФІЛЬМИ" — ПІД ЛОГОТИПОМ === */
 header {
@@ -758,17 +761,27 @@ header {
   z-index: 2000;
 }
 
+.dropdown {
+  position: static; /* важливо! щоб не обмежувало ширину */
+}
 
-/* === Анімація плавної появи меню === */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -8px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
+.mega-menu {
+  display: none;
+  position: absolute;
+  top: 100%; /* прямо під шапкою */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1150px; /* така ж, як у банера */
+  background: #000; /* чисто чорний фон */
+  border-top: 2px solid #00fff2;
+  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
+  padding: 50px 80px 60px; /* більше висоти для жанрів */
+  z-index: 3000;
+  border-radius: 0 0 16px 16px;
+  animation: fadeIn 0.25s ease;
+  backdrop-filter: none !important; /* 🔹 прибирає прозорість */
+  background-color: #000 !important; /* 🔹 гарантія чорного */
 }
 
 /* Плавна поява */
@@ -777,7 +790,10 @@ header {
   to { opacity: 1; transform: translate(-50%, 0); }
 }
 
-
+/* показуємо при наведенні */
+.dropdown:hover .mega-menu {
+  display: block;
+}
 
 /* === ЗАГОЛОВОК МЕНЮ === */
 .mega-menu::before {
@@ -795,10 +811,9 @@ header {
 /* === ЖАНРИ === */
 .genres {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px 40px;
-  justify-items: start;
-  max-width: 950px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px 45px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
@@ -842,7 +857,10 @@ header {
   letter-spacing: 1px;
 }
 
-
+/* показуємо при наведенні */
+.dropdown:hover .mega-series {
+  display: block;
+}
 
 /* Сітка жанрів */
 .mega-series .genres {
@@ -1071,95 +1089,6 @@ header {
   text-shadow: 0 0 4px #00ffff;
   transition: 0.2s;
 }
-/* === Випадаюче меню (повноширинне, чорне) === */
-.mega-menu {
-  display: none; /* ⬅️ залишається, але нижче ми зробимо hover */
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 1150px;
-  background: #000;
-  border-top: 2px solid #00fff2;
-  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
-  padding: 50px 80px 60px;
-  z-index: 3000;
-  border-radius: 0 0 16px 16px;
-  animation: fadeIn 0.25s ease;
-  backdrop-filter: none !important;
-  background-color: #000 !important;
-}
-
-/* ⬇️ додай одразу під ним */
-.dropdown:hover .mega-menu,
-.dropdown .mega-menu:hover {
-  display: block;
-}
-
-
-
-/* Вміст усередині */
-.mega-menu .genres {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px 35px;
-}
-
-.mega-menu .genres a {
-  color: #e4e4e4;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 15px;
-  transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.mega-menu .genres a:hover {
-  color: #00fff2;
-  transform: translateY(-1px);
-}
-
-/* === Індивідуальні стилі для підменю === */
-
-/* 🎬 ФІЛЬМИ */
-.dropdown .mega-menu {
-  background: #000;
-  box-shadow: 0 4px 15px rgba(0, 255, 255, 0.25);
-  border-top: 1px solid rgba(0, 255, 255, 0.25);
-}
-
-.dropdown .mega-menu .genres a:hover {
-  color: #00fff2;
-}
-
-/* 📺 СЕРІАЛИ */
-.dropdown .mega-series {
-  background: #0b0015;
-  box-shadow: 0 4px 15px rgba(176, 0, 255, 0.25);
-  border-top: 1px solid rgba(176, 0, 255, 0.25);
-}
-
-.dropdown .mega-series .genres a:hover {
-  color: #b34eff;
-}
-
-/* 🧸 МУЛЬТФІЛЬМИ */
-.dropdown .mega-cartoons {
-  background: #160400;
-  box-shadow: 0 4px 15px rgba(255, 115, 0, 0.25);
-  border-top: 1px solid rgba(255, 115, 0, 0.25);
-}
-
-.dropdown .mega-cartoons .genres a:hover {
-  color: #ff9944;
-}
-
-
-
-
-
-
-
 
 
 
