@@ -297,7 +297,7 @@
       card.innerHTML = `
         <div class="poster">
           <img src="${film.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${film.title}">
-          ${film.pro_access ? '<span class="badge plus">PRO</span>' : ''}
+          ${film.pro_access?.toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
         </div>
         <div class="title">${film.title}</div>
         <div class="meta">
@@ -321,4 +321,5 @@
 
 </body>
 </html>
+
 
