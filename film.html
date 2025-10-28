@@ -187,7 +187,7 @@
       <div class="film-right">
         <div class="film-title" id="filmTitle">Назва фільму</div>
         <div class="player-box">
-        
+          <video id="filmPlayer" controls playsinline muted crossorigin="anonymous"></video>
         </div>
         <div class="film-description">
           <h3>Про що фільм:</h3>
@@ -236,7 +236,7 @@
     document.getElementById("filmAge").textContent = data.age || "";
     document.getElementById("filmImdb").textContent = data.imdb || "—";
 
-// 🎬 Плеєр (універсально для .m3u8 і .mp4)
+    // 🎬 Плеєр (універсально для .m3u8 і .mp4)
 const player = document.getElementById("filmPlayer");
 const url = data.stream_url || "";
 
@@ -247,23 +247,37 @@ if (url && url.endsWith(".m3u8")) {
       maxBufferLength: 30,
       enableWorker: true,
       lowLatencyMode: true,
-      xhrSetup: function (xhr, url) {
-        xhr.withCredentials = false;
-        xhr.setRequestHeader("Origin", "https://relax-time2.onrender.com");
-        xhr.setRequestHeader("Referer", "https://relax-time2.onrender.com");
-      }
     });
     hls.loadSource(url);
     hls.attachMedia(player);
+    hls.on(Hls.Events.MANIFEST_PARSED, async () => {
+      try {
+        await player.play();
+      } catch {
+        document.body.addEventListener("click", () => player.play(), { once: true });
+      }
+    });
   } else if (player.canPlayType("application/vnd.apple.mpegurl")) {
     // Safari / iOS — нативно
     player.src = url;
+    player.addEventListener("loadedmetadata", async () => {
+      try {
+        await player.play();
+      } catch {
+        document.body.addEventListener("click", () => player.play(), { once: true });
+      }
+    });
   } else {
     console.error("Цей браузер не підтримує HLS без hls.js");
   }
 } else if (url) {
   // MP4 та інші формати
   player.src = url;
+  try {
+    await player.play();
+  } catch {
+    document.body.addEventListener("click", () => player.play(), { once: true });
+  }
 } else {
   console.warn("stream_url порожній");
 }
