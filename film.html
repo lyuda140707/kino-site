@@ -154,9 +154,11 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co"; // 👉 встав сюди свій URL
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE"; // 👉 встав сюди свій anon key
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+
+  // ✅ правильно — через window.supabase
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
   async function loadFilm() {
     const params = new URLSearchParams(window.location.search);
@@ -169,28 +171,37 @@
       .eq("id", id)
       .single();
 
-    if (error || !data) {
-      document.body.innerHTML = "<h2 style='color:white;text-align:center;margin-top:100px;'>Фільм не знайдено</h2>";
+    if (error) {
+      console.error("❌ Помилка Supabase:", error.message);
+      document.getElementById("filmTitle").textContent = "Помилка завантаження";
       return;
     }
 
-    document.getElementById("filmPoster").src = data.poster;
-    document.getElementById("filmTitle").textContent = data.title;
-    document.getElementById("filmDesc").textContent = data.description || "Опис відсутній";
-    document.getElementById("filmYear").textContent = data.year || "—";
-    document.getElementById("filmGenre").textContent = data.genre || "—";
-    document.getElementById("filmCountry").textContent = data.country || "—";
-    document.getElementById("filmDirector").textContent = data.director || "—";
-    document.getElementById("filmCast").textContent = data.cast || "—";
-    document.getElementById("filmSound").textContent = data.sound || "—";
-    document.getElementById("filmDuration").textContent = data.duration || "—";
-    document.getElementById("filmAge").textContent = data.age || "—";
+    if (!data) {
+      document.getElementById("filmTitle").textContent = "Фільм не знайдено";
+      return;
+    }
 
-    const video = document.getElementById("filmPlayer");
-    video.src = data.stream_url || "";
+    console.log("🎬 Дані фільму:", data);
+
+    document.getElementById("filmPoster").src = data.poster || "";
+    document.getElementById("filmTitle").textContent = data.title || "";
+    document.getElementById("filmDesc").textContent = data.description || "Опис відсутній";
+    document.getElementById("filmYear").textContent = data.year || "";
+    document.getElementById("filmGenre").textContent = data.genre || "";
+    document.getElementById("filmCountry").textContent = data.country || "";
+    document.getElementById("filmDirector").textContent = data.director || "";
+    document.getElementById("filmCast").textContent = data.cast || "";
+    document.getElementById("filmSound").textContent = data.sound || "";
+    document.getElementById("filmDuration").textContent = data.duration || "";
+    document.getElementById("filmAge").textContent = data.age || "";
+
+    const player = document.getElementById("filmPlayer");
+    player.src = data.stream_url || "";
   }
 
   loadFilm();
 </script>
+
 </body>
 </html>
