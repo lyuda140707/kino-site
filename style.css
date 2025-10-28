@@ -1089,6 +1089,30 @@ header {
   text-shadow: 0 0 4px #00ffff;
   transition: 0.2s;
 }
+/* === Випадаюче меню (ФІКС зникнення при наведенні) === */
+.dropdown {
+  position: relative;
+}
+
+.dropdown .mega-menu {
+  display: none;
+  position: absolute;
+  top: 100%; /* без зазору */
+  left: 0;
+  width: 100vw; /* на всю ширину сайту */
+  background: #0b0b0b;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px 40px;
+  box-sizing: border-box;
+  z-index: 999;
+}
+
+/* Показуємо меню при наведенні на кнопку або сам блок */
+.dropdown:hover .mega-menu,
+.dropdown .mega-menu:hover {
+  display: block;
+}
+
 
 
 
