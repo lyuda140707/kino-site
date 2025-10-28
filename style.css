@@ -859,10 +859,7 @@ header {
   letter-spacing: 1px;
 }
 
-/* показуємо при наведенні */
-.dropdown:hover .mega-series {
-  display: block;
-}
+
 
 /* Сітка жанрів */
 .mega-series .genres {
@@ -1171,6 +1168,7 @@ header {
 .dropdown .mega-cartoons .genres a:hover {
   color: #ff9944;
 }
+
 
 
 
