@@ -1068,7 +1068,11 @@ header {
   color: #ff9944;
 }
 
-/* === ВИПАДАЮЧІ МЕНЮ — ТОЧНО ПО ШИРИНІ БАНЕРА === */
+/* === ТОЧНЕ ВИРІВНЮВАННЯ ВИПАДАЮЧИХ МЕНЮ ПІД БАНЕРОМ === */
+header .container {
+  position: relative; /* база для позиціювання */
+}
+
 .mega-menu,
 .mega-series,
 .mega-cartoons {
@@ -1076,10 +1080,10 @@ header {
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  width: 1150px; /* ✅ така сама ширина, як у банера або .container */
+  width: 1150px; /* 🔹 така сама ширина, як у .container */
   margin-top: -1px;
   padding: 50px 80px 60px;
-  background: #000; /* щільний чорний фон */
+  background: #000;
   border-top: 2px solid #00fff2;
   border-radius: 0 0 16px 16px;
   box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
@@ -1090,7 +1094,7 @@ header {
   z-index: 5000;
 }
 
-/* показуємо при наведенні */
+/* показуємо */
 .dropdown:hover .mega-menu,
 .dropdown:hover .mega-series,
 .dropdown:hover .mega-cartoons,
@@ -1103,14 +1107,14 @@ header {
   transform: translateX(-50%) translateY(0);
 }
 
-/* анімація появи — легке випливання знизу */
+/* стартова позиція для плавної появи */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
   transform: translateX(-50%) translateY(-10px);
 }
 
-/* 🧱 зона безпеки, щоб меню не ховалось */
+/* зона безпеки */
 .dropdown {
   position: relative;
 }
@@ -1141,6 +1145,7 @@ header {
 .dropdown {
   position: relative;
 }
+
 
 
 
