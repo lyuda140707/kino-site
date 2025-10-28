@@ -1071,18 +1071,19 @@ header {
 /* === ВИПАДАЮЧІ МЕНЮ — ФІКС + ЗАТЕМНЕННЯ ФОНУ === */
 
 /* === ФІНАЛЬНИЙ ФІКС ВИПАДАЮЧИХ МЕНЮ === */
+/* === ФІНАЛЬНЕ ВИПРАВЛЕННЯ ВИГЛЯДУ МЕГА-МЕНЮ === */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
   position: absolute;
   top: 100%;
-  margin-top: -1px; /* перекриття крихітного зазору */
+  margin-top: -1px;
   left: 50%;
   transform: translateX(-50%);
-  width: 100%;
-  max-width: 1150px;
+  width: 100vw; /* ✅ тепер на всю ширину екрана */
+  max-width: none;
   padding: 50px 80px 60px;
-  background: rgba(0, 0, 0, 0.98);
+  background: #000; /* ✅ щільний чорний фон */
   border-top: 2px solid #00fff2;
   border-radius: 0 0 16px 16px;
   box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
@@ -1093,7 +1094,6 @@ header {
   z-index: 5000;
 }
 
-/* показуємо меню при наведенні */
 .dropdown:hover .mega-menu,
 .dropdown:hover .mega-series,
 .dropdown:hover .mega-cartoons,
@@ -1104,6 +1104,7 @@ header {
   visibility: visible;
   pointer-events: all;
 }
+
 
 /* невелика затримка закриття */
 .dropdown:not(:hover) .mega-menu,
@@ -1125,6 +1126,7 @@ header {
   height: 12px; /* перекриває 12px простору між пунктом і меню */
   background: transparent;
 }
+
 
 
 
