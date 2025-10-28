@@ -209,5 +209,12 @@
 
   loadFilm();
 </script>
+<script>
+  function scrollSlider(direction) {
+    const slider = document.getElementById("sliderRow");
+    const scrollAmount = 300;
+    slider.scrollBy({ left: scrollAmount * direction, behavior: "smooth" });
+  }
+</script>
 </body>
 </html>
