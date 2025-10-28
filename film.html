@@ -787,7 +787,8 @@ function getYouTubeId(url) {
       setupPlayer(trailerUrl);
     }
   });
-  
+  // 🎞️ ПІСЛЯ ВІДОБРАЖЕННЯ ФІЛЬМУ — завантажуємо схожі
+  loadRecommendedFilms(data.title, data.genre);
 }
 
 
@@ -799,19 +800,18 @@ function getYouTubeId(url) {
 
     // Завантаження сторінки
     loadFilm();
-    // ===== 🎬 Рекомендовані фільми =====
-// 🎬 Рекомендовані фільми — шукає схожі за назвою або жанром
+
+// ===== 🎬 Рекомендовані фільми =====
 async function loadRecommendedFilms(title, genre) {
   const list = document.getElementById("recommendedList");
   if (!list) return;
 
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
-  // перше слово з назви (наприклад "Аватар")
   const keyword = title.split(" ")[0];
 
   const { data, error } = await supabase
-    .from("films_site")                // ✅ твоя таблиця
+    .from("films_site") // ✅ правильна таблиця
     .select("id, title, poster, genre")
     .or(`title.ilike.%${keyword}%,genre.ilike.%${genre}%`)
     .limit(6);
@@ -821,7 +821,6 @@ async function loadRecommendedFilms(title, genre) {
     return;
   }
 
-  // очищаємо і створюємо картки
   list.innerHTML = "";
   data.forEach(film => {
     if (film.title === title) return; // не показує поточний фільм
@@ -832,7 +831,7 @@ async function loadRecommendedFilms(title, genre) {
       <p>${film.title}</p>
     `;
     item.addEventListener("click", () => {
-      window.location.href = `film.html?id=${film.id}`;
+      window.location.href = \`film.html?id=\${film.id}\`;
     });
     list.appendChild(item);
   });
