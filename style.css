@@ -1094,17 +1094,54 @@ header {
   text-shadow: 0 0 4px #00ffff;
   transition: 0.2s;
 }
-/* === ФІКС МЕНЮ: утримання + рівна сітка === */
+/* === 🧩 ФІНАЛЬНИЙ ФІКС ВИПАДАЮЧОГО МЕНЮ === */
+
+/* Утримання меню при наведенні */
 .dropdown {
   position: relative;
 }
-
 .dropdown:hover .mega-menu,
-.mega-menu:hover {
+.mega-menu:hover,
+.dropdown:hover .mega-series,
+.mega-series:hover,
+.dropdown:hover .mega-cartoons,
+.mega-cartoons:hover {
   display: block !important;
 }
 
-/* === Гарне вирівнювання жанрів === */
+/* === Загальні параметри випадаючих меню === */
+.mega-menu,
+.mega-series,
+.mega-cartoons {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1150px; /* рівно як банер */
+  background: #000; /* чисто чорний фон */
+  border-top: 2px solid #00fff2;
+  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
+  padding: 50px 80px 60px;
+  z-index: 3000;
+  border-radius: 0 0 16px 16px;
+  animation: fadeIn 0.25s ease;
+}
+
+/* === Анімація появи === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* === Сітка жанрів (вирівняна) === */
 .mega-menu .genres,
 .mega-series .genres,
 .mega-cartoons .genres {
@@ -1120,11 +1157,10 @@ header {
   box-sizing: border-box;
 }
 
-/* Пункти жанрів */
+/* === Пункти жанрів === */
 .mega-menu .genres a,
 .mega-series .genres a,
 .mega-cartoons .genres a {
-  display: block;
   color: #eaeaea;
   font-size: 17px;
   font-weight: 600;
@@ -1133,22 +1169,25 @@ header {
   white-space: nowrap;
 }
 
-/* Ефект при наведенні */
+/* === Індивідуальні кольори === */
+.mega-menu { border-top-color: #00fff2; }
+.mega-series { border-top-color: #ff00c8; }
+.mega-cartoons { border-top-color: #ffcc00; }
+
+/* === Ховер-ефекти === */
 .mega-menu .genres a:hover {
   color: #00fff2;
-  text-shadow: 0 0 12px #00fff2;
+  text-shadow: 0 0 15px #00fff2;
   transform: translateY(-2px);
 }
-
 .mega-series .genres a:hover {
   color: #ff00c8;
-  text-shadow: 0 0 12px #ff00c8;
+  text-shadow: 0 0 15px #ff00c8;
   transform: translateY(-2px);
 }
-
 .mega-cartoons .genres a:hover {
   color: #ffcc00;
-  text-shadow: 0 0 12px #ffcc00;
+  text-shadow: 0 0 15px #ffcc00;
   transform: translateY(-2px);
 }
 
@@ -1187,6 +1226,7 @@ header {
 .dropdown .mega-cartoons .genres a:hover {
   color: #ff9944;
 }
+
 
 
 
