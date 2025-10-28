@@ -1094,93 +1094,14 @@ header {
   text-shadow: 0 0 4px #00ffff;
   transition: 0.2s;
 }
-/* === Випадаюче меню (повноширинне, чорне) === */
-.mega-menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 1150px; /* така ж, як у банера */
-  background: #000;
-  border-top: 2px solid #00fff2;
-  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
-  padding: 50px 80px 60px;
-  z-index: 3000;
-  border-radius: 0 0 16px 16px;
-  animation: fadeIn 0.25s ease;
-  backdrop-filter: none !important;
-  background-color: #000 !important;
-}
 
-
-/* Залишає відкрите меню при наведенні */
-.dropdown:hover .mega-menu,
-.dropdown .mega-menu:hover {
-  display: block;
-}
-
-/* Вміст усередині */
-.mega-menu .genres {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px 35px;
-}
-
-.mega-menu .genres a {
-  color: #e4e4e4;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 15px;
-  transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.mega-menu .genres a:hover {
-  color: #00fff2;
-  transform: translateY(-1px);
-}
-
-/* === Індивідуальні стилі для підменю === */
-
-/* 🎬 ФІЛЬМИ */
-.dropdown .mega-menu {
-  background: #000;
-  box-shadow: 0 4px 15px rgba(0, 255, 255, 0.25);
-  border-top: 1px solid rgba(0, 255, 255, 0.25);
-}
-
-.dropdown .mega-menu .genres a:hover {
-  color: #00fff2;
-}
-
-/* 📺 СЕРІАЛИ */
-.dropdown .mega-series {
-  background: #0b0015;
-  box-shadow: 0 4px 15px rgba(176, 0, 255, 0.25);
-  border-top: 1px solid rgba(176, 0, 255, 0.25);
-}
-
-.dropdown .mega-series .genres a:hover {
-  color: #b34eff;
-}
-
-/* 🧸 МУЛЬТФІЛЬМИ */
-.dropdown .mega-cartoons {
-  background: #160400;
-  box-shadow: 0 4px 15px rgba(255, 115, 0, 0.25);
-  border-top: 1px solid rgba(255, 115, 0, 0.25);
-}
-
-.dropdown .mega-cartoons .genres a:hover {
-  color: #ff9944;
-}
 
 /* === ФІКС: меню не зникає при наведенні === */
 .dropdown {
   position: relative;
 }
 
+/* === ФІКС: меню не зникає при наведенні === */
 .dropdown:hover .mega-menu,
 .mega-menu:hover,
 .dropdown:hover .mega-series,
@@ -1189,8 +1110,6 @@ header {
 .mega-cartoons:hover {
   display: block !important;
 }
-
-
 
 
 
