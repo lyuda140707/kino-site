@@ -144,19 +144,27 @@
   </header>
 
   <!-- === BANNER === -->
-  <div class="container">
-    <section class="banner-slider">
-      <h2>🔥 Топ 10 фільмів</h2>
-      <button class="slider-btn left" onclick="scrollSlider(-1)">❮</button>
-      <button class="slider-btn right" onclick="scrollSlider(1)">❯</button>
-      <div class="slider-row" id="sliderRow">
-        <div class="slide"><img src="https://i.postimg.cc/VLHxgJsg/dragon.jpg"><p>Дракон Раджа</p></div>
-        <div class="slide"><img src="https://i.postimg.cc/V6z1QntN/anemone.jpg"><p>Анемона</p></div>
-        <div class="slide"><img src="https://i.postimg.cc/mkzLz6nK/enigma.jpg"><p>Енігма</p></div>
-        <div class="slide"><img src="https://i.postimg.cc/VvY5YBgJ/afterburn.jpg"><p>Afterburn</p></div>
-      </div>
-    </section>
-  </div>
+<div class="container">
+  <section class="banner-slider">
+    <h2>🔥 Топ 10 фільмів</h2>
+    <button class="slider-btn left" onclick="scrollSlider(-1)">❮</button>
+    <button class="slider-btn right" onclick="scrollSlider(1)">❯</button>
+    <div class="slider-row" id="sliderRow">
+      <div class="slide"><img src="https://i.postimg.cc/VLHxgJsg/dragon.jpg"><p>Дракон Раджа</p></div>
+      <div class="slide"><img src="https://i.postimg.cc/V6z1QntN/anemone.jpg"><p>Анемона</p></div>
+      <div class="slide"><img src="https://i.postimg.cc/mkzLz6nK/enigma.jpg"><p>Енігма</p></div>
+      <div class="slide"><img src="https://i.postimg.cc/VvY5YBgJ/afterburn.jpg"><p>Afterburn</p></div>
+      <div class="slide"><img src="https://i.postimg.cc/FFqXK6rL/epsilon.jpg"><p>Епсілон</p></div>
+      <div class="slide"><img src="https://i.postimg.cc/L6PQ1RzM/volcano.jpg"><p>Смерчі 2024</p></div>
+      <div class="slide"><img src="https://i.postimg.cc/qM0MYKnD/patriot.jpg"><p>Патріот</p></div>
+      <div class="slide"><img src="https://i.postimg.cc/d3zvTX6X/hero.jpg"><p>Ідеальний злочин</p></div>
+      <div class="slide"><img src="https://i.postimg.cc/LX3n8M46/chains.jpg"><p>Увімкни мене</p></div>
+      <div class="slide"><img src="https://i.postimg.cc/Y0Lt8Tmn/freeze.jpg"><p>Точка замерзання</p></div>
+    </div>
+  </section>
+</div>
+
+
 
   <!-- === MAIN === -->
   <main>
@@ -232,6 +240,15 @@
 
       const player = document.getElementById("filmPlayer");
       player.src = data.stream_url || "";
+      const player = document.getElementById("filmPlayer");
+      player.src = data.stream_url || "";
+
+      // 🟢 Автовідтворення після завантаження
+      player.addEventListener("canplay", () => {
+        player.play().catch(() => {
+          console.warn("🎬 Автовідтворення вимкнено браузером — чекаємо взаємодії");
+        });
+      });
     }
 
     loadFilm();
