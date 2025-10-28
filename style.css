@@ -794,10 +794,12 @@ header {
   to { opacity: 1; transform: translate(-50%, 0); }
 }
 
-/* показуємо при наведенні */
-.dropdown:hover .mega-menu {
+/* залишає меню відкритим, поки курсор над ним */
+.dropdown:hover .mega-menu,
+.dropdown .mega-menu:hover {
   display: block;
 }
+
 
 /* === ЗАГОЛОВОК МЕНЮ === */
 .mega-menu::before {
@@ -1175,6 +1177,7 @@ header {
 .dropdown .mega-cartoons .genres a:hover {
   color: #ff9944;
 }
+
 
 
 
