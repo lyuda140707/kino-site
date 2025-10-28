@@ -177,6 +177,22 @@
         hls = null;
       }
     }
+// YouTube helpers
+function isYouTube(url) {
+  return /youtube\.com|youtu\.be|googlevideo\.com/.test(url || "");
+}
+
+// Спробувати витягнути YouTube ID з різних форматів (watch?v=, youtu.be/, embed/)
+function getYouTubeId(url) {
+  if (!url) return "";
+  // класичні формати
+  const m1 = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})(?:[?&]|$)/);
+  if (m1) return m1[1];
+  // якщо кинули чистий ID - 11 символів
+  const m2 = url.match(/^[0-9A-Za-z_-]{11}$/);
+  if (m2) return m2[0];
+  return ""; // для googlevideo краще вносити нормальний YouTube-URL у таблицю
+}
 
     // Універсальне підключення джерела до <video>
     function setupPlayer(url) {
@@ -271,22 +287,48 @@
 
       // Обробники кліків
       btnMovie.addEventListener("click", () => {
-        if (currentSource === "movie") return;
-        currentSource = "movie";
-        btnMovie.classList.add("active");
-        btnTrailer.classList.remove("active");
-        setupPlayer(movieUrl);
-      });
+  if (currentSource === "movie") return;
+  currentSource = "movie";
+  btnMovie.classList.add("active");
+  btnTrailer.classList.remove("active");
 
-      btnTrailer.addEventListener("click", () => {
-        if (!trailerUrl) return;
-        if (currentSource === "trailer") return;
-        currentSource = "trailer";
-        btnTrailer.classList.add("active");
-        btnMovie.classList.remove("active");
-        setupPlayer(trailerUrl);
-      });
-    }
+  // Повертаємо звичайний відео-плеєр
+  const box = document.querySelector(".player-box");
+  box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous"></video>`;
+  setupPlayer(movieUrl); // без автозапуску
+});
+
+btnTrailer.addEventListener("click", () => {
+  if (!trailerUrl) return;
+  if (currentSource === "trailer") return;
+  currentSource = "trailer";
+  btnTrailer.classList.add("active");
+  btnMovie.classList.remove("active");
+
+  const box = document.querySelector(".player-box");
+
+  if (isYouTube(trailerUrl)) {
+    // YouTube → показуємо iframe
+    const ytId = getYouTubeId(trailerUrl);
+    // якщо ID не дістали (наприклад, дали manifest.googlevideo) — все одно покажемо iframe без ID
+    const src = ytId ? `https://www.youtube.com/embed/${ytId}` : trailerUrl;
+
+    box.innerHTML = `
+      <iframe
+        width="100%" height="480"
+        src="${src}"
+        frameborder="0"
+        allow="autoplay; encrypted-media"
+        allowfullscreen
+        style="border-radius:12px;width:100%;aspect-ratio:16/9;">
+      </iframe>`;
+  } else {
+    // Не YouTube → стандартний відео-плеєр
+    box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous"></video>`;
+    setupPlayer(trailerUrl); // без автозапуску
+  }
+});
+
 
     function scrollSlider(direction) {
       const slider = document.getElementById("sliderRow");
