@@ -1176,6 +1176,16 @@ header {
   color: #ff9944;
 }
 
+/* === ФІКС: меню не зникає при русі миші всередині === */
+.dropdown {
+  position: relative;
+}
+
+.dropdown:hover .mega-menu,
+.mega-menu:hover {
+  display: block !important;
+}
+
 
 
 
