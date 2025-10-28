@@ -1022,3 +1022,22 @@ header {
   color: #000;
   box-shadow: 0 0 20px #00fff2;
 }
+/* 🧾 Стиль для інформаційного блоку фільму */
+.film-info p {
+  margin: 6px 0;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.15); /* бірюзова лінія */
+}
+
+.film-info p:last-child {
+  border-bottom: none; /* без лінії у кінці */
+}
+
+/* опціонально: зробити легку тінь і фон для всього блоку */
+.film-info {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  padding: 15px 20px;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+}
+
