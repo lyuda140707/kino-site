@@ -1081,26 +1081,25 @@ header {
 }
 
 
-/* === ФІНАЛЬНЕ ВИПАДАЮЧЕ МЕНЮ — ПО ЦЕНТРУ САЙТУ === */
+/* === ФІНАЛЬНИЙ ВАРІАНТ — КОЖНЕ МЕНЮ ВІДКРИВАЄТЬСЯ ОКРЕМО, ПО ЦЕНТРУ === */
 header {
   position: relative;
   z-index: 3000;
 }
 
-/* базовий контейнер */
 header .container.topbar {
   position: relative;
 }
 
-/* усі мега-меню прив’язані до центру сайту */
+/* 🎬 Усі випадаючі меню */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
   position: absolute;
-  top: 100%; /* прямо під верхнім меню */
-  left: 50%; /* центр сайту */
+  top: 100%; /* прямо під шапкою */
+  left: 50%; /* центр сторінки */
   transform: translateX(-50%);
-  width: 1150px; /* ✅ фіксована ширина як банер */
+  width: 1150px; /* така сама ширина, як банер */
   margin-top: -1px;
   padding: 50px 80px 60px;
   border-radius: 0 0 16px 16px;
@@ -1112,29 +1111,27 @@ header .container.topbar {
   box-sizing: border-box;
 }
 
-/* чорний / фіолетовий / помаранчевий фони */
+/* 🟢 Індивідуальні кольори */
 .mega-menu {
   background: #000;
   border-top: 2px solid #00fff2;
   box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
 }
-
 .mega-series {
   background: #100016;
   border-top: 2px solid #ff00c8;
   box-shadow: 0 8px 25px rgba(255, 0, 200, 0.25);
 }
-
 .mega-cartoons {
   background: #160800;
   border-top: 2px solid #ffcc00;
   box-shadow: 0 8px 25px rgba(255, 204, 0, 0.25);
 }
 
-/* показуємо при наведенні */
-nav:hover .mega-menu,
-nav:hover .mega-series,
-nav:hover .mega-cartoons,
+/* 🧩 Показуємо меню тільки для активного dropdown */
+.dropdown:hover .mega-menu,
+.dropdown:hover .mega-series,
+.dropdown:hover .mega-cartoons,
 .mega-menu:hover,
 .mega-series:hover,
 .mega-cartoons:hover {
@@ -1144,18 +1141,17 @@ nav:hover .mega-cartoons,
   transform: translateX(-50%) translateY(0);
 }
 
-/* плавна поява */
+/* Початкове положення для плавного з’явлення */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
   transform: translateX(-50%) translateY(-10px);
 }
 
-/* зона безпеки */
+/* 🧱 “Зона безпеки”, щоб меню не зникало при переході */
 .dropdown {
   position: relative;
 }
-
 .dropdown::after {
   content: "";
   position: absolute;
@@ -1165,24 +1161,6 @@ nav:hover .mega-cartoons,
   height: 12px;
   background: transparent;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
