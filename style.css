@@ -1040,4 +1040,39 @@ header {
   padding: 15px 20px;
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
 }
+/* 🎬 Стиль для лівого блоку інформації про фільм */
+.film-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.15);
+}
+
+/* Кожен пункт окремим рядком */
+.film-meta span {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #bffcff;
+  font-size: 15px;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.15);
+  padding: 5px 0;
+}
+
+/* Останній без лінії */
+.film-meta span:last-child {
+  border-bottom: none;
+}
+
+/* Підсвітка при наведенні */
+.film-meta span:hover {
+  color: #00ffff;
+  text-shadow: 0 0 5px #00ffff;
+  transition: 0.2s ease;
+}
+
 
