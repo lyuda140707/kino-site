@@ -1080,11 +1080,16 @@ header {
   position: relative;
 }
 
-/* === ФІНАЛЬНЕ ВИРІВНЮВАННЯ МЕГА-МЕНЮ ПО ЦЕНТРУ КОНТЕЙНЕРА === */
+
+
+/* === ФІНАЛЬНЕ ТОЧНЕ ВИРІВНЮВАННЯ МЕГА-МЕНЮ === */
 header .container.topbar {
   position: relative;
+  display: flex;
+  justify-content: center;
 }
 
+/* Центруємо меню строго по контейнеру */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
@@ -1092,7 +1097,7 @@ header .container.topbar {
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(1150px + 50px); /* така сама як .container (1150 + падінги по 25px) */
+  width: 1150px; /* 🔹 така сама ширина, як .container */
   margin-top: -1px;
   padding: 50px 80px 60px;
   border-radius: 0 0 16px 16px;
@@ -1103,12 +1108,26 @@ header .container.topbar {
   z-index: 6000;
 }
 
-/* індивідуальні кольори */
-.mega-menu { background: #000; border-top: 2px solid #00fff2; }
-.mega-series { background: #100016; border-top: 2px solid #ff00c8; }
-.mega-cartoons { background: #160800; border-top: 2px solid #ffcc00; }
+/* Індивідуальні кольори фону */
+.mega-menu {
+  background: #000;
+  border-top: 2px solid #00fff2;
+  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
+}
 
-/* показ при наведенні */
+.mega-series {
+  background: #100016;
+  border-top: 2px solid #ff00c8;
+  box-shadow: 0 8px 25px rgba(255, 0, 200, 0.25);
+}
+
+.mega-cartoons {
+  background: #160800;
+  border-top: 2px solid #ffcc00;
+  box-shadow: 0 8px 25px rgba(255, 204, 0, 0.25);
+}
+
+/* показуємо при наведенні */
 .dropdown:hover .mega-menu,
 .dropdown:hover .mega-series,
 .dropdown:hover .mega-cartoons,
@@ -1121,7 +1140,7 @@ header .container.topbar {
   transform: translateX(-50%) translateY(0);
 }
 
-/* невелике плавне з’явлення */
+/* плавна поява */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
@@ -1129,6 +1148,10 @@ header .container.topbar {
 }
 
 /* зона безпеки */
+.dropdown {
+  position: relative;
+}
+
 .dropdown::after {
   content: "";
   position: absolute;
@@ -1138,6 +1161,7 @@ header .container.topbar {
   height: 12px;
   background: transparent;
 }
+
 
 
 
