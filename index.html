@@ -269,9 +269,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // 🔗 Підключення до Supabase
-  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co"; // 👉 встав сюди свій URL
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE"; // 👉 встав сюди свій anon key
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+
+  // ✅ правильне створення клієнта
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
 
   // 🎬 Завантаження фільмів із таблиці films_site
   async function loadFilms() {
@@ -321,6 +324,7 @@
 
 </body>
 </html>
+
 
 
 
