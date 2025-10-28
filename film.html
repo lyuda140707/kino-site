@@ -131,6 +131,7 @@
         <span><b>Звук:</b> <span id="filmSound"></span></span>
         <span><b>Тривалість:</b> <span id="filmDuration"></span></span>
         <span><b>Вік:</b> <span id="filmAge"></span></span>
+        <span><b>IMDb:</b> <span id="filmImdb"></span></span>
       </div>
     </div>
 
@@ -195,6 +196,8 @@
     document.getElementById("filmSound").textContent = data.sound || "";
     document.getElementById("filmDuration").textContent = data.duration || "";
     document.getElementById("filmAge").textContent = data.age || "";
+    document.getElementById("filmImdb").textContent = data.imdb || "—";
+
 
     const player = document.getElementById("filmPlayer");
     player.src = data.stream_url || "";
