@@ -28,7 +28,11 @@
       transition: transform .12s ease, box-shadow .12s ease, background .12s ease, color .12s ease;
     }
     .source-switch button:hover { transform: translateY(-1px); box-shadow: 0 0 22px rgba(0,255,242,0.18); }
-    .source-switch button.active { background: #00fff2; color: #002927; }
+    .source-switch button.active {
+      background: #0f0f0f;   /* чорний */
+      color: #e9fefe;        /* світлий текст */
+      border: 1px solid rgba(0,255,242,0.35);
+    }
     .source-switch button:disabled { opacity: .45; cursor: not-allowed; }
 
     .player-box { position: relative; background: #000; border-radius: 12px; border: 1px solid rgba(0,255,242,0.3); overflow: hidden; box-shadow: 0 0 30px rgba(0,255,242,0.15); }
@@ -145,7 +149,7 @@
 
         <div class="player-box">
           <!-- autoplay видалено (нема автозапуску) -->
-          <video id="filmPlayer" controls playsinline muted crossorigin="anonymous"></video>
+          <video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>
         </div>
 
         <div class="film-description">
@@ -301,7 +305,7 @@ function getYouTubeId(url) {
   // ▶️ Початково показуємо ФІЛЬМ у звичайному відео-плеєрі (без автозапуску)
   currentSource = "movie";
   document.querySelector(".player-box").innerHTML =
-    `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous"></video>`;
+    `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
   setupPlayer(movieUrl);
 
   // 🖱️ Обробники кліків
@@ -311,7 +315,7 @@ function getYouTubeId(url) {
     btnMovie.classList.add("active");
     btnTrailer.classList.remove("active");
     const box = document.querySelector(".player-box");
-    box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous"></video>`;
+    box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
     setupPlayer(movieUrl);
   });
 
