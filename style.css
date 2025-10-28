@@ -758,24 +758,7 @@ header {
   z-index: 2000;
 }
 
-.mega-menu {
-  display: none;
-  position: absolute;
-  top: 100%; /* прямо під шапкою */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 1150px; /* така ж, як у банера */
-  background: #000; /* чисто чорний фон */
-  border-top: 2px solid #00fff2;
-  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
-  padding: 50px 80px 60px; /* більше висоти для жанрів */
-  z-index: 3000;
-  border-radius: 0 0 16px 16px;
-  animation: fadeIn 0.25s ease;
-  backdrop-filter: none !important; /* 🔹 прибирає прозорість */
-  background-color: #000 !important; /* 🔹 гарантія чорного */
-}
+
 /* === Анімація плавної появи меню === */
 @keyframes fadeIn {
   from {
@@ -1090,13 +1073,13 @@ header {
 }
 /* === Випадаюче меню (повноширинне, чорне) === */
 .mega-menu {
-  display: none;
+  display: none; /* ⬅️ залишається, але нижче ми зробимо hover */
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 1150px; /* така ж, як у банера */
+  max-width: 1150px;
   background: #000;
   border-top: 2px solid #00fff2;
   box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
@@ -1108,12 +1091,14 @@ header {
   background-color: #000 !important;
 }
 
-
-/* Залишає відкрите меню при наведенні */
+/* ⬇️ додай одразу під ним */
 .dropdown:hover .mega-menu,
 .dropdown .mega-menu:hover {
   display: block;
 }
+
+
+
 /* Вміст усередині */
 .mega-menu .genres {
   display: flex;
@@ -1168,6 +1153,7 @@ header {
 .dropdown .mega-cartoons .genres a:hover {
   color: #ff9944;
 }
+
 
 
 
