@@ -378,33 +378,36 @@ function getYouTubeId(url) {
       setupPlayer(trailerUrl);
     }
   });
-}
-    // 🔹 Велика кнопка Play поверх відео
-const player = document.getElementById("filmPlayer");
-const bigPlay = document.getElementById("bigPlayBtn");
+    // 🔹 Додаємо кнопку Play після створення плеєра
+  const bigPlay = document.getElementById("bigPlayBtn");
+  if (bigPlay) {
+    bigPlay.style.opacity = "1";
+    bigPlay.style.pointerEvents = "auto";
 
-// Клік по кнопці → запускає відео
-bigPlay.addEventListener("click", async () => {
-  try {
-    await player.play();
-    bigPlay.style.opacity = "0";
-    bigPlay.style.pointerEvents = "none";
-  } catch (err) {
-    console.warn("Не вдалося автозапустити відео:", err);
+    bigPlay.onclick = async () => {
+      try {
+        await player.play();
+        bigPlay.style.opacity = "0";
+        bigPlay.style.pointerEvents = "none";
+      } catch (err) {
+        console.warn("Не вдалося запустити відео:", err);
+      }
+    };
+
+    // Якщо відео почало грати — ховаємо кнопку
+    player.addEventListener("play", () => {
+      bigPlay.style.opacity = "0";
+      bigPlay.style.pointerEvents = "none";
+    });
+
+    // Якщо відео на паузі — показуємо кнопку знову
+    player.addEventListener("pause", () => {
+      bigPlay.style.opacity = "1";
+      bigPlay.style.pointerEvents = "auto";
+    });
   }
-});
 
-// Якщо відео почало грати — ховаємо кнопку
-player.addEventListener("play", () => {
-  bigPlay.style.opacity = "0";
-  bigPlay.style.pointerEvents = "none";
-});
-
-// Якщо відео зупинили — показуємо кнопку знову
-player.addEventListener("pause", () => {
-  bigPlay.style.opacity = "1";
-  bigPlay.style.pointerEvents = "auto";
-});
+}
 
 
     function scrollSlider(direction) {
