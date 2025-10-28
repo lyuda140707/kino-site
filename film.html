@@ -5,63 +5,110 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Фільм — Relax Kino</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
-    .film-page {
+    /* === СТИЛЬ ДЛЯ СТОРІНКИ ФІЛЬМУ === */
+    .film-container {
       display: flex;
+      flex-wrap: wrap;
       gap: 40px;
       margin-top: 40px;
+      align-items: flex-start;
     }
+
     .film-left {
       flex: 1;
-      max-width: 320px;
+      min-width: 300px;
+      max-width: 360px;
     }
+
     .film-left img {
       width: 100%;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,255,242,0.4);
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 255, 242, 0.3);
+      border: 2px solid rgba(0, 255, 242, 0.4);
     }
+
     .film-meta {
-      margin-top: 15px;
-      background: #111;
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 15px;
-      line-height: 1.6;
-      color: #ccc;
-      border: 1px solid rgba(0,255,242,0.2);
+      margin-top: 18px;
+      background: #0d0d0d;
+      border-radius: 10px;
+      padding: 15px 18px;
+      border: 1px solid rgba(0,255,242,0.25);
+      box-shadow: 0 0 25px rgba(0,255,242,0.1);
     }
+
     .film-meta span {
       display: block;
-      margin-bottom: 4px;
+      color: #bbb;
+      margin: 4px 0;
+      font-size: 15px;
+      line-height: 1.4;
     }
-    .film-player {
+
+    .film-meta b {
+      color: #00fff2;
+    }
+
+    .film-right {
       flex: 2;
+      min-width: 400px;
     }
-    .film-player video {
-      width: 100%;
-      border-radius: 10px;
-      border: 2px solid #00fff2;
+
+    .film-title {
+      font-size: 28px;
+      color: #00fff2;
+      text-shadow: 0 0 18px #00fff2a0;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .player-box {
+      position: relative;
       background: #000;
+      border-radius: 12px;
+      border: 1px solid rgba(0,255,242,0.3);
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0,255,242,0.15);
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
       aspect-ratio: 16/9;
     }
+
     .film-description {
       margin-top: 25px;
-      background: #1b1b1b;
-      padding: 20px;
-      border-radius: 10px;
+      background: #1a1a1a;
+      border-radius: 12px;
       border: 1px solid rgba(0,255,242,0.2);
-      box-shadow: 0 0 20px rgba(0,255,242,0.1);
+      box-shadow: 0 0 30px rgba(0,255,242,0.1);
+      padding: 20px 24px;
+      color: #ddd;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    footer {
+      margin-top: 80px;
     }
   </style>
 </head>
 <body>
+
+<!-- === HEADER === -->
 <header>
   <div class="container topbar">
     <nav class="main-nav">
       <img src="logo.png" alt="Relax Logo" class="nav-logo" />
       <a href="index.html">Головна</a>
-      <a href="#">Фільми</a>
+      <a href="#" class="active">Фільми</a>
       <a href="#">Серіали</a>
+      <a href="#">Мультфільми</a>
     </nav>
     <div class="top-right">
       <input type="text" placeholder="Пошук…" class="search" />
@@ -70,10 +117,11 @@
   </div>
 </header>
 
-<main class="container">
-  <section class="film-page">
+<!-- === MAIN === -->
+<main>
+  <div class="container film-container">
     <div class="film-left">
-      <img id="filmPoster" src="" alt="Постер фільму">
+      <img id="filmPoster" src="" alt="Постер">
       <div class="film-meta">
         <span><b>Рік:</b> <span id="filmYear"></span></span>
         <span><b>Жанр:</b> <span id="filmGenre"></span></span>
@@ -85,16 +133,21 @@
         <span><b>Вік:</b> <span id="filmAge"></span></span>
       </div>
     </div>
-    <div class="film-player">
-      <video id="filmPlayer" controls autoplay muted playsinline></video>
+
+    <div class="film-right">
+      <div class="film-title" id="filmTitle">Назва фільму</div>
+      <div class="player-box">
+        <video id="filmPlayer" controls autoplay muted playsinline></video>
+      </div>
       <div class="film-description">
-        <h2 id="filmTitle">Назва фільму</h2>
-        <p id="filmDesc">Опис фільму з бази...</p>
+        <h3>Про що фільм:</h3>
+        <p id="filmDesc">Опис фільму...</p>
       </div>
     </div>
-  </section>
+  </div>
 </main>
 
+<!-- === FOOTER === -->
 <footer>
   © 2025 KinoSite • Усі права захищені
 </footer>
@@ -102,7 +155,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
   const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
   async function loadFilm() {
