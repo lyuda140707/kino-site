@@ -776,6 +776,17 @@ header {
   backdrop-filter: none !important; /* 🔹 прибирає прозорість */
   background-color: #000 !important; /* 🔹 гарантія чорного */
 }
+/* === Анімація плавної появи меню === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
 
 /* Плавна поява */
 @keyframes fadeIn {
@@ -804,9 +815,10 @@ header {
 /* === ЖАНРИ === */
 .genres {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 20px 45px;
-  max-width: 1000px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px 40px;
+  justify-items: start;
+  max-width: 950px;
   margin: 0 auto;
 }
 
@@ -1083,23 +1095,25 @@ header {
   transition: 0.2s;
 }
 /* === Випадаюче меню (повноширинне, чорне) === */
-.dropdown {
-  position: relative;
-}
-
-.dropdown .mega-menu {
+.mega-menu {
   display: none;
   position: absolute;
   top: 100%;
-  left: 0;
-  width: 100vw; /* тягнеться на всю ширину вікна */
-  background: #000; /* насичений чорний фон */
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-  padding: 25px 60px;
-  box-sizing: border-box;
-  z-index: 999;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1150px; /* така ж, як у банера */
+  background: #000;
+  border-top: 2px solid #00fff2;
+  box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
+  padding: 50px 80px 60px;
+  z-index: 3000;
+  border-radius: 0 0 16px 16px;
+  animation: fadeIn 0.25s ease;
+  backdrop-filter: none !important;
+  background-color: #000 !important;
 }
+
 
 /* Залишає відкрите меню при наведенні */
 .dropdown:hover .mega-menu,
@@ -1161,6 +1175,7 @@ header {
 .dropdown .mega-cartoons .genres a:hover {
   color: #ff9944;
 }
+
 
 
 
