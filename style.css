@@ -1176,6 +1176,20 @@ header {
   color: #ff9944;
 }
 
+/* === ФІКС: меню не зникає при наведенні === */
+.dropdown {
+  position: relative;
+}
+
+.dropdown:hover .mega-menu,
+.mega-menu:hover,
+.dropdown:hover .mega-series,
+.mega-series:hover,
+.dropdown:hover .mega-cartoons,
+.mega-cartoons:hover {
+  display: block !important;
+}
+
 
 
 
