@@ -722,6 +722,8 @@ function getYouTubeId(url) {
   document.getElementById("filmDuration").textContent = data.duration || "";
   document.getElementById("filmAge").textContent = data.age || "";
   document.getElementById("filmImdb").textContent = data.imdb || "—";
+  // 🟢 Запускаємо підбірку схожих фільмів
+  loadRecommendedFilms(data.title, data.genre);
 
   // 🔗 Джерела
   movieUrl   = data.stream_url   || "";
