@@ -800,19 +800,20 @@ function getYouTubeId(url) {
     // Завантаження сторінки
     loadFilm();
     // ===== 🎬 Рекомендовані фільми =====
-async function loadRecommendedFilms(title) {
+// 🎬 Рекомендовані фільми — шукає схожі за назвою або жанром
+async function loadRecommendedFilms(title, genre) {
   const list = document.getElementById("recommendedList");
   if (!list) return;
 
-  // Очищаємо попередній вміст
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
-  // шукаємо фільми, в назві яких є одне слово з поточного
-  const keyword = title.split(" ")[0]; // перше слово (наприклад “Аватар”)
+  // перше слово з назви (наприклад "Аватар")
+  const keyword = title.split(" ")[0];
+
   const { data, error } = await supabase
-    .from("films") // 🔹 твоя таблиця з фільмами (заміни, якщо інша)
-    .select("id, title, poster")
-    .ilike("title", `%${keyword}%`)
+    .from("films_site")                // ✅ твоя таблиця
+    .select("id, title, poster, genre")
+    .or(`title.ilike.%${keyword}%,genre.ilike.%${genre}%`)
     .limit(6);
 
   if (error || !data || data.length === 0) {
@@ -820,18 +821,16 @@ async function loadRecommendedFilms(title) {
     return;
   }
 
-  // відображаємо картки
+  // очищаємо і створюємо картки
   list.innerHTML = "";
   data.forEach(film => {
-    // пропускаємо поточний фільм
-    if (film.title === title) return;
+    if (film.title === title) return; // не показує поточний фільм
     const item = document.createElement("div");
     item.className = "recommended-item";
     item.innerHTML = `
       <img src="${film.poster}" alt="${film.title}">
       <p>${film.title}</p>
     `;
-    // клік → відкриває сторінку цього фільму
     item.addEventListener("click", () => {
       window.location.href = `film.html?id=${film.id}`;
     });
@@ -839,9 +838,6 @@ async function loadRecommendedFilms(title) {
   });
 }
 
-// 🔹 Викликати після завантаження поточного фільму
-// після того, як ти вже отримуєш data.title:
-loadRecommendedFilms(data.title);
 
   </script>
 <!-- 🧾 Модальне вікно -->
