@@ -1157,6 +1157,42 @@ header {
 
 
 
+/* === KEEP-OPEN + DELAY CLOSE для всіх випадаючих меню === */
+/* 1) Ховаємо не "display:none", а через opacity/visibility — щоб працювали плавні переходи */
+.mega-menu,
+.mega-series,
+.mega-cartoons {
+  display: block !important;          /* перекриває попереднє display:none */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  /* решта позиціювання у тебе вже є вище (absolute, top:100%, left:50% ...) */
+}
+
+/* 2) Показуємо, коли курсор на .dropdown І/АБО на самому випавшому блоці */
+.dropdown:hover .mega-menu,
+.dropdown:hover .mega-series,
+.dropdown:hover .mega-cartoons,
+.dropdown .mega-menu:hover,
+.dropdown .mega-series:hover,
+.dropdown .mega-cartoons:hover {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s; /* відкривається одразу */
+}
+
+/* 3) Коли курсор пішов з .dropdown, тримаємо меню ще 0.25с */
+.dropdown:not(:hover) .mega-menu,
+.dropdown:not(:hover) .mega-series,
+.dropdown:not(:hover) .mega-cartoons {
+  transition-delay: 0.25s; /* ця затримка дає час "потрапити" в меню курсором */
+}
+
+/* (додатково, але безпечно) — щоб контейнер був базою для абсолютних меню */
+header .container { position: relative; }
+
 
 
 
