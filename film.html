@@ -6,6 +6,8 @@
   <title>Фільм — Relax Kino</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
 
   <style>
     .film-container { display: flex; flex-wrap: wrap; gap: 40px; margin-top: 40px; align-items: flex-start; }
@@ -46,6 +48,20 @@
       filter: drop-shadow(0 0 8px #00fff2);
       transition: transform 0.25s ease, filter 0.25s ease;
     }
+
+    .film-title{
+  font-family: "Bebas Neue", system-ui, sans-serif;
+  font-size: 42px;
+  line-height: 1.05;
+  letter-spacing: .5px;
+  font-weight: 600;
+  color: #00fff2;
+  text-align: center;
+  text-shadow: 0 0 12px rgba(0,255,255,.35);
+  margin: 0 0 14px 0;
+}
+.film-left { text-align: center; } /* щоб назва і постер були по центру лівої колонки */
+
     
   </style>
 </head>
@@ -131,6 +147,7 @@
   <main>
     <div class="container film-container">
       <div class="film-left">
+        <h1 class="film-title" id="filmTitle">Назва фільму</h1>
         <img id="filmPoster" src="" alt="Постер">
         <div class="film-meta">
           <span><b>Рік:</b> <span id="filmYear"></span></span>
@@ -146,7 +163,7 @@
       </div>
 
       <div class="film-right">
-        <div class="film-title" id="filmTitle">Назва фільму</div>
+    
 
         <!-- Перемикач Фільм / Трейлер -->
         <div class="source-switch">
