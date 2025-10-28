@@ -1078,16 +1078,6 @@ header {
 }
 
 
-/* Індивідуальні іконки */
-.film-meta span:nth-child(1)::before { content: "📅"; } /* Рік */
-.film-meta span:nth-child(2)::before { content: "🎭"; } /* Жанр */
-.film-meta span:nth-child(3)::before { content: "🌍"; } /* Країна */
-.film-meta span:nth-child(4)::before { content: "🎬"; } /* Режисер */
-.film-meta span:nth-child(5)::before { content: "🎙️"; } /* В ролях */
-.film-meta span:nth-child(6)::before { content: "🔊"; } /* Звук */
-.film-meta span:nth-child(7)::before { content: "⏱️"; } /* Тривалість */
-.film-meta span:nth-child(8)::before { content: "🔞"; } /* Вік */
-
 /* Без нижньої лінії у останнього */
 .film-meta span:last-child {
   border-bottom: none;
@@ -1099,6 +1089,7 @@ header {
   text-shadow: 0 0 4px #00ffff;
   transition: 0.2s;
 }
+
 
 
 
