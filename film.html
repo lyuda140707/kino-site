@@ -13,13 +13,13 @@
     .film-container { display: flex; flex-wrap: wrap; gap: 40px; margin-top: 40px; align-items: flex-start; }
     .film-left {
       flex: 1;
-      min-width: 320px;
-      max-width: 400px;
+      min-width: 300px;
+      max-width: 380px;
       width: 100%;
-      background: #0b0b0b; /* легкий чорний фон */
-      border-radius: 14px;
-      padding: 20px 18px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+      background: #0b0b0b;
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.06);
       text-align: center;
     }
@@ -27,16 +27,17 @@
       box-shadow: 0 0 20px rgba(0, 255, 255, 0.25); border: 1px solid rgba(0, 255, 255, 0.25); transition: transform 0.3s ease; }
     .film-left img:hover { transform: scale(1.05); }
     /* --- новий сучасний чорний блок --- */
+/* --- чорний компактний стиль без анімацій --- */
 .film-meta {
-  background: #0d0d0d;
-  border-radius: 14px;
-  padding: 16px 18px;
-  margin-top: 18px;
+  background: #0e0e0e;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 14px;
   border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 0 20px rgba(0,0,0,0.4);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
 }
 
 .film-meta span {
@@ -44,32 +45,30 @@
   justify-content: space-between;
   align-items: center;
   background: #131313;
-  padding: 10px 12px;
-  border-radius: 8px;
-  color: #cfcfcf;
-  font-size: 15px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: #d8d8d8;
+  font-size: 14px;
   font-weight: 500;
-  transition: background .2s ease;
 }
 
-/* Ліва частина — лейбл */
 .film-meta span b {
   color: #888;
   font-weight: 600;
 }
 
-/* Права частина — значення */
 .film-meta span span {
   color: #eaeaea;
   font-weight: 600;
 }
 
-/* Без жодного ефекту наведення або кліку */
+/* без ефектів наведення */
 .film-meta span:hover,
 .film-meta span:active {
   background: #131313;
-  color: #eaeaea;
+  transform: none;
 }
+
 
     .film-right { flex: 2; min-width: 400px; }
     .film-title { font-size: 28px; color: #00fff2; text-shadow: 0 0 18px #00fff2a0; margin-bottom: 15px; font-weight: 700; }
