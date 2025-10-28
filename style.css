@@ -1094,103 +1094,52 @@ header {
   text-shadow: 0 0 4px #00ffff;
   transition: 0.2s;
 }
-/* === 🧩 ФІНАЛЬНИЙ ФІКС ВИПАДАЮЧОГО МЕНЮ === */
-
-/* Утримання меню при наведенні */
-.dropdown {
-  position: relative;
-}
-.dropdown:hover .mega-menu,
-.mega-menu:hover,
-.dropdown:hover .mega-series,
-.mega-series:hover,
-.dropdown:hover .mega-cartoons,
-.mega-cartoons:hover {
-  display: block !important;
-}
-
-/* === Загальні параметри випадаючих меню === */
-.mega-menu,
-.mega-series,
-.mega-cartoons {
+/* === Випадаюче меню (повноширинне, чорне) === */
+.mega-menu {
   display: none;
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 1150px; /* рівно як банер */
-  background: #000; /* чисто чорний фон */
+  max-width: 1150px; /* така ж, як у банера */
+  background: #000;
   border-top: 2px solid #00fff2;
   box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
   padding: 50px 80px 60px;
   z-index: 3000;
   border-radius: 0 0 16px 16px;
   animation: fadeIn 0.25s ease;
+  backdrop-filter: none !important;
+  background-color: #000 !important;
 }
 
-/* === Анімація появи === */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -8px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
+
+/* Залишає відкрите меню при наведенні */
+.dropdown:hover .mega-menu,
+.dropdown .mega-menu:hover {
+  display: block;
 }
 
-/* === Сітка жанрів (вирівняна) === */
-.mega-menu .genres,
-.mega-series .genres,
-.mega-cartoons .genres {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px 40px;
-  justify-items: start;
-  align-items: start;
-  max-width: 950px;
-  margin: 0 auto;
-  text-align: left;
-  padding: 0 30px;
-  box-sizing: border-box;
+/* Вміст усередині */
+.mega-menu .genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 35px;
 }
 
-/* === Пункти жанрів === */
-.mega-menu .genres a,
-.mega-series .genres a,
-.mega-cartoons .genres a {
-  color: #eaeaea;
-  font-size: 17px;
-  font-weight: 600;
+.mega-menu .genres a {
+  color: #e4e4e4;
   text-decoration: none;
-  transition: all 0.2s ease;
-  white-space: nowrap;
+  font-weight: 500;
+  font-size: 15px;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
-/* === Індивідуальні кольори === */
-.mega-menu { border-top-color: #00fff2; }
-.mega-series { border-top-color: #ff00c8; }
-.mega-cartoons { border-top-color: #ffcc00; }
-
-/* === Ховер-ефекти === */
 .mega-menu .genres a:hover {
   color: #00fff2;
-  text-shadow: 0 0 15px #00fff2;
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
-.mega-series .genres a:hover {
-  color: #ff00c8;
-  text-shadow: 0 0 15px #ff00c8;
-  transform: translateY(-2px);
-}
-.mega-cartoons .genres a:hover {
-  color: #ffcc00;
-  text-shadow: 0 0 15px #ffcc00;
-  transform: translateY(-2px);
-}
-
 
 /* === Індивідуальні стилі для підменю === */
 
@@ -1226,9 +1175,6 @@ header {
 .dropdown .mega-cartoons .genres a:hover {
   color: #ff9944;
 }
-
-
-
 
 
 
