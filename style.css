@@ -1071,11 +1071,13 @@ header {
   text-shadow: 0 0 4px #00ffff;
   transition: 0.2s;
 }
-/* === ВИПАДАЮЧІ МЕНЮ — ФІКСОВАНА ВЕРСІЯ === */
+/* === ВИПАДАЮЧІ МЕНЮ — ФІКС: НЕ ХОВАЮТЬСЯ ПРИ НАВЕДЕННІ НА ПУСТИЙ ФОН === */
+
+/* Початково приховані */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
-  display: block !important;          /* завжди існує, просто приховане */
+  display: block !important;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1092,10 +1094,17 @@ header {
   z-index: 3000;
   border-radius: 0 0 16px 16px;
   transition: opacity 0.25s ease, visibility 0.25s ease;
-  animation: fadeIn 0.25s ease;
 }
 
-/* === Показуємо меню при наведенні === */
+/* Додаємо головний фікс 👇 */
+.mega-menu:hover,
+.mega-series:hover,
+.mega-cartoons:hover {
+  pointer-events: auto !important;
+  background-color: rgba(0,0,0,0.98) !important;
+}
+
+/* Показуємо меню при наведенні */
 .dropdown:hover .mega-menu,
 .dropdown:hover .mega-series,
 .dropdown:hover .mega-cartoons,
@@ -1108,18 +1117,19 @@ header {
   transition-delay: 0s;
 }
 
-/* === Плавна затримка зникнення === */
+/* Плавна затримка закриття */
 .dropdown:not(:hover) .mega-menu,
 .dropdown:not(:hover) .mega-series,
 .dropdown:not(:hover) .mega-cartoons {
   transition-delay: 0.3s;
 }
 
-/* === Базове вирівнювання контейнера === */
+/* Щоб меню не "відривалось" від шапки */
 header .container {
   position: relative;
   z-index: 4000;
 }
+
 
 
 
@@ -1216,6 +1226,7 @@ header .container {
 
 /* (додатково, але безпечно) — щоб контейнер був базою для абсолютних меню */
 header .container { position: relative; }
+
 
 
 
