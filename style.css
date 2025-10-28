@@ -1090,23 +1090,24 @@ header {
 .mega-cartoons {
   position: absolute;
   top: 100%;
+  margin-top: -1px; /* перекриття крихітного зазору */
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   max-width: 1150px;
   padding: 50px 80px 60px;
-  background: rgba(0, 0, 0, 0.98); /* суцільний непрозорий шар */
+  background: rgba(0, 0, 0, 0.98);
   border-top: 2px solid #00fff2;
   border-radius: 0 0 16px 16px;
   box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
   opacity: 0;
   visibility: hidden;
-  pointer-events: none; /* вимкнено, доки не наведено */
+  pointer-events: none;
   transition: opacity 0.25s ease, visibility 0.25s ease;
-  z-index: 3000;
+  z-index: 5000;
 }
 
-/* 🔹 Коли курсор на меню або на сам блок — увімкнути всю площу */
+/* показуємо меню при наведенні */
 .dropdown:hover .mega-menu,
 .dropdown:hover .mega-series,
 .dropdown:hover .mega-cartoons,
@@ -1115,20 +1116,28 @@ header {
 .mega-cartoons:hover {
   opacity: 1;
   visibility: visible;
-  pointer-events: all; /* тепер навіть фон реагує */
+  pointer-events: all;
 }
 
-/* 🔹 Плавна затримка закриття */
+/* невелика затримка закриття */
 .dropdown:not(:hover) .mega-menu,
 .dropdown:not(:hover) .mega-series,
 .dropdown:not(:hover) .mega-cartoons {
   transition-delay: 0.3s;
 }
-
-/* Запобігаємо “відриву” меню */
-header .container {
+/* === ЗОНА БЕЗПЕКИ, ЩОБ МЕНЮ НЕ ХОВАЛОСЬ === */
+.dropdown {
   position: relative;
-  z-index: 4000;
+}
+
+.dropdown::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 12px; /* перекриває 12px простору між пунктом і меню */
+  background: transparent;
 }
 
 
