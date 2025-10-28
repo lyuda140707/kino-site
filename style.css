@@ -1127,6 +1127,41 @@ header {
   transform: translateY(-1px);
 }
 
+/* === Індивідуальні стилі для підменю === */
+
+/* 🎬 ФІЛЬМИ */
+.dropdown .mega-menu {
+  background: #000;
+  box-shadow: 0 4px 15px rgba(0, 255, 255, 0.25);
+  border-top: 1px solid rgba(0, 255, 255, 0.25);
+}
+
+.dropdown .mega-menu .genres a:hover {
+  color: #00fff2;
+}
+
+/* 📺 СЕРІАЛИ */
+.dropdown .mega-series {
+  background: #0b0015;
+  box-shadow: 0 4px 15px rgba(176, 0, 255, 0.25);
+  border-top: 1px solid rgba(176, 0, 255, 0.25);
+}
+
+.dropdown .mega-series .genres a:hover {
+  color: #b34eff;
+}
+
+/* 🧸 МУЛЬТФІЛЬМИ */
+.dropdown .mega-cartoons {
+  background: #160400;
+  box-shadow: 0 4px 15px rgba(255, 115, 0, 0.25);
+  border-top: 1px solid rgba(255, 115, 0, 0.25);
+}
+
+.dropdown .mega-cartoons .genres a:hover {
+  color: #ff9944;
+}
+
 
 
 
