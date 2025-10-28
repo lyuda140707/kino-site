@@ -1081,22 +1081,25 @@ header {
 }
 
 
+/* === ФІНАЛЬНИЙ ВАРІАНТ: МЕГА-МЕНЮ ЯК БАНЕР === */
+header {
+  position: relative;
+  z-index: 3000;
+}
 
-/* === АВТОМАТИЧНЕ ВИРІВНЮВАННЯ МЕГА-МЕНЮ ПІД КОНТЕЙНЕР === */
 header .container.topbar {
   position: relative;
 }
 
-/* Центруємо та автоматично підлаштовуємо ширину */
+/* універсальні налаштування */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
   position: absolute;
-  top: 100%;
-  left: 50%;
+  top: 100%; /* прямо під хедером */
+  left: 50%; /* центр сторінки */
   transform: translateX(-50%);
-  width: 100%; /* ✅ завжди така ж ширина, як у контейнера */
-  max-width: var(--container-width, 1350px); /* підстрахуємо, якщо контейнер не має max-width */
+  width: 1150px; /* 🔹 така ж, як банер */
   margin-top: -1px;
   padding: 50px 80px 60px;
   border-radius: 0 0 16px 16px;
@@ -1108,19 +1111,19 @@ header .container.topbar {
   box-sizing: border-box;
 }
 
-/* фони */
+/* чорний щільний фон */
 .mega-menu {
-  background: #000;
+  background: #000; /* не прозорий */
   border-top: 2px solid #00fff2;
   box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
 }
 
+/* фіолетовий і помаранчевий для інших меню */
 .mega-series {
   background: #100016;
   border-top: 2px solid #ff00c8;
   box-shadow: 0 8px 25px rgba(255, 0, 200, 0.25);
 }
-
 .mega-cartoons {
   background: #160800;
   border-top: 2px solid #ffcc00;
@@ -1140,14 +1143,18 @@ header .container.topbar {
   transform: translateX(-50%) translateY(0);
 }
 
-/* плавна поява */
+/* плавна поява знизу */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
   transform: translateX(-50%) translateY(-10px);
 }
 
-/* зона безпеки */
+/* зона безпеки, щоб не ховалось */
+.dropdown {
+  position: relative;
+}
+
 .dropdown::after {
   content: "";
   position: absolute;
@@ -1157,6 +1164,7 @@ header .container.topbar {
   height: 12px;
   background: transparent;
 }
+
 
 
 
