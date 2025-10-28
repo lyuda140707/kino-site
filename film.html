@@ -126,6 +126,36 @@
   letter-spacing: 0.5px;
   vertical-align: middle;
 }
+.tg-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: linear-gradient(90deg,#0a0a0a 0%,#111 100%);
+  border: 1px solid rgba(0,255,255,0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #00fff2;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 16px;
+  box-shadow: 0 0 15px rgba(0,255,255,0.15);
+  transition: all .25s ease;
+}
+
+.tg-banner:hover {
+  background: linear-gradient(90deg,#00fff226 0%,#00fff20e 100%);
+  box-shadow: 0 0 22px rgba(0,255,255,0.3);
+  transform: translateY(-1px);
+}
+
+.tg-icon {
+  width: 22px;
+  height: 22px;
+  filter: invert(68%) sepia(99%) saturate(900%) hue-rotate(120deg);
+}
 
     
   </style>
@@ -231,6 +261,12 @@
       </div>
 
       <div class="film-right">
+
+        <!-- 🔹 Телеграм-банер -->
+        <a href="https://t.me/RelaxBox_UA_bot" target="_blank" class="tg-banner">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" class="tg-icon">
+          <span>🔥 Новинки в каналі, перегляд у боті — усе в одному місці!</span>
+        </a>
     
 
         <!-- Перемикач Фільм / Трейлер -->
