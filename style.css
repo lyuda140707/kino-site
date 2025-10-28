@@ -798,7 +798,6 @@ header {
 }
 
 
-
 .genres a:hover {
   color: #00fff2;
   text-shadow: 0 0 12px #00fff2;
@@ -1027,20 +1026,7 @@ header {
   transition: 0.2s;
 }
 
-/* Вміст усередині */
-.mega-menu .genres {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px 35px;
-}
 
-.mega-menu .genres a {
-  color: #e4e4e4;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 15px;
-  transition: color 0.2s ease, transform 0.2s ease;
-}
 
 .mega-menu .genres a:hover {
   color: #00fff2;
@@ -1139,6 +1125,7 @@ header {
   height: 12px; /* перекриває 12px простору між пунктом і меню */
   background: transparent;
 }
+
 
 
 
