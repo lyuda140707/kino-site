@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Фільм — Relax Kino</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .film-page {
+      display: flex;
+      gap: 40px;
+      margin-top: 40px;
+    }
+    .film-left {
+      flex: 1;
+      max-width: 320px;
+    }
+    .film-left img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,255,242,0.4);
+    }
+    .film-meta {
+      margin-top: 15px;
+      background: #111;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #ccc;
+      border: 1px solid rgba(0,255,242,0.2);
+    }
+    .film-meta span {
+      display: block;
+      margin-bottom: 4px;
+    }
+    .film-player {
+      flex: 2;
+    }
+    .film-player video {
+      width: 100%;
+      border-radius: 10px;
+      border: 2px solid #00fff2;
+      background: #000;
+      aspect-ratio: 16/9;
+    }
+    .film-description {
+      margin-top: 25px;
+      background: #1b1b1b;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,255,242,0.2);
+      box-shadow: 0 0 20px rgba(0,255,242,0.1);
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container topbar">
+    <nav class="main-nav">
+      <img src="logo.png" alt="Relax Logo" class="nav-logo" />
+      <a href="index.html">Головна</a>
+      <a href="#">Фільми</a>
+      <a href="#">Серіали</a>
+    </nav>
+    <div class="top-right">
+      <input type="text" placeholder="Пошук…" class="search" />
+      <button class="profile-btn">👑 Мій кабінет</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section class="film-page">
+    <div class="film-left">
+      <img id="filmPoster" src="" alt="Постер фільму">
+      <div class="film-meta">
+        <span><b>Рік:</b> <span id="filmYear"></span></span>
+        <span><b>Жанр:</b> <span id="filmGenre"></span></span>
+        <span><b>Країна:</b> <span id="filmCountry"></span></span>
+        <span><b>Режисер:</b> <span id="filmDirector"></span></span>
+        <span><b>В ролях:</b> <span id="filmCast"></span></span>
+        <span><b>Звук:</b> <span id="filmSound"></span></span>
+        <span><b>Тривалість:</b> <span id="filmDuration"></span></span>
+        <span><b>Вік:</b> <span id="filmAge"></span></span>
+      </div>
+    </div>
+    <div class="film-player">
+      <video id="filmPlayer" controls autoplay muted playsinline></video>
+      <div class="film-description">
+        <h2 id="filmTitle">Назва фільму</h2>
+        <p id="filmDesc">Опис фільму з бази...</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2025 KinoSite • Усі права захищені
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+  async function loadFilm() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    if (!id) return;
+
+    const { data, error } = await supabase
+      .from("films_site")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error || !data) {
+      document.body.innerHTML = "<h2 style='color:white;text-align:center;margin-top:100px;'>Фільм не знайдено</h2>";
+      return;
+    }
+
+    document.getElementById("filmPoster").src = data.poster;
+    document.getElementById("filmTitle").textContent = data.title;
+    document.getElementById("filmDesc").textContent = data.description || "Опис відсутній";
+    document.getElementById("filmYear").textContent = data.year || "—";
+    document.getElementById("filmGenre").textContent = data.genre || "—";
+    document.getElementById("filmCountry").textContent = data.country || "—";
+    document.getElementById("filmDirector").textContent = data.director || "—";
+    document.getElementById("filmCast").textContent = data.cast || "—";
+    document.getElementById("filmSound").textContent = data.sound || "—";
+    document.getElementById("filmDuration").textContent = data.duration || "—";
+    document.getElementById("filmAge").textContent = data.age || "—";
+
+    const video = document.getElementById("filmPlayer");
+    video.src = data.stream_url || "";
+  }
+
+  loadFilm();
+</script>
+</body>
+</html>
