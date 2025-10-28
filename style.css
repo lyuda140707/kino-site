@@ -297,11 +297,6 @@ footer {
 }
 
 
-.slider-row::-webkit-scrollbar {
-  display: none;
-}
-
-
 .slide {
   min-width: 160px;
   flex: 0 0 auto;
@@ -809,25 +804,6 @@ header {
   text-shadow: 0 0 12px #00fff2;
 }
 
-/* === МЕГА-МЕНЮ "СЕРІАЛИ" — АНАЛОГ ФІЛЬМІВ === */
-.mega-series {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 1150px; /* така ж ширина як у банера */
-  background: #000; /* чорний фон */
-  border-top: 2px solid #ff00c8; /* рожево-фіолетовий акцент */
-  box-shadow: 0 8px 25px rgba(255, 0, 200, 0.3);
-  padding: 50px 80px 60px;
-  z-index: 3000;
-  border-radius: 0 0 16px 16px;
-  animation: fadeIn 0.25s ease;
-  backdrop-filter: none !important;
-  background-color: #000 !important;
-}
 
 /* Заголовок */
 .mega-series::before {
@@ -858,25 +834,7 @@ header {
   color: #ff00c8;
   text-shadow: 0 0 12px #ff00c8;
 }
-/* === МЕГА-МЕНЮ "МУЛЬТФІЛЬМИ" === */
-.mega-cartoons {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 1150px;
-  background: #000;
-  border-top: 2px solid #ffcc00; /* 🟡 жовтий неон */
-  box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3);
-  padding: 50px 80px 60px;
-  z-index: 3000;
-  border-radius: 0 0 16px 16px;
-  animation: fadeIn 0.25s ease;
-  backdrop-filter: none !important;
-  background-color: #000 !important;
-}
+
 
 /* Заголовок */
 .mega-cartoons::before {
@@ -1186,6 +1144,7 @@ header .container {
   position: relative;
   z-index: 4000;
 }
+
 
 
 
