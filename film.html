@@ -3,20 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Фільм | KinoSite</title>
+  <title>Фільм — Relax Kino</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    .film-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      margin-top: 40px;
+      align-items: flex-start;
+    }
+    .film-left {
+      flex: 1;
+      min-width: 300px;
+      max-width: 360px;
+    }
+    .film-left img {
+      width: 95%;
+      max-width: 275px;
+      border-radius: 10px;
+      margin: 0 auto;
+      display: block;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.25);
+      border: 1px solid rgba(0, 255, 255, 0.25);
+      transition: transform 0.3s ease;
+    }
+    .film-left img:hover { transform: scale(1.05); }
+
+    .film-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+      background: none;
+      box-shadow: none;
+      border: none;
+    }
+    .film-meta span {
+      display: block;
+      color: #bbb;
+      margin: 4px 0;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    .film-meta b { color: #00fff2; }
+
+    .film-right {
+      flex: 2;
+      min-width: 400px;
+    }
+    .film-title {
+      font-size: 28px;
+      color: #00fff2;
+      text-shadow: 0 0 18px #00fff2a0;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+    .player-box {
+      position: relative;
+      background: #000;
+      border-radius: 12px;
+      border: 1px solid rgba(0,255,242,0.3);
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0,255,242,0.15);
+    }
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+      aspect-ratio: 16/9;
+    }
+    .film-description {
+      margin-top: 25px;
+      background: #1a1a1a;
+      border-radius: 12px;
+      border: 1px solid rgba(0,255,242,0.2);
+      box-shadow: 0 0 30px rgba(0,255,242,0.1);
+      padding: 20px 24px;
+      color: #ddd;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    footer { margin-top: 80px; }
+  </style>
 </head>
 
 <body>
-
-  <!-- === HEADER (ідентичний index.html) === -->
+  <!-- === HEADER === -->
   <header>
     <div class="container topbar">
       <nav class="main-nav">
         <img src="logo.png" alt="Relax Logo" class="nav-logo" />
         <a href="index.html">Головна</a>
-
-        <!-- ФІЛЬМИ -->
         <div class="dropdown">
           <a href="#" class="menu-films">Фільми</a>
           <div class="mega-menu">
@@ -32,40 +113,29 @@
             </div>
           </div>
         </div>
-
-        <!-- СЕРІАЛИ -->
         <div class="dropdown">
           <a href="#" class="menu-series">Серіали</a>
           <div class="mega-menu mega-series">
             <div class="genres">
-              <a href="#">Біографія</a><a href="#">Бойовик</a><a href="#">Вестерн</a>
-              <a href="#">Воєнний</a><a href="#">Детектив</a><a href="#">Документальний</a>
-              <a href="#">Драма</a><a href="#">Історія</a><a href="#">Комедія</a>
-              <a href="#">Кримінал</a><a href="#">Мелодрама</a><a href="#">Містика</a>
-              <a href="#">Пригоди</a><a href="#">Спорт</a><a href="#">Трилер</a>
-              <a href="#">Жахи</a><a href="#">Фантастика</a><a href="#">Фентезі</a>
-              <a href="#">Дорама</a><a href="#">Субтитри</a><a href="#">Міні-серіал</a>
+              <a href="#">Біографія</a><a href="#">Бойовик</a><a href="#">Детектив</a>
+              <a href="#">Драма</a><a href="#">Комедія</a><a href="#">Мелодрама</a>
+              <a href="#">Фантастика</a><a href="#">Жахи</a><a href="#">Фентезі</a>
             </div>
           </div>
         </div>
-
-        <!-- МУЛЬТФІЛЬМИ -->
         <div class="dropdown">
           <a href="#" class="menu-cartoons">Мультфільми</a>
           <div class="mega-menu mega-cartoons">
             <div class="genres">
-              <a href="#">Всі мультики</a><a href="#">Повнометражні</a>
-              <a href="#">Короткометражні</a><a href="#">Мультсеріали</a>
-              <a href="#">Netflix</a><a href="#">DreamWorks</a><a href="#">Pixar</a>
-              <a href="#">WB: Анімація</a><a href="#">Для дорослих</a>
+              <a href="#">Для дітей</a><a href="#">Повнометражні</a>
+              <a href="#">Мультсеріали</a><a href="#">Disney</a>
+              <a href="#">DreamWorks</a><a href="#">Pixar</a>
             </div>
           </div>
         </div>
-
         <a href="#">Новинки</a>
         <a href="#">Збірки фільмів</a>
       </nav>
-
       <div class="top-right">
         <input type="text" placeholder="Пошук…" class="search" />
         <button class="profile-btn">👑 Мій кабінет</button>
@@ -88,7 +158,7 @@
     </section>
   </div>
 
-  <!-- === ОСНОВНИЙ КОНТЕНТ === -->
+  <!-- === MAIN === -->
   <main>
     <div class="container film-container">
       <div class="film-left">
@@ -106,17 +176,21 @@
         </div>
       </div>
 
-      <div class="film-center">
-        <video id="filmPlayer" controls autoplay playsinline muted></video>
+      <div class="film-right">
+        <div class="film-title" id="filmTitle">Назва фільму</div>
+        <div class="player-box">
+          <video id="filmPlayer" controls autoplay muted playsinline></video>
+        </div>
         <div class="film-description">
-          <h3>Про що фільм</h3>
-          <p id="filmDescription"></p>
+          <h3>Про що фільм:</h3>
+          <p id="filmDesc">Опис фільму...</p>
         </div>
       </div>
     </div>
   </main>
 
-  <!-- === SCRIPTS === -->
+  <footer>© 2025 KinoSite • Усі права захищені</footer>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
@@ -125,18 +199,27 @@
 
     async function loadFilm() {
       const params = new URLSearchParams(window.location.search);
-      const filmId = params.get("id");
-      if (!filmId) return;
-
+      const id = params.get("id");
+      if (!id) return;
       const { data, error } = await supabase
-        .from("films")
+        .from("films_site")
         .select("*")
-        .eq("id", filmId)
+        .eq("id", id)
         .single();
 
-      if (error || !data) return;
+      if (error) {
+        console.error("❌ Помилка Supabase:", error.message);
+        document.getElementById("filmTitle").textContent = "Помилка завантаження";
+        return;
+      }
+      if (!data) {
+        document.getElementById("filmTitle").textContent = "Фільм не знайдено";
+        return;
+      }
 
       document.getElementById("filmPoster").src = data.poster || "";
+      document.getElementById("filmTitle").textContent = data.title || "";
+      document.getElementById("filmDesc").textContent = data.description || "Опис відсутній";
       document.getElementById("filmYear").textContent = data.year || "";
       document.getElementById("filmGenre").textContent = data.genre || "";
       document.getElementById("filmCountry").textContent = data.country || "";
@@ -145,18 +228,19 @@
       document.getElementById("filmSound").textContent = data.sound || "";
       document.getElementById("filmDuration").textContent = data.duration || "";
       document.getElementById("filmAge").textContent = data.age || "";
-      document.getElementById("filmImdb").textContent = data.imdb || "";
-      document.getElementById("filmDescription").textContent = data.description || "";
-      document.getElementById("filmPlayer").src = data.stream_url || "";
+      document.getElementById("filmImdb").textContent = data.imdb || "—";
+
+      const player = document.getElementById("filmPlayer");
+      player.src = data.stream_url || "";
     }
+
+    loadFilm();
 
     function scrollSlider(direction) {
       const slider = document.getElementById("sliderRow");
       const scrollAmount = 300;
       slider.scrollBy({ left: scrollAmount * direction, behavior: "smooth" });
     }
-
-    loadFilm();
   </script>
 </body>
 </html>
