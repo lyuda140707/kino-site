@@ -236,99 +236,121 @@ function getYouTubeId(url) {
       // Автовідтворення вимкнено — користувач сам натисне Play
     }
 
-    async function loadFilm() {
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get("id");
-      if (!id) return;
+   async function loadFilm() {
+  const params = new URLSearchParams(window.location.search);
+  const idParam = params.get("id");
 
-      const { data, error } = await supabase
+  console.log("🔎 URL id =", idParam); // діагностика
+
+  let data = null, error = null;
+
+  try {
+    if (idParam) {
+      // Якщо id є в URL — беремо конкретний запис
+      const idNum = isNaN(Number(idParam)) ? idParam : Number(idParam);
+      ({ data, error } = await supabase
         .from("films_site")
         .select("*")
-        .eq("id", id)
-        .single();
+        .eq("id", idNum)
+        .single());
+    } else {
+      // Fallback: якщо id НЕ передали — беремо останній запис (де є title)
+      ({ data, error } = await supabase
+        .from("films_site")
+        .select("*")
+        .order("id", { ascending: false })
+        .limit(1)
+        .maybeSingle());
+    }
+  } catch (e) {
+    console.error("❌ Виняток Supabase:", e);
+  }
 
-      if (error || !data) {
-        console.error("❌ Помилка Supabase:", error?.message);
-        document.getElementById("filmTitle").textContent = "Фільм не знайдено";
-        return;
-      }
+  if (error || !data) {
+    console.error("❌ Помилка Supabase:", error?.message || "порожня відповідь");
+    document.getElementById("filmTitle").textContent = "Фільм не знайдено";
+    return;
+  }
 
-      // 🟢 Заповнення даних
-      document.getElementById("filmPoster").src = data.poster || "";
-      document.getElementById("filmTitle").textContent = data.title || "";
-      document.getElementById("filmDesc").textContent = data.description || "Опис відсутній";
-      document.getElementById("filmYear").textContent = data.year || "";
-      document.getElementById("filmGenre").textContent = data.genre || "";
-      document.getElementById("filmCountry").textContent = data.country || "";
-      document.getElementById("filmDirector").textContent = data.director || "";
-      document.getElementById("filmCast").textContent = data.cast || "";
-      document.getElementById("filmSound").textContent = data.sound || "";
-      document.getElementById("filmDuration").textContent = data.duration || "";
-      document.getElementById("filmAge").textContent = data.age || "";
-      document.getElementById("filmImdb").textContent = data.imdb || "—";
+  // 🟢 Заповнення даних
+  document.getElementById("filmPoster").src = data.poster || "";
+  document.getElementById("filmTitle").textContent = data.title || "";
+  document.getElementById("filmDesc").textContent = data.description || "Опис відсутній";
+  document.getElementById("filmYear").textContent = data.year || "";
+  document.getElementById("filmGenre").textContent = data.genre || "";
+  document.getElementById("filmCountry").textContent = data.country || "";
+  document.getElementById("filmDirector").textContent = data.director || "";
+  document.getElementById("filmCast").textContent = data.cast || "";
+  document.getElementById("filmSound").textContent = data.sound || "";
+  document.getElementById("filmDuration").textContent = data.duration || "";
+  document.getElementById("filmAge").textContent = data.age || "";
+  document.getElementById("filmImdb").textContent = data.imdb || "—";
 
-      // Джерела
-      movieUrl   = data.stream_url   || "";
-      trailerUrl = data.trailer_url  || "";
+  // 🔗 Джерела
+  movieUrl   = data.stream_url   || "";
+  trailerUrl = data.trailer_url  || "";
 
-      // Стан кнопок
-      const btnMovie   = document.getElementById("btnMovie");
-      const btnTrailer = document.getElementById("btnTrailer");
+  // 🎛️ Кнопки
+  const btnMovie   = document.getElementById("btnMovie");
+  const btnTrailer = document.getElementById("btnTrailer");
 
-      btnMovie.classList.add("active");
-      btnTrailer.classList.remove("active");
-
-      // Якщо трейлера немає — вимикаємо кнопку
-      btnTrailer.disabled = !trailerUrl;
-
-      // Підключаємо початкове джерело (фільм)
-      currentSource = "movie";
-      setupPlayer(movieUrl);
-
-      // Обробники кліків
-      btnMovie.addEventListener("click", () => {
-  if (currentSource === "movie") return;
-  currentSource = "movie";
   btnMovie.classList.add("active");
   btnTrailer.classList.remove("active");
+  btnTrailer.disabled = !trailerUrl;
 
-  // Повертаємо звичайний відео-плеєр
-  const box = document.querySelector(".player-box");
-  box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous"></video>`;
-  setupPlayer(movieUrl); // без автозапуску
-});
+  // ▶️ Початково показуємо ФІЛЬМ у звичайному відео-плеєрі (без автозапуску)
+  currentSource = "movie";
+  document.querySelector(".player-box").innerHTML =
+    `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous"></video>`;
+  setupPlayer(movieUrl);
 
-btnTrailer.addEventListener("click", () => {
-  if (!trailerUrl) return;
-  if (currentSource === "trailer") return;
-  currentSource = "trailer";
-  btnTrailer.classList.add("active");
-  btnMovie.classList.remove("active");
-
-  const box = document.querySelector(".player-box");
-
-  if (isYouTube(trailerUrl)) {
-    // YouTube → показуємо iframe
-    const ytId = getYouTubeId(trailerUrl);
-    // якщо ID не дістали (наприклад, дали manifest.googlevideo) — все одно покажемо iframe без ID
-    const src = ytId ? `https://www.youtube.com/embed/${ytId}` : trailerUrl;
-
-    box.innerHTML = `
-      <iframe
-        width="100%" height="480"
-        src="${src}"
-        frameborder="0"
-        allow="autoplay; encrypted-media"
-        allowfullscreen
-        style="border-radius:12px;width:100%;aspect-ratio:16/9;">
-      </iframe>`;
-  } else {
-    // Не YouTube → стандартний відео-плеєр
+  // 🖱️ Обробники кліків
+  btnMovie.addEventListener("click", () => {
+    if (currentSource === "movie") return;
+    currentSource = "movie";
+    btnMovie.classList.add("active");
+    btnTrailer.classList.remove("active");
+    const box = document.querySelector(".player-box");
     box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous"></video>`;
-    setupPlayer(trailerUrl); // без автозапуску
-  }
-});
-});
+    setupPlayer(movieUrl);
+  });
+
+  btnTrailer.addEventListener("click", () => {
+    if (!trailerUrl) return;
+    if (currentSource === "trailer") return;
+    currentSource = "trailer";
+    btnTrailer.classList.add("active");
+    btnMovie.classList.remove("active");
+
+    const box = document.querySelector(".player-box");
+
+    // Якщо трейлер з YouTube/GoogleVideo — показуємо iframe
+    if (
+      trailerUrl.includes("youtube.com") ||
+      trailerUrl.includes("youtu.be") ||
+      trailerUrl.includes("googlevideo.com")
+    ) {
+      // Спроба витягнути YouTube ID
+      const m = trailerUrl.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
+      const ytId = m ? m[1] : "";
+      const src = ytId ? `https://www.youtube.com/embed/${ytId}` : trailerUrl;
+
+      box.innerHTML = `
+        <iframe
+          width="100%" height="480"
+          src="${src}"
+          frameborder="0"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+          style="border-radius:12px;width:100%;aspect-ratio:16/9;">
+        </iframe>`;
+    } else {
+      // Інакше — звичайний відео-плеєр
+      box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous"></video>`;
+      setupPlayer(trailerUrl);
+    }
+  });
+}
 
     function scrollSlider(direction) {
       const slider = document.getElementById("sliderRow");
