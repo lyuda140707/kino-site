@@ -1068,26 +1068,25 @@ header {
   color: #ff9944;
 }
 
-/* === ВИПАДАЮЧІ МЕНЮ — ФІКС + ЗАТЕМНЕННЯ ФОНУ === */
-
-/* === ІДЕАЛЬНЕ ВИРІВНЮВАННЯ МЕГА-МЕНЮ ПО ЦЕНТРУ === */
+/* === ФІНАЛЬНЕ ІДЕАЛЬНЕ МЕГА-МЕНЮ — ЦЕНТР, НЕ ХОВАЄТЬСЯ, ЩІЛЬНИЙ ФОН === */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
   position: absolute;
   top: 100%;
-  left: 0;
-  width: 100%; /* ✅ вирівнюється точно по ширині контейнера */
+  left: 50%;
+  transform: translateX(-50%); /* ✅ строго по центру екрана */
+  width: 100vw; /* ✅ на всю ширину вікна */
   margin-top: -1px;
   padding: 50px 80px 60px;
-  background: #000;
+  background: #000; /* ✅ суцільний чорний фон, не прозорий */
   border-top: 2px solid #00fff2;
   border-radius: 0 0 16px 16px;
   box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease;
   z-index: 5000;
 }
 
@@ -1101,9 +1100,21 @@ header {
   opacity: 1;
   visibility: visible;
   pointer-events: all;
+  transform: translateX(-50%) translateY(0);
 }
 
-/* 🧱 зона безпеки, щоб не зникало */
+/* легка анімація появи (виїзд знизу вверх) */
+.mega-menu,
+.mega-series,
+.mega-cartoons {
+  transform: translateX(-50%) translateY(-10px);
+}
+
+/* 🧱 зона безпеки, щоб не зникало при русі мишки */
+.dropdown {
+  position: relative;
+}
+
 .dropdown::after {
   content: "";
   position: absolute;
@@ -1113,6 +1124,10 @@ header {
   height: 12px;
   background: transparent;
 }
+
+
+
+
 
 
 
@@ -1126,6 +1141,7 @@ header {
 .dropdown {
   position: relative;
 }
+
 
 
 
