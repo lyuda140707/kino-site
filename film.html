@@ -42,14 +42,17 @@
 
 
 
-    .film-meta {
-      margin-top: 18px;
-      background: #0d0d0d;
-      border-radius: 10px;
-      padding: 15px 18px;
-      border: 1px solid rgba(0,255,242,0.25);
-      box-shadow: 0 0 25px rgba(0,255,242,0.1);
-    }
+/* 🎬 Лівий блок без фону, але з окремими підсвіченими рядками */
+.film-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;              /* трохи більше відстані між рядками */
+  margin-top: 12px;
+  background: none;      /* прибрали підсвітку усього блоку */
+  box-shadow: none;
+  border: none;
+}
+
 
     .film-meta span {
       display: block;
