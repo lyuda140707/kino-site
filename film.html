@@ -40,6 +40,13 @@
     .film-description { margin-top: 25px; background: #1a1a1a; border-radius: 12px; border: 1px solid rgba(0,255,242,0.2);
       box-shadow: 0 0 30px rgba(0,255,242,0.1); padding: 20px 24px; color: #ddd; font-size: 16px; line-height: 1.7; }
     footer { margin-top: 80px; }
+    /* ефект наведення на велику кнопку Play */
+    #bigPlayBtn:hover svg {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 8px #00fff2);
+      transition: transform 0.25s ease, filter 0.25s ease;
+    }
+    
   </style>
 </head>
 
@@ -148,9 +155,26 @@
         </div>
 
         <div class="player-box">
-          <!-- autoplay видалено (нема автозапуску) -->
-          <video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>
-        </div>
+  <div class="player-wrapper" style="position:relative;">
+    <video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"
+      style="border-radius:12px;width:100%;aspect-ratio:16/9;display:block;"></video>
+
+    <!-- 🔹 Велика кнопка Play поверх відео -->
+    <div id="bigPlayBtn"
+         style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+                background:rgba(0,0,0,0.45);cursor:pointer;border-radius:12px;
+                transition:opacity 0.3s ease;">
+      <div style="width:100px;height:100px;border-radius:50%;background:rgba(0,0,0,0.6);
+                  display:flex;align-items:center;justify-content:center;
+                  box-shadow:0 0 25px rgba(0,255,255,0.5);">
+        <svg width="58" height="58" viewBox="0 0 24 24" fill="#00fff2">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
 
         <div class="film-description">
           <h3>Про що фільм:</h3>
@@ -355,6 +379,33 @@ function getYouTubeId(url) {
     }
   });
 }
+    // 🔹 Велика кнопка Play поверх відео
+const player = document.getElementById("filmPlayer");
+const bigPlay = document.getElementById("bigPlayBtn");
+
+// Клік по кнопці → запускає відео
+bigPlay.addEventListener("click", async () => {
+  try {
+    await player.play();
+    bigPlay.style.opacity = "0";
+    bigPlay.style.pointerEvents = "none";
+  } catch (err) {
+    console.warn("Не вдалося автозапустити відео:", err);
+  }
+});
+
+// Якщо відео почало грати — ховаємо кнопку
+player.addEventListener("play", () => {
+  bigPlay.style.opacity = "0";
+  bigPlay.style.pointerEvents = "none";
+});
+
+// Якщо відео зупинили — показуємо кнопку знову
+player.addEventListener("pause", () => {
+  bigPlay.style.opacity = "1";
+  bigPlay.style.pointerEvents = "auto";
+});
+
 
     function scrollSlider(direction) {
       const slider = document.getElementById("sliderRow");
