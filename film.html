@@ -187,7 +187,7 @@
       <div class="film-right">
         <div class="film-title" id="filmTitle">Назва фільму</div>
         <div class="player-box">
-          <video id="filmPlayer" controls autoplay muted playsinline></video>
+          <video id="filmPlayer" controls playsinline muted></video>
         </div>
         <div class="film-description">
           <h3>Про що фільм:</h3>
@@ -199,63 +199,65 @@
 
   <footer>© 2025 KinoSite • Усі права захищені</footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function loadFilm() {
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get("id");
-      if (!id) return;
-      const { data, error } = await supabase
-        .from("films_site")
-        .select("*")
-        .eq("id", id)
-        .single();
+  async function loadFilm() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    if (!id) return;
 
-      if (error) {
-        console.error("❌ Помилка Supabase:", error.message);
-        document.getElementById("filmTitle").textContent = "Помилка завантаження";
-        return;
-      }
-      if (!data) {
-        document.getElementById("filmTitle").textContent = "Фільм не знайдено";
-        return;
-      }
+    const { data, error } = await supabase
+      .from("films_site")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-      document.getElementById("filmPoster").src = data.poster || "";
-      document.getElementById("filmTitle").textContent = data.title || "";
-      document.getElementById("filmDesc").textContent = data.description || "Опис відсутній";
-      document.getElementById("filmYear").textContent = data.year || "";
-      document.getElementById("filmGenre").textContent = data.genre || "";
-      document.getElementById("filmCountry").textContent = data.country || "";
-      document.getElementById("filmDirector").textContent = data.director || "";
-      document.getElementById("filmCast").textContent = data.cast || "";
-      document.getElementById("filmSound").textContent = data.sound || "";
-      document.getElementById("filmDuration").textContent = data.duration || "";
-      document.getElementById("filmAge").textContent = data.age || "";
-      document.getElementById("filmImdb").textContent = data.imdb || "—";
-
-      const player = document.getElementById("filmPlayer");
-      player.src = data.stream_url || "";
-
-      // 🟢 Автовідтворення після завантаження
-      player.addEventListener("canplay", () => {
-        player.play().catch(() => {
-          console.warn("🎬 Автовідтворення вимкнено браузером — чекаємо взаємодії");
-        });
-      });
+    if (error || !data) {
+      console.error("❌ Помилка Supabase:", error?.message);
+      document.getElementById("filmTitle").textContent = "Фільм не знайдено";
+      return;
     }
 
-    loadFilm();
+    // 🟢 Заповнення даних
+    document.getElementById("filmPoster").src = data.poster || "";
+    document.getElementById("filmTitle").textContent = data.title || "";
+    document.getElementById("filmDesc").textContent = data.description || "Опис відсутній";
+    document.getElementById("filmYear").textContent = data.year || "";
+    document.getElementById("filmGenre").textContent = data.genre || "";
+    document.getElementById("filmCountry").textContent = data.country || "";
+    document.getElementById("filmDirector").textContent = data.director || "";
+    document.getElementById("filmCast").textContent = data.cast || "";
+    document.getElementById("filmSound").textContent = data.sound || "";
+    document.getElementById("filmDuration").textContent = data.duration || "";
+    document.getElementById("filmAge").textContent = data.age || "";
+    document.getElementById("filmImdb").textContent = data.imdb || "—";
 
-    function scrollSlider(direction) {
-      const slider = document.getElementById("sliderRow");
-      const scrollAmount = 300;
-      slider.scrollBy({ left: scrollAmount * direction, behavior: "smooth" });
+    // 🎬 Плеєр
+    const player = document.getElementById("filmPlayer");
+    player.src = data.stream_url || "";
+
+    // 🟢 Примусове відтворення
+    try {
+      await player.play();
+    } catch (err) {
+      console.warn("🎬 Автовідтворення заблоковано браузером. Очікується клік користувача.");
+      document.body.addEventListener("click", () => player.play(), { once: true });
     }
-  </script>
+  }
+
+  loadFilm();
+
+  function scrollSlider(direction) {
+    const slider = document.getElementById("sliderRow");
+    const scrollAmount = 300;
+    slider.scrollBy({ left: scrollAmount * direction, behavior: "smooth" });
+  }
+</script>
+
+
 </body>
 </html>
