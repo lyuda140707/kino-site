@@ -245,6 +245,79 @@
   color: #777;
 }
 .close-modal:hover { color: #fff; }
+/* ===== 💬 СЕКЦІЯ КОМЕНТАРІВ ===== */
+.comments-section {
+  margin-top: 22px;
+  background: #0d0d0d;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.comments-section h3 {
+  color: #00fff2;
+  font-size: 18px;
+  margin: 0 0 12px 0;
+}
+
+/* Список коментарів */
+#commentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.comment {
+  background: #121212;
+  border-radius: 8px;
+  padding: 10px;
+  color: #ddd;
+  font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.comment strong { color: #eaeaea; }
+
+.comment small {
+  display: block;
+  color: #777;
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+/* Форма для написання */
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment-form input,
+.comment-form textarea {
+  background: #131313;
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 8px;
+  resize: vertical;
+}
+
+.comment-form button {
+  align-self: flex-end;
+  background: #00fff2;
+  color: #001c1a;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+
+.comment-form button:disabled {
+  opacity: .65;
+  cursor: not-allowed;
+}
 
     
   </style>
@@ -395,6 +468,26 @@
       </div>
     </div>
   </main>
+  <div class="film-right">
+  <div class="film-title" id="filmTitle"></div>
+  <div class="film-desc" id="filmDesc"></div>
+
+  <!-- 💬 Коментарі -->
+  <div class="comments-section">
+    <h3>💬 Коментарі</h3>
+
+    <!-- список коментарів -->
+    <div id="commentsList"></div>
+
+    <!-- форма -->
+    <div class="comment-form">
+      <input type="text" id="username" placeholder="Ваше ім’я (необов’язково)">
+      <textarea id="commentText" placeholder="Напишіть свій коментар..." rows="3"></textarea>
+      <button id="sendComment">Надіслати</button>
+    </div>
+  </div>
+</div>
+
 
   <footer>© 2025 KinoSite • Усі права захищені</footer>
 
@@ -691,6 +784,79 @@ sendBtn.onclick = () => {
 window.onclick = (e) => {
   if (e.target == modal) modal.style.display = "none";
 };
+</script>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+const supabaseUrl = 'https://zerlqvbmqszomlondlte.supabase.co';   // 🔹 заміни на свою адресу
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";                      // 🔹 встав свій anon ключ
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Отримуємо ID фільму з URL (наприклад ?id=5)
+const filmId = new URLSearchParams(window.location.search).get("id");
+
+// HTML елементи
+const commentsList = document.getElementById("commentsList");
+const sendBtn = document.getElementById("sendComment");
+
+// ===== 📥 ЗАВАНТАЖИТИ КОМЕНТАРІ =====
+async function loadComments() {
+  commentsList.innerHTML = "<p style='color:#777'>Завантаження...</p>";
+
+  const { data, error } = await supabase
+    .from('comments')
+    .select('*')
+    .eq('film_id', filmId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Помилка завантаження:", error);
+    commentsList.innerHTML = "<p style='color:#c66'>Не вдалося завантажити коментарі 😕</p>";
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    commentsList.innerHTML = "<p style='color:#888'>Ще немає коментарів. Будь першим!</p>";
+    return;
+  }
+
+  // очищуємо і додаємо
+  commentsList.innerHTML = "";
+  for (const c of data) {
+    const div = document.createElement("div");
+    div.className = "comment";
+    div.innerHTML = `
+      <strong>${c.username || "Анонім"}</strong>
+      <p>${c.text}</p>
+      <small>${new Date(c.created_at).toLocaleString()}</small>
+    `;
+    commentsList.appendChild(div);
+  }
+}
+
+// ===== 📤 НАДІСЛАТИ КОМЕНТАР =====
+sendBtn.addEventListener("click", async () => {
+  const username = document.getElementById("username").value.trim() || "Анонім";
+  const text = document.getElementById("commentText").value.trim();
+
+  if (!text) return alert("Введи коментар 🙂");
+
+  // вставляємо в базу
+  const { error } = await supabase
+    .from('comments')
+    .insert([{ film_id: filmId, username, text }]);
+
+  if (error) {
+    console.error("Помилка надсилання:", error);
+    alert("Не вдалося надіслати 😕");
+  } else {
+    document.getElementById("commentText").value = "";
+    loadComments(); // оновити список
+  }
+});
+
+// Запускаємо завантаження при відкритті сторінки
+loadComments();
 </script>
 
 </body>
