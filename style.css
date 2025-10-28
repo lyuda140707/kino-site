@@ -815,14 +815,28 @@ header {
 /* === ЖАНРИ === */
 .genres {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px 40px;
-  justify-items: start;
-  max-width: 950px;
-  margin: 0 auto;
+  grid-template-columns: repeat(5, 1fr); /* 5 рівних стовпців */
+  gap: 14px 40px;                        /* відстань між рядками і колонками */
+  max-width: 1000px;                     /* така сама, як ширина тексту банера */
+  margin: 0 auto;                        /* центрування */
+  justify-items: start;                  /* вирівнює текст по лівому краю */
+  align-items: start;
+  text-align: left;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
-
-
+/* Стиль пунктів */
+.genres a {
+  display: block;
+  color: #e8e8e8;
+  font-family: "Poppins", sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap; /* щоб не переносились */
+}
 
 .genres a:hover {
   color: #00fff2;
@@ -944,23 +958,20 @@ header {
 /* Ефект при наведенні — для кожного меню свій неон */
 .mega-menu .genres a:hover {
   color: #00fff2;
-  text-shadow: 0 0 15px #00fff2, 0 0 30px #00fff2;
+  text-shadow: 0 0 10px #00fff2, 0 0 25px #00fff2;
+  transform: translateY(-2px);
 }
 
 .mega-series .genres a:hover {
   color: #ff00c8;
-  text-shadow: 0 0 15px #ff00c8, 0 0 30px #ff00c8;
+  text-shadow: 0 0 10px #ff00c8, 0 0 25px #ff00c8;
+  transform: translateY(-2px);
 }
 
 .mega-cartoons .genres a:hover {
   color: #ffcc00;
-  text-shadow: 0 0 15px #ffcc00, 0 0 30px #ffcc00;
-}
-
-
-.mega-cartoons .genres a:hover {
-  color: #ffcc00;
-  text-shadow: 0 0 12px #ffcc00;
+  text-shadow: 0 0 10px #ffcc00, 0 0 25px #ffcc00;
+  transform: translateY(-2px);
 }
 
 
@@ -1185,6 +1196,7 @@ header {
 .mega-menu:hover {
   display: block !important;
 }
+
 
 
 
