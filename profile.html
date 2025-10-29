@@ -69,9 +69,17 @@
 <script>
   // 🟣 Telegram вбудований callback
   function onTelegramAuth(user) {
-    console.log("✅ Telegram повернув користувача через onauth:", user);
-    handleTelegramUser(user);
+  console.log("✅ Telegram повернув користувача через onauth:", user);
+
+  // Якщо Telegram повертає об'єкт типу {auth_data:{...}}
+  const data = user.auth_data || user;
+  if (data?.id) {
+    handleTelegramUser(data);
+  } else {
+    console.warn("⚠️ Не вдалося отримати дані користувача від Telegram:", user);
   }
+}
+
 </script>
 <iframe
   src="https://oauth.telegram.org/embed/RelaxBox_UA_bot?origin=https://kino-site.pages.dev&request_access=write"
