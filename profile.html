@@ -25,6 +25,24 @@
   .btn-primary{background:#00ffd5;color:#000;font-weight:600}
   .btn-ghost{background:transparent;border:1px solid #444;color:#ddd}
   .input{width:100%;padding:10px 12px;border:1px solid #333;border-radius:10px;background:#111;color:#eee}
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.profile-actions .btn {
+  width: 100%;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-actions .btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
+}
+
 </style>
 </head>
 <body>
@@ -35,6 +53,19 @@
   fetch("header.html").then(r=>r.text()).then(html=>{
     document.getElementById("header-placeholder").innerHTML = html;
   });
+// ===== Кнопки у профілі
+document.getElementById("get-pro")?.addEventListener("click", () => {
+  window.location.href = "/pro.html"; // сторінка з оплатою PRO
+});
+
+document.getElementById("messages")?.addEventListener("click", () => {
+  alert("📩 Розділ 'Повідомлення' у розробці");
+});
+
+document.getElementById("bookmarks")?.addEventListener("click", () => {
+  window.location.href = "/bookmarks.html"; // сторінка збережених фільмів
+});
+      
 </script>
 
 <main class="profile-wrap">
@@ -42,11 +73,17 @@
 
   <!-- 🧩 Блок користувача -->
   <div class="card" id="user-card" style="display:none;">
-    <h3 id="hello-line">Вітаю!</h3>
-    <p class="muted">Статус: <span id="pro-status">—</span></p>
-    <button class="btn btn-ghost" id="logout-btn">Вийти</button>
-  </div>
+  <h3 id="hello-line">Вітаю!</h3>
+  <p class="muted">Статус: <span id="pro-status">—</span></p>
+  <button class="btn btn-ghost" id="logout-btn">Вийти</button>
 
+  <!-- 🔹 Додаткові дії користувача -->
+  <div class="profile-actions">
+    <button id="get-pro" class="btn btn-primary">💎 Отримати PRO</button>
+    <button id="messages" class="btn btn-ghost">📩 Повідомлення</button>
+    <button id="bookmarks" class="btn btn-ghost">⭐ Мої закладки</button>
+  </div>
+</div>
   <!-- 📨 Авторизація Email -->
   <div class="card" id="auth-card">
     <h3>Увійти через Email</h3>
