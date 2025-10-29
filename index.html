@@ -57,18 +57,13 @@
 <!-- === ОСНОВНА СІТКА === -->
 <div class="main-grid">
 
- <!-- Ліва колонка (динамічна) -->
+<!-- Ліва колонка без підбірок -->
 <aside class="sidebar">
-  <div class="block">
-    <h2>Підбірки</h2>
-  </div>
-
-  <!-- Динамічне заповнення -->
-  <div id="dynamicCollections"></div>
   <div id="dynamicSeries"></div>
   <div id="dynamicFilms"></div>
   <div id="dynamicCartoons"></div>
 </aside>
+
 
 
   <!-- Права колонка (тепер фільми) -->
@@ -286,37 +281,6 @@ async function loadLatestSeries() {
 async function loadDynamicSidebar() {
   const sidebar = document.querySelector(".sidebar");
   if (!sidebar) return;
-// 🧩 Підбірки (🎬 Збірки фільмів)
-try {
-  const { data: collections, error: collErr } = await supabase
-    .from("films_site")
-    .select("id, title, poster, type")
-    .or("type.eq.Збірка,type.eq.Збірка фільмів,type.eq.Колекція");
-  if (collErr) console.warn("❌ Помилка підбірок:", collErr);
-
-  const container = document.getElementById("dynamicCollections");
-
-  if (collections?.length) {
-    const randomCollections = collections.sort(() => 0.5 - Math.random()).slice(0, 5);
-    container.innerHTML = randomCollections
-      .map(
-        (c) => `
-        <div class="pick" onclick="window.location.href='/collections#${encodeURIComponent(c.title)}'">
-          <img src="${c.poster || 'https://via.placeholder.com/150'}" alt="${c.title}">
-          <p>${c.title}</p>
-        </div>`
-      )
-      .join("");
-  } else {
-    container.innerHTML = `
-      <p style="color:#aaa;font-size:14px;">Немає підбірок у таблиці.</p>
-      <a href="/collections" style="color:#00ffd5;">🎬 Всі збірки фільмів</a>
-    `;
-  }
-} catch (e) {
-  console.error("❌ Помилка підбірок:", e);
-}
-
 
 
   // 🎬 Актуальні серіали
@@ -422,6 +386,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
