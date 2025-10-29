@@ -45,6 +45,21 @@
   max-width:1200px; margin:10px auto 0; padding:0 30px;
   display:flex; gap:10px; align-items:center; flex-wrap:wrap;
 }
+.year-select {
+  background:#0f0f0f;
+  color:#00fff2;
+  border:1px solid rgba(0,255,255,.35);
+  border-radius:10px;
+  padding:8px 14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s;
+}
+.year-select:hover {
+  background:#00fff2;
+  color:#000;
+}
+
 .filter-btn{
   background:#0f0f0f; color:#00fff2; border:1px solid rgba(0,255,255,.35);
   padding:8px 14px; border-radius:10px; font-weight:600; cursor:pointer;
@@ -69,11 +84,19 @@
 
   <h1 id="pageTitle">Категорія</h1>
   <!-- === ПАНЕЛЬ ФІЛЬТРІВ === -->
-  <div class="filter-bar">
-    <button id="btn-latest" class="filter-btn active">🆕 Останні</button>
-    <button id="btn-best"   class="filter-btn">⭐ Найкращі (IMDb)</button>
-    <button id="btn-year"   class="filter-btn">📅 За роком</button>
+ <!-- === ПАНЕЛЬ ФІЛЬТРІВ === -->
+<div class="filter-bar">
+  <button id="btn-latest" class="filter-btn active">🆕 Останні</button>
+  <button id="btn-best"   class="filter-btn">⭐ Найкращі (IMDb)</button>
+
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button id="btn-year" class="filter-btn">📅 За роком</button>
+    <select id="yearSelect" class="year-select">
+      <option value="">Усі роки</option>
+    </select>
   </div>
+</div>
+
   <div class="film-grid" id="filmGrid"></div>
 
   <footer>© 2025 Relax Kino</footer>
@@ -92,17 +115,17 @@
 
   document.getElementById("pageTitle").textContent = `${type} • ${genre || "Усі"}`;
 
-  let currentSort = 'latest'; // latest | best | year
+let currentSort = 'latest'; // latest | best | year
+let selectedYear = '';      // значення з випадаючого списку
 
+// === основне завантаження ===
 async function loadFilms(sortMode = currentSort) {
   currentSort = sortMode;
 
-  // базовий вибір з Supabase
   let query = supabase.from("films_site").select("*");
   if (type)  query = query.ilike("type",  `%${type}%`);
   if (genre) query = query.ilike("genre", `%${genre}%`);
 
-  // беремо «останні» як дефолт — id ↓ (як у тебе було)
   const { data, error } = await query.order("id", { ascending: false });
 
   const grid = document.getElementById("filmGrid");
@@ -117,17 +140,20 @@ async function loadFilms(sortMode = currentSort) {
     return;
   }
 
-  // локальне сортування для «Найкращі» та «За роком»,
-  // бо imdb/year можуть бути текстом у таблиці
+  // фільтрація за роком, якщо вибрано
   let items = [...data];
-  if (sortMode === 'best') {
-    items.sort((a,b) => (parseFloat(b.imdb||0) || 0) - (parseFloat(a.imdb||0) || 0));
-  } else if (sortMode === 'year') {
-    items.sort((a,b) => (parseInt(b.year||0) || 0) - (parseInt(a.year||0) || 0));
+  if (selectedYear) {
+    items = items.filter(f => String(f.year).trim() === selectedYear);
   }
-  // 'latest' вже відсортовано з бази по id ↓
 
-  // відмалювати картки
+  // сортування
+  if (sortMode === 'best') {
+    items.sort((a,b) => (parseFloat(b.imdb||0)||0) - (parseFloat(a.imdb||0)||0));
+  } else if (sortMode === 'year') {
+    items.sort((a,b) => (parseInt(b.year||0)||0) - (parseInt(a.year||0)||0));
+  } // latest уже відсортовано
+
+  // відмальовуємо картки
   for (const film of items) {
     const card = document.createElement("div");
     card.className = "film-card";
@@ -142,21 +168,39 @@ async function loadFilms(sortMode = currentSort) {
   }
 }
 
-// кнопки фільтрів
+// === кнопки фільтрів ===
 const btnLatest = document.getElementById('btn-latest');
 const btnBest   = document.getElementById('btn-best');
 const btnYear   = document.getElementById('btn-year');
+const yearSelect = document.getElementById('yearSelect');
 
 function setActive(btn){
   [btnLatest, btnBest, btnYear].forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
 
-btnLatest.addEventListener('click', () => { setActive(btnLatest); loadFilms('latest'); });
-btnBest  .addEventListener('click', () => { setActive(btnBest);   loadFilms('best');   });
-btnYear  .addEventListener('click', () => { setActive(btnYear);   loadFilms('year');   });
+// заповнення списку років з таблиці
+async function fillYearOptions() {
+  const { data, error } = await supabase.from("films_site").select("year").order("year", { ascending: false });
+  if (!error && data) {
+    const years = [...new Set(data.map(f => String(f.year).trim()).filter(y => y && y !== "undefined"))];
+    yearSelect.innerHTML = '<option value="">Усі роки</option>' + 
+      years.map(y => `<option value="${y}">${y}</option>`).join('');
+  }
+}
 
-// перше завантаження
+btnLatest.addEventListener('click', () => { setActive(btnLatest); currentSort='latest'; loadFilms('latest'); });
+btnBest  .addEventListener('click', () => { setActive(btnBest);   currentSort='best';   loadFilms('best');   });
+btnYear  .addEventListener('click', () => { setActive(btnYear);   currentSort='year';   loadFilms('year');   });
+
+// зміна року в select
+yearSelect.addEventListener('change', (e) => {
+  selectedYear = e.target.value;
+  loadFilms(currentSort);
+});
+
+// ініціалізація
+await fillYearOptions();
 loadFilms('latest');
 
 </script>
