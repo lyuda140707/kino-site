@@ -37,8 +37,22 @@
   <!-- Стрілки -->
   <button class="slider-btn left" onclick="scrollSlider(-1)">❮</button>
   <button class="slider-btn right" onclick="scrollSlider(1)">❯</button>
+
+  <div class="slider-row" id="sliderRow"></div>
 </section>
-<!-- ✅ Завантаження Топ 10 з Supabase -->
+
+<!-- JS керування слайдером -->
+<script>
+  function scrollSlider(direction) {
+    const slider = document.getElementById("sliderRow");
+    const scrollAmount = 300; // відстань прокрутки за раз
+    slider.scrollBy({
+      left: scrollAmount * direction,
+      behavior: "smooth",
+    });
+  }
+</script>
+<!-- ✅ Завантаження Топ 10 фільмів з Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
@@ -47,27 +61,31 @@
 
   async function loadTopFilms() {
     const slider = document.getElementById("sliderRow");
+    if (!slider) return;
     slider.innerHTML = "<p style='color:#aaa;'>Завантаження...</p>";
 
     const { data, error } = await supabase
       .from("films_site")
       .select("id, title, poster, top")
-      .ilike("top", "%ТОП%")  // 🔹 шукаємо ті, де в полі top є “ТОП”
+      .ilike("top", "%ТОП%")   // шукаємо ті, де поле top містить слово "ТОП"
       .limit(10);
 
     if (error) {
-      console.error("❌ Помилка завантаження ТОП:", error);
-      slider.innerHTML = "<p style='color:white;'>Помилка завантаження</p>";
+      console.error("❌ Помилка:", error);
+      slider.innerHTML = `<p style="color:white;">Помилка завантаження.</p>`;
       return;
     }
 
     if (!data || data.length === 0) {
-      slider.innerHTML = "<p style='color:white;'>Немає фільмів у ТОПі</p>";
+      slider.innerHTML = `<p style="color:white;">Немає фільмів у ТОПі.</p>`;
       return;
     }
 
+    // Якщо більше 10 — перемішуємо випадково
+    const shuffled = data.sort(() => Math.random() - 0.5).slice(0, 10);
+
     slider.innerHTML = "";
-    data.forEach(film => {
+    shuffled.forEach(film => {
       const card = document.createElement("div");
       card.className = "slide";
       card.innerHTML = `
@@ -82,18 +100,6 @@
   }
 
   document.addEventListener("DOMContentLoaded", loadTopFilms);
-</script>
-
-<!-- JS керування слайдером -->
-<script>
-  function scrollSlider(direction) {
-    const slider = document.getElementById("sliderRow");
-    const scrollAmount = 300; // відстань прокрутки за раз
-    slider.scrollBy({
-      left: scrollAmount * direction,
-      behavior: "smooth",
-    });
-  }
 </script>
 
 
@@ -264,8 +270,6 @@
 
 </body>
 </html>
-
-
 
 
 
