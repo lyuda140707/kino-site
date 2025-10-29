@@ -181,27 +181,57 @@ function setActive(btn){
 
 // заповнення списку років з таблиці
 async function fillYearOptions() {
-  const { data, error } = await supabase.from("films_site").select("year").order("year", { ascending: false });
+  const { data, error } = await supabase
+    .from("films_site")
+    .select("year")
+    .order("year", { ascending: false });
+
   if (!error && data) {
-    const years = [...new Set(data.map(f => String(f.year).trim()).filter(y => y && y !== "undefined"))];
-    yearSelect.innerHTML = '<option value="">Усі роки</option>' + 
+    const years = [...new Set(
+      data
+        .map(f => String(f.year).trim())
+        .filter(y => y && y !== "undefined" && y !== "null")
+    )];
+
+    yearSelect.innerHTML =
+      '<option value="">Усі роки</option>' +
       years.map(y => `<option value="${y}">${y}</option>`).join('');
   }
 }
 
-btnLatest.addEventListener('click', () => { setActive(btnLatest); currentSort='latest'; loadFilms('latest'); });
-btnBest  .addEventListener('click', () => { setActive(btnBest);   currentSort='best';   loadFilms('best');   });
-btnYear  .addEventListener('click', () => { setActive(btnYear);   currentSort='year';   loadFilms('year');   });
+// 🔹 Головна ініціалізація — обгорнута в async
+async function initCategoryPage() {
+  await fillYearOptions();  // заповнюємо роки перед завантаженням
+  loadFilms('latest');      // показуємо фільми одразу
 
-// зміна року в select
-yearSelect.addEventListener('change', (e) => {
-  selectedYear = e.target.value;
-  loadFilms(currentSort);
-});
+  // Кнопки фільтрів
+  btnLatest.addEventListener('click', () => {
+    setActive(btnLatest);
+    currentSort = 'latest';
+    loadFilms('latest');
+  });
 
-// ініціалізація
-await fillYearOptions();
-loadFilms('latest');
+  btnBest.addEventListener('click', () => {
+    setActive(btnBest);
+    currentSort = 'best';
+    loadFilms('best');
+  });
+
+  btnYear.addEventListener('click', () => {
+    setActive(btnYear);
+    currentSort = 'year';
+    loadFilms('year');
+  });
+
+  // Зміна року в select
+  yearSelect.addEventListener('change', (e) => {
+    selectedYear = e.target.value;
+    loadFilms(currentSort);
+  });
+}
+
+// 🚀 Запуск
+initCategoryPage();
 
 </script>
 
