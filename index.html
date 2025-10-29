@@ -311,9 +311,38 @@ async function loadLatestSeries() {
   });
 </script>
 <script>
-/* === 🎬 Рандомні блоки збоку === */
+/* === 🎬 Автоматичні підбірки та бокові блоки === */
 
-// Рандомно 3 серіали
+// 🧩 Рандомні Підбірки (із таблиці films_site, де type = "Збірка")
+async function loadSidebarCollections() {
+  const container = document.querySelector('.sidebar .block + .pick')?.parentElement;
+  if (!container) return;
+
+  const { data, error } = await supabase
+    .from('films_site')
+    .select('id, title, poster, type')
+    .eq('type', 'Збірка');
+
+  if (error || !data?.length) return;
+
+  const random = data.sort(() => 0.5 - Math.random()).slice(0, 5);
+
+  // очищаємо попередні підбірки
+  const picks = container.querySelectorAll('.pick');
+  picks.forEach(p => p.remove());
+
+  random.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'pick';
+    div.innerHTML = `
+      <img src="${item.poster || 'https://via.placeholder.com/300x180?text=No+Image'}">
+      <p>${item.title}</p>`;
+    div.onclick = () => location.href = `/collections.html#${encodeURIComponent(item.title)}`;
+    container.insertBefore(div, container.querySelector('.sub-category'));
+  });
+}
+
+// 🎬 Актуальні серіали
 async function loadSidebarSeries() {
   const container = document.querySelector('.sub-category:nth-of-type(1) .mini-grid');
   if (!container) return;
@@ -336,7 +365,7 @@ async function loadSidebarSeries() {
   });
 }
 
-// Рандомно 3 фільми
+// 🎥 Актуальні фільми
 async function loadSidebarFilms() {
   const container = document.querySelector('.sub-category:nth-of-type(2) .mini-grid');
   if (!container) return;
@@ -359,7 +388,7 @@ async function loadSidebarFilms() {
   });
 }
 
-// Рандомно 3 мультсеріали
+// 🧸 Мультсеріали
 async function loadSidebarMult() {
   const container = document.querySelector('.sub-category:nth-of-type(3) .mini-grid');
   if (!container) return;
@@ -384,6 +413,7 @@ async function loadSidebarMult() {
 
 // 🚀 Запускаємо після завантаження сторінки
 document.addEventListener('DOMContentLoaded', () => {
+  loadSidebarCollections();
   loadSidebarSeries();
   loadSidebarFilms();
   loadSidebarMult();
@@ -393,6 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
