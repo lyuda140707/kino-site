@@ -36,14 +36,77 @@
     <button class="btn btn-ghost" id="logout-btn">Вийти</button>
   </div>
 
-  <!-- блок входу (поки без логіки) -->
-  <div class="card" id="auth-card">
-    <h3>Увійти</h3>
-    <p class="muted">Далі додамо кнопки: Telegram та Email/Телефон.</p>
+ <div class="card" id="auth-card">
+  <h3>Увійти через Email або Телефон</h3>
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:320px;">
+    <input id="email-input" class="input" type="email" placeholder="email@example.com" />
+    <button class="btn btn-primary" id="email-login-btn">Надіслати посилання для входу</button>
+
+    <p class="muted" style="text-align:center;margin:6px 0;">або</p>
+
+    <input id="phone-input" class="input" type="tel" placeholder="+380XXXXXXXXX" />
+    <button class="btn btn-primary" id="phone-otp-btn">Надіслати код</button>
+    <input id="otp-input" class="input" type="text" placeholder="Код із SMS" style="display:none;" />
+    <button class="btn btn-primary" id="verify-otp-btn" style="display:none;">Підтвердити код</button>
   </div>
-</main>
+</div>
+
 
 <footer style="text-align:center;color:#8a8f98;margin:32px 0">© 2025 KinoSite</footer>
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ⚙️ Підключаємо твій проєкт Supabase
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+</script>
+<script>
+// ===== Вхід через Email (magic link) =====
+document.getElementById("email-login-btn").onclick = async () => {
+  const email = document.getElementById("email-input").value.trim();
+  if (!email) return alert("Введіть email");
+  const { error } = await supabase.auth.signInWithOtp({ email });
+  alert(error ? "Помилка: " + error.message : "Перевірте пошту, щоб увійти!");
+};
+
+// ===== Вхід через Телефон (OTP код) =====
+document.getElementById("phone-otp-btn").onclick = async () => {
+  const phone = document.getElementById("phone-input").value.trim();
+  if (!phone) return alert("Введіть телефон у форматі +380...");
+  const { error } = await supabase.auth.signInWithOtp({ phone });
+  if (error) return alert("Помилка: " + error.message);
+  document.getElementById("otp-input").style.display = "block";
+  document.getElementById("verify-otp-btn").style.display = "block";
+};
+
+document.getElementById("verify-otp-btn").onclick = async () => {
+  const phone = document.getElementById("phone-input").value.trim();
+  const token = document.getElementById("otp-input").value.trim();
+  const { data, error } = await supabase.auth.verifyOtp({ phone, token, type: "sms" });
+  if (error) return alert("Помилка: " + error.message);
+  onUserLoggedIn(data.user);
+};
+
+// ===== Перевіряємо, чи користувач уже залогінений =====
+supabase.auth.getUser().then(({ data }) => {
+  if (data?.user) onUserLoggedIn(data.user);
+});
+
+// ===== Вихід =====
+document.getElementById("logout-btn").onclick = async () => {
+  await supabase.auth.signOut();
+  location.reload();
+};
+
+// ===== Коли користувач увійшов =====
+function onUserLoggedIn(user) {
+  document.getElementById("auth-card").style.display = "none";
+  document.getElementById("user-card").style.display = "block";
+  document.getElementById("hello-line").innerText = "Вітаю, " + (user.email || user.phone);
+  document.getElementById("pro-status").innerText = "Free — увійди через Telegram, щоб синхронізувати PRO.";
+}
+</script>
 
 </body>
 </html>
