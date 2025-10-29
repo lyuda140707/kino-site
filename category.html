@@ -8,7 +8,21 @@
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
   <style>
     body { background: #000; color: #fff; font-family: "Poppins", sans-serif; }
-    h1 { text-align: center; color: #00fff2; margin-top: 25px; text-shadow: 0 0 10px #00fff2a0; }
+    h1 {
+      text-align: center;
+      color: #000;
+      margin-top: 25px;
+      font-weight: 800;
+      font-size: 2rem;
+      letter-spacing: 1px;
+      /* неонова обводка */
+      text-shadow:
+        0 0 2px #00fff2,
+        0 0 4px #00fff2,
+        0 0 8px #00fff2,
+        0 0 12px #00fff2;
+      -webkit-text-stroke: 1px #00fff2; /* бірюзова обводка */
+    }
     .film-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
