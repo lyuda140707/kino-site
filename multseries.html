@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Серіал — KinoSite</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    .series-wrap{display:flex;gap:32px;flex-wrap:wrap;margin-top:28px}
+    .series-left{flex:1;min-width:280px;max-width:360px;background:#0b0b0b;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px}
+    .series-left img {
+      width: 95%;
+      max-width: 275px;
+      border-radius: 10px;
+      margin: 0 auto;
+      display: block;
+      box-shadow: 0 0 20px rgba(0,255,255,0.25);
+      border: 1px solid rgba(0,255,255,0.25);
+      transition: transform 0.3s ease;
+    }
+    .series-left img:hover {
+      transform: scale(1.05);
+    }
+
+    .series-title{font-size:36px;color:#00fff2;text-shadow:0 0 12px rgba(0,255,255,.35);font-weight:700;margin:0 0 10px}
+    .series-meta{margin-top:12px;background:#101010;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px}
+    .series-meta div{display:flex;justify-content:space-between;background:#151515;color:#ddd;padding:7px 10px;border-radius:6px;margin-bottom:6px}
+    .series-right{flex:2;min-width:420px}
+    .player-box{position:relative;background:#000;border-radius:12px;border:1px solid rgba(0,255,242,.3);overflow:hidden;box-shadow:0 0 30px rgba(0,255,242,.15)}
+    video{width:100%;display:block;aspect-ratio:16/9;border-radius:12px}
+    .episodes{margin-top:14px;background:#0d0d0d;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:12px}
+    .episodes h3{color:#00fff2;margin:0 0 10px}
+    .season-block{margin-bottom:8px}
+    .ep-list{display:flex;flex-wrap:wrap;gap:8px}
+    .ep-btn{padding:7px 10px;border-radius:8px;border:1px solid rgba(0,255,242,.35);background:#0f0f0f;color:#e9fefe;font-weight:600;cursor:pointer}
+    .ep-btn.active{outline:2px solid #00fff2}
+    .series-desc{margin-top:16px;background:#1a1a1a;border:1px solid rgba(0,255,242,.2);border-radius:12px;padding:16px;color:#ddd;line-height:1.7}
+    /* оверлейна велика кнопка Play */
+    #bigPlayOverlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);cursor:pointer;border-radius:12px;transition:opacity .25s ease}
+    #bigPlayOverlay>div{width:100px;height:100px;border-radius:50%;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;box-shadow:0 0 25px rgba(0,255,255,.5)}
+    #bigPlayOverlay svg{width:58px;height:58px;fill:#00fff2}
+    #bigPlayOverlay:hover svg{transform:scale(1.08);filter:drop-shadow(0 0 8px #00fff2)}
+
+    
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header-placeholder"></div>
+<script>
+  fetch("header.html").then(r=>r.text()).then(h=>{document.getElementById("header-placeholder").innerHTML=h});
+</script>
+
+<div class="container">
+  <h1 class="series-title" id="seriesTitle">Серіал</h1>
+
+  <div class="series-wrap">
+    <div class="series-left">
+      <img id="seriesPoster" src="" alt="Постер серіалу">
+      <div class="series-meta">
+        <div><span>Жанр</span><span id="seriesGenre"></span></div>
+        <div><span>Рік</span><span id="seriesYear"></span></div>
+        <div><span>IMDb</span><span id="seriesImdb"></span></div>
+      </div>
+    </div>
+
+    <div class="series-right">
+      <div class="player-box">
+        <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
+        <div id="bigPlayOverlay"><div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+      </div>
+
+      <div class="episodes">
+        <h3>Серії</h3>
+        <div id="episodesContainer"></div>
+      </div>
+
+      <div class="series-desc">
+        <h3>Про серіал</h3>
+        <p id="seriesDesc">Опис…</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2025 KinoSite • Усі права захищені</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // === Supabase
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const seriesTitle = decodeURIComponent(urlParams.get("title") || "");
+
+  const player = document.getElementById("seriesPlayer");
+  const overlay = document.getElementById("bigPlayOverlay");
+  let hls = null;
+
+  function useSource(url){
+    // прибираємо попередній HLS
+    if (hls){ try{hls.destroy()}catch(e){} hls=null; }
+    try{ player.pause(); }catch(e){}
+    player.removeAttribute("src"); player.load();
+
+    if (!url) return;
+
+    if (url.endsWith(".m3u8")){
+      if (window.Hls && Hls.isSupported()){
+        hls = new Hls({maxBufferLength:30,lowLatencyMode:true,enableWorker:true});
+        hls.loadSource(url);
+        hls.attachMedia(player);
+      }else if (player.canPlayType("application/vnd.apple.mpegurl")){
+        player.src = url; // Safari/iOS
+      }
+    }else{
+      player.src = url; // mp4 тощо
+    }
+  }
+
+  overlay.addEventListener("click", async ()=>{
+    try{ await player.play(); overlay.style.opacity="0"; overlay.style.pointerEvents="none"; }catch(e){}
+  });
+  player.addEventListener("play", ()=>{ overlay.style.opacity="0"; overlay.style.pointerEvents="none"; });
+  player.addEventListener("pause", ()=>{ overlay.style.opacity="1"; overlay.style.pointerEvents="auto"; });
+
+  function groupBySeason(rows){
+    const map = new Map();
+    rows.forEach(r=>{
+      const s = r.season || 1;
+      if(!map.has(s)) map.set(s, []);
+      map.get(s).push(r);
+    });
+    // епізоди по зростанню
+    for (const [s, arr] of map.entries()){
+      arr.sort((a,b)=>(a.episode||0)-(b.episode||0));
+    }
+    return [...map.entries()].sort((a,b)=>a[0]-b[0]);
+  }
+
+  async function loadSeries(){
+    if(!seriesTitle){
+      document.body.innerHTML = "<h2 style='color:#fff;text-align:center'>Серіал не знайдено</h2>";
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("films_site")
+      .select("*")
+      .eq("type", "Мультсеріал")
+      .eq("title", seriesTitle)
+      .order("season", { ascending: true })
+      .order("episode", { ascending: true });
+
+    if (error || !data || !data.length){
+      document.body.innerHTML = "<h2 style='color:#fff;text-align:center'>Серіал не знайдено</h2>";
+      return;
+    }
+
+    // заповнення заголовку/постера/мети/опису з першого рядка
+    const first = data[0];
+    document.getElementById("seriesTitle").textContent = first.title || seriesTitle;
+    document.getElementById("seriesPoster").src = first.poster || "";
+    document.getElementById("seriesGenre").textContent = first.genre || "";
+    document.getElementById("seriesYear").textContent  = first.year  || "";
+    document.getElementById("seriesImdb").textContent  = first.imdb  || "—";
+    document.getElementById("seriesDesc").textContent  = first.description || "Опис відсутній";
+
+    // встановлюємо перше джерело
+    useSource(first.stream_url || "");
+    player.pause();
+
+    // малюємо список серій, згруповано по сезонах
+    const container = document.getElementById("episodesContainer");
+    container.innerHTML = "";
+    const groups = groupBySeason(data);
+
+    groups.forEach(([season, episodes])=>{
+      const block = document.createElement("div");
+      block.className = "season-block";
+      const h = document.createElement("h4");
+      h.style.color="#bbb"; h.style.margin="6px 0";
+      h.textContent = `Сезон ${season}`;
+      const list = document.createElement("div");
+      list.className = "ep-list";
+
+      episodes.forEach(ep=>{
+        const btn = document.createElement("button");
+        btn.className = "ep-btn";
+        btn.textContent = `Серія ${ep.episode || "?"}`;
+        btn.addEventListener("click", ()=>{
+          container.querySelectorAll(".ep-btn.active").forEach(b=>b.classList.remove("active"));
+          btn.classList.add("active");
+          useSource(ep.stream_url || "");
+          // ▶️ Автоплей прибрано — користувач сам натискає Play
+        });
+        // активуємо першу кнопку
+        if (ep === first) btn.classList.add("active");
+        list.appendChild(btn);
+      });
+
+      block.appendChild(h);
+      block.appendChild(list);
+      container.appendChild(block);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", loadSeries);
+</script>
+</body>
+</html>
