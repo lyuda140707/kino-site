@@ -70,23 +70,6 @@ document.getElementById("email-login-btn").onclick = async () => {
   alert(error ? "Помилка: " + error.message : "Перевірте пошту, щоб увійти!");
 };
 
-// ===== Вхід через Телефон (OTP код) =====
-document.getElementById("phone-otp-btn").onclick = async () => {
-  const phone = document.getElementById("phone-input").value.trim();
-  if (!phone) return alert("Введіть телефон у форматі +380...");
-  const { error } = await supabase.auth.signInWithOtp({ phone });
-  if (error) return alert("Помилка: " + error.message);
-  document.getElementById("otp-input").style.display = "block";
-  document.getElementById("verify-otp-btn").style.display = "block";
-};
-
-document.getElementById("verify-otp-btn").onclick = async () => {
-  const phone = document.getElementById("phone-input").value.trim();
-  const token = document.getElementById("otp-input").value.trim();
-  const { data, error } = await supabase.auth.verifyOtp({ phone, token, type: "sms" });
-  if (error) return alert("Помилка: " + error.message);
-  onUserLoggedIn(data.user);
-};
 
 // ===== Перевіряємо, чи користувач уже залогінений =====
 supabase.auth.getUser().then(({ data }) => {
