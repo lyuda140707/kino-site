@@ -286,38 +286,46 @@ async function loadLatestSeries() {
 async function loadDynamicSidebar() {
   const sidebar = document.querySelector(".sidebar");
   if (!sidebar) return;
-// 🧩 Підбірки (🎬 Збірки фільмів)
-try {
-  const { data: collections, error: collErr } = await supabase
-    .from("films_site")
-    .select("id, title, poster, type")
-    .or("type.eq.Збірка,type.eq.Збірка фільмів,type.eq.Колекція");
-  if (collErr) console.warn("❌ Помилка підбірок:", collErr);
 
+// 🧩 ПІДБІРКИ — тягнемо рандомно зі сторінки /collections
+try {
   const container = document.getElementById("dynamicCollections");
 
-  if (collections?.length) {
-    const randomCollections = collections.sort(() => 0.5 - Math.random()).slice(0, 5);
-    container.innerHTML = randomCollections
-      .map(
-        (c) => `
-        <div class="pick" onclick="window.location.href='/collections#${encodeURIComponent(c.title)}'">
-          <img src="${c.poster || 'https://via.placeholder.com/150'}" alt="${c.title}">
-          <p>${c.title}</p>
-        </div>`
-      )
-      .join("");
-  } else {
-    container.innerHTML = `
-      <p style="color:#aaa;font-size:14px;">Немає підбірок у таблиці.</p>
-      <a href="/collections" style="color:#00ffd5;">🎬 Всі збірки фільмів</a>
-    `;
+  // Завантажуємо HTML сторінки /collections
+  const res = await fetch("/collections");
+  const html = await res.text();
+
+  // Створюємо тимчасовий DOM
+  const temp = document.createElement("div");
+  temp.innerHTML = html;
+
+  // 🔍 Знаходимо всі блоки зі збірками (використовуємо клас із твоєї сторінки)
+  const allCards = temp.querySelectorAll(".film"); // якщо на сторінці /collections інший клас, зміни тут
+
+  if (!allCards.length) {
+    container.innerHTML = `<p style="color:#aaa;">Не знайдено збірок на сторінці.</p>`;
+    return;
   }
+
+  // 🎲 Беремо 5 випадкових збірок
+  const random = Array.from(allCards).sort(() => 0.5 - Math.random()).slice(0, 5);
+
+  // 🖼️ Виводимо у ліву колонку
+  container.innerHTML = random
+    .map(card => {
+      const img = card.querySelector("img")?.src || "https://via.placeholder.com/150";
+      const title = card.querySelector("p, h3, .title")?.innerText || "Без назви";
+      return `
+        <div class="pick" onclick="window.location.href='/collections#${encodeURIComponent(title)}'">
+          <img src="${img}" alt="${title}">
+          <p>${title}</p>
+        </div>
+      `;
+    })
+    .join("");
 } catch (e) {
-  console.error("❌ Помилка підбірок:", e);
+  console.error("❌ Помилка завантаження підбірок із /collections:", e);
 }
-
-
 
   // 🎬 Актуальні серіали
   try {
@@ -422,6 +430,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
