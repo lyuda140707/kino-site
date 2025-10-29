@@ -220,9 +220,8 @@ async function loadTopFilms() {
 
   const { data, error } = await supabase
     .from("films_site")
-    .select("id, title, poster, top")
-    .or("top.ilike.%ТОП%, top.ilike.%топ%")
-    .not("poster", "is", null)
+    .select("id, title, poster")
+    .order("id", { ascending: false })
     .limit(10);
 
   if (error) {
@@ -232,14 +231,12 @@ async function loadTopFilms() {
   }
 
   if (!data || data.length === 0) {
-    slider.innerHTML = `<p style="color:white;">Немає фільмів у ТОПі.</p>`;
+    slider.innerHTML = `<p style="color:white;">Немає фільмів для банеру.</p>`;
     return;
   }
 
-  const shuffled = data.sort(() => Math.random() - 0.5).slice(0, 10);
   slider.innerHTML = "";
-
-  shuffled.forEach(film => {
+  data.forEach(film => {
     const card = document.createElement("div");
     card.className = "slide";
     card.innerHTML = `
@@ -253,15 +250,12 @@ async function loadTopFilms() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadLatestFilms();
-  loadTopFilms();
-});
 
 </script>
 
 </body>
 </html>
+
 
 
 
