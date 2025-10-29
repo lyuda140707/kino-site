@@ -54,50 +54,24 @@
 </script>
 
 
-      <!-- === ОСНОВНА СІТКА === -->
+<!-- === ОСНОВНА СІТКА === -->
 <div class="main-grid">
 
-  <!-- Ліва колонка (тепер добірки) -->
+  <!-- Ліва колонка (тепер динамічна) -->
   <aside class="sidebar">
     <div class="block">
       <h2>Підбірки</h2>
     </div>
-    <div class="pick"><img src="https://i.postimg.cc/QM8N4h7z/pick1.jpg"><p>ру*ня отримує по заслугах</p></div>
-    <div class="pick"><img src="https://i.postimg.cc/4Nf0gQyT/pick2.jpg"><p>про ніндзя ⚔️ та самураїв</p></div>
-    <div class="pick"><img src="https://i.postimg.cc/j5gQxqQK/pick3.jpg"><p>бойові мистецтва 🥋</p></div>
-    <div class="pick"><img src="https://i.postimg.cc/Vk0K2QmM/pick4.jpg"><p>Біблійні мотиви ✝️</p></div>
-    <div class="pick"><img src="https://i.postimg.cc/8kKpdt4Z/pick5.jpg"><p>Романтичне та смішне 💕</p></div>
 
-    <!-- === Підкатегорії === -->
+    <!-- 🎬 Тут JS сам підставить рандомні підбірки -->
+    <div id="dynamicCollections"></div>
 
-<div class="sub-category">
-  <h3>🎬 Актуальні серіали</h3>
-  <div class="mini-grid">
-    <div class="mini-card"><img src="https://i.postimg.cc/zv2ZDb0b/serial1.jpg"><p>Перевізники</p></div>
-    <div class="mini-card"><img src="https://i.postimg.cc/dVVRB7D8/serial2.jpg"><p>Енігма</p></div>
-    <div class="mini-card"><img src="https://i.postimg.cc/fRsgwHKx/serial3.jpg"><p>Маревокрай</p></div>
-  </div>
-</div>
-
-<div class="sub-category">
-  <h3>🍥 Актуальні аніме</h3>
-  <div class="mini-grid">
-    <div class="mini-card"><img src="https://i.postimg.cc/tCxyY6Y4/gachiakuta.jpg"><p>Гачіакута</p></div>
-    <div class="mini-card"><img src="https://i.postimg.cc/9MFMG6rq/solo.jpg"><p>Solo Leveling</p></div>
-    <div class="mini-card"><img src="https://i.postimg.cc/RV8r2csW/dragon.jpg"><p>Дракон Раджа</p></div>
-  </div>
-</div>
-
-<div class="sub-category">
-  <h3>🧸 Мультсеріали</h3>
-  <div class="mini-grid">
-    <div class="mini-card"><img src="https://i.postimg.cc/Vk52Mprx/mult1.jpg"><p>Качині історії</p></div>
-    <div class="mini-card"><img src="https://i.postimg.cc/JzzSTqzF/mult2.jpg"><p>Панда і друзі</p></div>
-    <div class="mini-card"><img src="https://i.postimg.cc/d1b6KZ3J/mult3.jpg"><p>Сімпсони</p></div>
-  </div>
-</div>
-
+    <!-- 🎞 Актуальні категорії -->
+    <div id="dynamicSeries"></div>
+    <div id="dynamicFilms"></div>
+    <div id="dynamicCartoons"></div>
   </aside>
+
 
   <!-- Права колонка (тепер фільми) -->
   <div class="content">
@@ -310,116 +284,115 @@ async function loadLatestSeries() {
     loadTopFilms();
   });
 </script>
-<script>
-// === 🎬 Динамічні підбірки і блоки збоку ===
+/* === 🎬 ДИНАМІЧНІ БЛОКИ === */
+async function loadDynamicSidebar() {
+  const sidebar = document.querySelector(".sidebar");
+  if (!sidebar) return;
 
-// 🧩 ПІДБІРКИ (type = "Збірка")
-async function loadSidebarCollections() {
-  const picks = document.querySelectorAll(".sidebar .pick");
-  if (!picks.length) return;
-
-  const { data, error } = await supabase
+  // 🧩 Підбірки
+  const { data: collections } = await supabase
     .from("films_site")
-    .select("title, poster, type")
+    .select("id, title, poster, type")
     .eq("type", "Збірка");
 
-  if (error || !data?.length) {
-    console.warn("❌ Не вдалося завантажити збірки:", error);
-    return;
+  if (collections?.length) {
+    const random = collections.sort(() => 0.5 - Math.random()).slice(0, 5);
+    const container = document.getElementById("dynamicCollections");
+    container.innerHTML = random
+      .map(
+        (c) => `
+        <div class="pick" onclick="window.location.href='collection.html?id=${c.id}'">
+          <img src="${c.poster || 'https://via.placeholder.com/150'}">
+          <p>${c.title}</p>
+        </div>`
+      )
+      .join("");
   }
 
-  const random = data.sort(() => 0.5 - Math.random()).slice(0, picks.length);
-  random.forEach((item, i) => {
-    const img = picks[i].querySelector("img");
-    const p = picks[i].querySelector("p");
-    img.src = item.poster || "https://via.placeholder.com/300x180?text=No+Image";
-    p.textContent = item.title;
-    picks[i].onclick = () =>
-      (location.href = `/collections.html#${encodeURIComponent(item.title)}`);
-  });
-}
-
-// 🎬 АКТУАЛЬНІ СЕРІАЛИ
-async function loadSidebarSeries() {
-  const cont = document.querySelector(".sub-category:nth-of-type(1) .mini-grid");
-  if (!cont) return;
-
-  const { data } = await supabase
+  // 🎬 Актуальні серіали
+  const { data: series } = await supabase
     .from("films_site")
-    .select("title, poster, type")
+    .select("id, title, poster, type")
     .eq("type", "Серіал");
 
-  if (!data?.length) return;
-  const random = data.sort(() => 0.5 - Math.random()).slice(0, 3);
-  cont.innerHTML = "";
-  random.forEach((s) => {
-    const card = document.createElement("div");
-    card.className = "mini-card";
-    card.innerHTML = `<img src="${s.poster || "https://via.placeholder.com/150x220"}"><p>${s.title}</p>`;
-    card.onclick = () =>
-      (location.href = `/series.html?title=${encodeURIComponent(s.title)}`);
-    cont.appendChild(card);
-  });
-}
+  if (series?.length) {
+    const random = series.sort(() => 0.5 - Math.random()).slice(0, 3);
+    document.getElementById("dynamicSeries").innerHTML = `
+      <div class="sub-category">
+        <h3>🎬 Актуальні серіали</h3>
+        <div class="mini-grid">
+          ${random
+            .map(
+              (s) => `
+              <div class="mini-card" onclick="window.location.href='film.html?id=${s.id}'">
+                <img src="${s.poster || 'https://via.placeholder.com/150'}">
+                <p>${s.title}</p>
+              </div>`
+            )
+            .join("")}
+        </div>
+      </div>`;
+  }
 
-// 🎥 АКТУАЛЬНІ ФІЛЬМИ
-async function loadSidebarFilms() {
-  const cont = document.querySelector(".sub-category:nth-of-type(2) .mini-grid");
-  if (!cont) return;
-
-  const { data } = await supabase
+  // 🎞 Актуальні фільми
+  const { data: films } = await supabase
     .from("films_site")
     .select("id, title, poster, type")
     .eq("type", "Фільм");
 
-  if (!data?.length) return;
-  const random = data.sort(() => 0.5 - Math.random()).slice(0, 3);
-  cont.innerHTML = "";
-  random.forEach((f) => {
-    const card = document.createElement("div");
-    card.className = "mini-card";
-    card.innerHTML = `<img src="${f.poster || "https://via.placeholder.com/150x220"}"><p>${f.title}</p>`;
-    card.onclick = () => (location.href = `/film.html?id=${f.id}`);
-    cont.appendChild(card);
-  });
-}
+  if (films?.length) {
+    const random = films.sort(() => 0.5 - Math.random()).slice(0, 3);
+    document.getElementById("dynamicFilms").innerHTML = `
+      <div class="sub-category">
+        <h3>🎞 Актуальні фільми</h3>
+        <div class="mini-grid">
+          ${random
+            .map(
+              (f) => `
+              <div class="mini-card" onclick="window.location.href='film.html?id=${f.id}'">
+                <img src="${f.poster || 'https://via.placeholder.com/150'}">
+                <p>${f.title}</p>
+              </div>`
+            )
+            .join("")}
+        </div>
+      </div>`;
+  }
 
-// 🧸 МУЛЬТСЕРІАЛИ
-async function loadSidebarMult() {
-  const cont = document.querySelector(".sub-category:nth-of-type(3) .mini-grid");
-  if (!cont) return;
-
-  const { data } = await supabase
+  // 🧸 Мультсеріали
+  const { data: cartoons } = await supabase
     .from("films_site")
-    .select("title, poster, type")
+    .select("id, title, poster, type")
     .eq("type", "Мультсеріал");
 
-  if (!data?.length) return;
-  const random = data.sort(() => 0.5 - Math.random()).slice(0, 3);
-  cont.innerHTML = "";
-  random.forEach((m) => {
-    const card = document.createElement("div");
-    card.className = "mini-card";
-    card.innerHTML = `<img src="${m.poster || "https://via.placeholder.com/150x220"}"><p>${m.title}</p>`;
-    card.onclick = () =>
-      (location.href = `/multseries.html?title=${encodeURIComponent(m.title)}`);
-    cont.appendChild(card);
-  });
+  if (cartoons?.length) {
+    const random = cartoons.sort(() => 0.5 - Math.random()).slice(0, 3);
+    document.getElementById("dynamicCartoons").innerHTML = `
+      <div class="sub-category">
+        <h3>🧸 Мультсеріали</h3>
+        <div class="mini-grid">
+          ${random
+            .map(
+              (m) => `
+              <div class="mini-card" onclick="window.location.href='film.html?id=${m.id}'">
+                <img src="${m.poster || 'https://via.placeholder.com/150'}">
+                <p>${m.title}</p>
+              </div>`
+            )
+            .join("")}
+        </div>
+      </div>`;
+  }
 }
 
-// 🚀 Запуск після завантаження сторінки
-document.addEventListener("DOMContentLoaded", () => {
-  loadSidebarCollections();
-  loadSidebarSeries();
-  loadSidebarFilms();
-  loadSidebarMult();
-});
-</script>
+// Запуск при завантаженні
+loadDynamicSidebar();
 
 
 
 </body>
 </html>
+
 
 
 
