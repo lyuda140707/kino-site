@@ -102,6 +102,7 @@ function onUserLoggedIn(user) {
   document.getElementById("hello-line").innerText = "Вітаю, " + (user.email || user.phone);
   document.getElementById("pro-status").innerText = "Free — увійди через Telegram, щоб синхронізувати PRO.";
 }
+window.onTelegramAuth = onTelegramAuth;
 // === Вхід через Telegram ===
 async function onTelegramAuth(user) {
   console.log("Telegram user:", user);
