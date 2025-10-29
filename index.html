@@ -286,28 +286,37 @@ async function loadLatestSeries() {
 async function loadDynamicSidebar() {
   const sidebar = document.querySelector(".sidebar");
   if (!sidebar) return;
+// 🧩 Підбірки (🎬 Збірки фільмів)
+try {
+  const { data: collections, error: collErr } = await supabase
+    .from("films_site")
+    .select("id, title, poster, type")
+    .or("type.eq.Збірка,type.eq.Збірка фільмів,type.eq.Колекція");
+  if (collErr) console.warn("❌ Помилка підбірок:", collErr);
 
-  // 🧩 Підбірки
-  try {
-    const { data: collections, error: collErr } = await supabase
-      .from("films_site")
-      .select("id, title, poster, type")
-      .ilike("type", "%збірк%");
-    if (collErr) console.warn("❌ Помилка підбірок:", collErr);
+  const container = document.getElementById("dynamicCollections");
 
-    if (collections?.length) {
-      const randomCollections = collections.sort(() => 0.5 - Math.random()).slice(0, 5);
-      const container = document.getElementById("dynamicCollections");
-      container.innerHTML = randomCollections
-        .map(
-          (c) => `
-          <div class="pick" onclick="window.location.href='collection.html?id=${c.id}'">
-            <img src="${c.poster || 'https://via.placeholder.com/150'}">
-            <p>${c.title}</p>
-          </div>`
-        )
-        .join("");
-    }
+  if (collections?.length) {
+    const randomCollections = collections.sort(() => 0.5 - Math.random()).slice(0, 5);
+    container.innerHTML = randomCollections
+      .map(
+        (c) => `
+        <div class="pick" onclick="window.location.href='/collections#${encodeURIComponent(c.title)}'">
+          <img src="${c.poster || 'https://via.placeholder.com/150'}" alt="${c.title}">
+          <p>${c.title}</p>
+        </div>`
+      )
+      .join("");
+  } else {
+    container.innerHTML = `
+      <p style="color:#aaa;font-size:14px;">Немає підбірок у таблиці.</p>
+      <a href="/collections" style="color:#00ffd5;">🎬 Всі збірки фільмів</a>
+    `;
+  }
+} catch (e) {
+  console.error("❌ Помилка підбірок:", e);
+}
+
   } catch (e) {
     console.error("❌ Помилка колекцій:", e);
   }
@@ -415,6 +424,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
