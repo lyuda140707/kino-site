@@ -65,32 +65,29 @@
 <!-- Авторизація Telegram -->
 <div class="card">
   <h3>Увійти через Telegram</h3>
-  <p class="muted">Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.</p>
+  <p class="muted">
+    Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
+  </p>
 
-  <iframe
-    id="tg-frame"
-    data-onauth="onTelegramAuth(user)"
-    width="320"
-    height="80"
-    frameborder="0"
-    scrolling="no">
-  </iframe>
+  <!-- ✅ ЄДИНИЙ робочий Telegram Login Widget -->
+  <script async src="https://telegram.org/js/telegram-widget.js?22"
+          data-telegram-login="RelaxBox_UA_bot"
+          data-size="large"
+          data-radius="8"
+          data-userpic="true"
+          data-request-access="write"
+          data-onauth="onTelegramAuth(user)">
+  </script>
 
   <script>
-    // 🟢 Динамічно підставляємо актуальний origin (щоб не було "Origin required")
-    const siteOrigin = window.location.origin;
-    document.getElementById("tg-frame").src =
-      `https://oauth.telegram.org/embed/RelaxBox_UA_bot?origin=${siteOrigin}&request_access=write`;
-
-    // 🔹 Telegram callback
+    // 🔹 Простий callback — Telegram повертає дані сюди
     function onTelegramAuth(user) {
-      console.log("✅ Telegram повернув користувача через onauth:", user);
-      const data = user.auth_data || user;
-      if (data?.id) handleTelegramUser(data);
-      else console.warn("⚠️ Не вдалося знайти ID користувача у відповіді Telegram:", user);
+      console.log("✅ Telegram авторизував користувача:", user);
+      handleTelegramUser(user);
     }
   </script>
 </div>
+
 
 </main>
 
