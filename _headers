@@ -1,0 +1,2 @@
+/*
+  Content-Security-Policy: default-src * 'self' data: blob: https: http:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org https://oauth.telegram.org https://cdn.jsdelivr.net https://cdn.jsdelivr.net/npm/@supabase/; frame-src https://oauth.telegram.org https://kino-site.pages.dev; connect-src *; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com;
