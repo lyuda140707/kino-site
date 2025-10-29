@@ -67,22 +67,27 @@
     <h3>Увійти через Telegram</h3>
     <p class="muted">Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.</p>
 
+<!-- 🔹 Telegram iframe (origin підставляється динамічно) -->
 <iframe
-  src="https://oauth.telegram.org/embed/RelaxBox_UA_bot?origin=https://kino-site.pages.dev&request_access=write"
+  id="tg-frame"
   data-onauth="onTelegramAuth(user)"
   width="320"
   height="80"
   frameborder="0"
   scrolling="no">
 </iframe>
+
 <script>
-  // 🔹 Telegram викликає цю функцію автоматично після входу
+  // ✅ Динамічно підставляємо правильний origin
+  const tgFrame = document.getElementById("tg-frame");
+  const siteOrigin = window.location.origin; // автоматично буде https://kino-site.pages.dev
+  tgFrame.src = `https://oauth.telegram.org/embed/RelaxBox_UA_bot?origin=${siteOrigin}&request_access=write`;
+</script>
+
+<script>
   function onTelegramAuth(user) {
     console.log("✅ Telegram повернув користувача через onauth:", user);
-
-    // якщо Telegram передає auth_data, дістаємо звідти id
     const data = user.auth_data || user;
-
     if (data?.id) {
       handleTelegramUser(data);
     } else {
@@ -90,6 +95,7 @@
     }
   }
 </script>
+
 
 
   </div>
