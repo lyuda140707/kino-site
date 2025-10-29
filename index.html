@@ -67,7 +67,7 @@
     const { data, error } = await supabase
       .from("films_site")
       .select("id, title, poster, top")
-      .ilike("top", "%ТОП%")   // шукаємо ті, де поле top містить слово "ТОП"
+      .or("top.ilike.%ТОП%, top.ilike.%топ%")   // шукаємо ті, де поле top містить слово "ТОП"
       .limit(10);
 
     if (error) {
@@ -270,6 +270,7 @@
 
 </body>
 </html>
+
 
 
 
