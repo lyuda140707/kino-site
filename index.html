@@ -210,63 +210,56 @@
     });
   }
 
-  // 🚀 Запускаємо після завантаження сторінки
 </script>
 <script>
-async function loadLatestFilms() {
-  const container = document.getElementById("films-list");
-  if (!container) return;
-  container.innerHTML = "<p style='color:#aaa;'>Завантаження...</p>";
+async function loadTopFilms() {
+  const slider = document.getElementById("sliderRow");
+  if (!slider) return;
+  slider.innerHTML = "<p style='color:#aaa;'>Завантаження...</p>";
 
   const { data, error } = await supabase
     .from("films_site")
-    .select("*")                         // ← беремо все, щоб не падало на неіснуючих полях
-    .order("id", { ascending: false })   // або .order("inserted_at", { ascending:false }) якщо треба
-    .limit(20);
+    .select("*")
+    .ilike("top", "%топ%")
+    .not("poster", "is", null)
+    .order("id", { ascending: false })
+    .limit(10);
 
   if (error) {
-    console.error("❌ Latest error:", error);
-    container.innerHTML = `<p style="color:white;">Помилка завантаження.</p>`;
-    return;
-  }
-  if (!data || data.length === 0) {
-    container.innerHTML = `<p style="color:white;">Поки що немає надходжень.</p>`;
+    console.error("❌ ТОП error:", error);
+    slider.innerHTML = `<p style="color:white;">Помилка завантаження ТОП.</p>`;
     return;
   }
 
-  container.innerHTML = "";
+  if (!data || data.length === 0) {
+    slider.innerHTML = `<p style="color:white;">Немає фільмів у ТОПі.</p>`;
+    return;
+  }
+
+  slider.innerHTML = "";
   data.forEach(film => {
     const card = document.createElement("div");
-    card.className = "film";
+    card.className = "slide";
     card.innerHTML = `
-      <div class="poster">
-        <img src="${film.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${film.title || ''}">
-        ${String(film.pro_access || '').toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
-      </div>
-      <div class="title">${film.title || ''}</div>
-      <div class="meta">
-        <span>${film.genre || ''}</span> • 
-        <span>${film.year || ''}</span> • 
-        <span>IMDb: ${film.imdb || '—'}</span>
-      </div>
+      <img src="${film.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${film.title || ''}">
+      <p>${film.title || ''}</p>
     `;
     card.addEventListener("click", () => {
-      window.location.href = `film.html?id=${film.id}`;
+      window.location.href = \`film.html?id=\${film.id}\`;
     });
-    container.appendChild(card);
+    slider.appendChild(card);
   });
 }
-</script>
-<script>
-  // 🚀 Автоматичне завантаження при відкритті сторінки
-  document.addEventListener("DOMContentLoaded", () => {
-    loadLatestFilms();
-    loadTopFilms();
-  });
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadLatestFilms();
+  loadTopFilms();
+});
 </script>
 
 </body>
 </html>
+
 
 
 
