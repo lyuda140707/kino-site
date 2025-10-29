@@ -1080,27 +1080,21 @@ header {
   position: relative;
 }
 
-
-/* === ФІКСОВАНЕ ВИПАДАЮЧЕ МЕНЮ ПО ЦЕНТРУ САЙТУ === */
+/* === ФІКС — УСІ МЕНЮ СТАЮТЬ ПО ЦЕНТРУ, НЕ ПІД КНОПКОЮ === */
 header {
   position: relative;
   z-index: 3000;
 }
 
-/* Контейнер навігації */
-header .container.topbar {
-  position: relative;
-}
-
-/* Всі мега-меню вирівнюємо однаково */
-.mega-menu,
-.mega-series,
-.mega-cartoons {
+/* Вирівнюємо відносно всього header */
+header .mega-menu,
+header .mega-series,
+header .mega-cartoons {
   position: absolute;
-  top: 100%; /* строго під верхнім меню */
-  left: 50%; /* центр сторінки */
-  transform: translateX(-50%); /* щоб точно по центру */
-  width: 1150px; /* така сама ширина, як у банера */
+  top: 100%;          /* під верхньою панеллю */
+  left: 50%;          /* центр сайту */
+  transform: translateX(-50%); /* центрування */
+  width: 1150px;      /* така сама ширина, як банер */
   margin-top: 0;
   padding: 50px 80px 60px;
   border-radius: 0 0 16px 16px;
@@ -1112,47 +1106,44 @@ header .container.topbar {
   box-sizing: border-box;
 }
 
-/* 🔹 Фони */
-.mega-menu {
+/* Фони */
+header .mega-menu {
   background: #000;
   border-top: 2px solid #00fff2;
   box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
 }
-.mega-series {
+header .mega-series {
   background: #100016;
   border-top: 2px solid #ff00c8;
   box-shadow: 0 8px 25px rgba(255, 0, 200, 0.25);
 }
-.mega-cartoons {
+header .mega-cartoons {
   background: #160800;
   border-top: 2px solid #ffcc00;
   box-shadow: 0 8px 25px rgba(255, 204, 0, 0.25);
 }
 
-/* 🔹 Показуємо тільки потрібне меню */
+/* Показ тільки при наведенні */
 .dropdown:hover .mega-menu,
 .dropdown:hover .mega-series,
 .dropdown:hover .mega-cartoons,
-.mega-menu:hover,
-.mega-series:hover,
-.mega-cartoons:hover {
+header .mega-menu:hover,
+header .mega-series:hover,
+header .mega-cartoons:hover {
   opacity: 1;
   visibility: visible;
   pointer-events: all;
   transform: translateX(-50%) translateY(0);
 }
 
-/* 🔹 Плавна поява знизу */
-.mega-menu,
-.mega-series,
-.mega-cartoons {
+/* Початкова позиція для плавного відкриття */
+header .mega-menu,
+header .mega-series,
+header .mega-cartoons {
   transform: translateX(-50%) translateY(-10px);
 }
 
-/* 🔹 “Зона безпеки”, щоб не ховалось */
-.dropdown {
-  position: relative;
-}
+/* Зона безпеки */
 .dropdown::after {
   content: "";
   position: absolute;
@@ -1162,5 +1153,6 @@ header .container.topbar {
   height: 12px;
   background: transparent;
 }
+
 
 
