@@ -51,33 +51,30 @@
     Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
   </p>
 
-<script>
-  // Telegram вимагає глобальну функцію для onauth
-  function onTelegramAuth(user) {
-    if (!user) return;
-    // створюємо посилання з параметрами
-    const params = new URLSearchParams(user).toString();
-    // редіректимо назад у /profile
-    window.location.href = "https://kino-site.pages.dev/profile?" + params;
-  }
-</script>
+  <!-- 🔹 1. Функція має бути ВИЩЕ за віджет -->
+  <script>
+    function onTelegramAuth(user) {
+      if (!user) return;
+      console.log("📩 Telegram повернув користувача:", user);
+      // створюємо URL з параметрами
+      const params = new URLSearchParams(user).toString();
+      // редіректимо назад у /profile (твій реальний шлях)
+      window.location.href = "https://kino-site.pages.dev/profile?" + params;
+    }
+  </script>
 
-</script>
-
-<!-- 2) Сам віджет Telegram (ВАЖЛИВО: auth-url = твій сайт) -->
-<script async src="https://telegram.org/js/telegram-widget.js?22"
-  data-telegram-login="RelaxBox_UA_bot"
-  data-size="large"
-  data-userpic="false"
-  data-request-access="write"
-  data-radius="8"
-  data-auth-url="https://kino-site.pages.dev/profile"
-  data-onauth="onTelegramAuth">
-</script>
-
-
-
+  <!-- 🔹 2. Сам Telegram Login Widget -->
+  <script async src="https://telegram.org/js/telegram-widget.js?22"
+          data-telegram-login="RelaxBox_UA_bot"
+          data-size="large"
+          data-userpic="false"
+          data-request-access="write"
+          data-radius="8"
+          data-auth-url="https://kino-site.pages.dev/profile"
+          data-onauth="onTelegramAuth">
+  </script>
 </div>
+
 
 
 
