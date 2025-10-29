@@ -311,108 +311,104 @@ async function loadLatestSeries() {
   });
 </script>
 <script>
-/* === 🎬 Автоматичні підбірки та бокові блоки === */
+// === 🎬 Динамічні підбірки і блоки збоку ===
 
-// 🧩 Рандомні Підбірки (із таблиці films_site, де type = "Збірка")
+// 🧩 ПІДБІРКИ (type = "Збірка")
 async function loadSidebarCollections() {
-  const container = document.querySelector('.sidebar .block + .pick')?.parentElement;
-  if (!container) return;
+  const picks = document.querySelectorAll(".sidebar .pick");
+  if (!picks.length) return;
 
   const { data, error } = await supabase
-    .from('films_site')
-    .select('id, title, poster, type')
-    .eq('type', 'Збірка');
+    .from("films_site")
+    .select("title, poster, type")
+    .eq("type", "Збірка");
 
-  if (error || !data?.length) return;
+  if (error || !data?.length) {
+    console.warn("❌ Не вдалося завантажити збірки:", error);
+    return;
+  }
 
-  const random = data.sort(() => 0.5 - Math.random()).slice(0, 5);
-
-  // очищаємо попередні підбірки
-  const picks = container.querySelectorAll('.pick');
-  picks.forEach(p => p.remove());
-
-  random.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'pick';
-    div.innerHTML = `
-      <img src="${item.poster || 'https://via.placeholder.com/300x180?text=No+Image'}">
-      <p>${item.title}</p>`;
-    div.onclick = () => location.href = `/collections.html#${encodeURIComponent(item.title)}`;
-    container.insertBefore(div, container.querySelector('.sub-category'));
+  const random = data.sort(() => 0.5 - Math.random()).slice(0, picks.length);
+  random.forEach((item, i) => {
+    const img = picks[i].querySelector("img");
+    const p = picks[i].querySelector("p");
+    img.src = item.poster || "https://via.placeholder.com/300x180?text=No+Image";
+    p.textContent = item.title;
+    picks[i].onclick = () =>
+      (location.href = `/collections.html#${encodeURIComponent(item.title)}`);
   });
 }
 
-// 🎬 Актуальні серіали
+// 🎬 АКТУАЛЬНІ СЕРІАЛИ
 async function loadSidebarSeries() {
-  const container = document.querySelector('.sub-category:nth-of-type(1) .mini-grid');
-  if (!container) return;
-  const { data, error } = await supabase
-    .from('films_site')
-    .select('title, poster, type')
-    .eq('type', 'Серіал');
+  const cont = document.querySelector(".sub-category:nth-of-type(1) .mini-grid");
+  if (!cont) return;
 
-  if (error || !data?.length) return;
+  const { data } = await supabase
+    .from("films_site")
+    .select("title, poster, type")
+    .eq("type", "Серіал");
+
+  if (!data?.length) return;
   const random = data.sort(() => 0.5 - Math.random()).slice(0, 3);
-  container.innerHTML = '';
-  random.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'mini-card';
-    div.innerHTML = `
-      <img src="${item.poster || 'https://via.placeholder.com/150x220?text=No+Image'}">
-      <p>${item.title}</p>`;
-    div.onclick = () => location.href = `/series.html?title=${encodeURIComponent(item.title)}`;
-    container.appendChild(div);
+  cont.innerHTML = "";
+  random.forEach((s) => {
+    const card = document.createElement("div");
+    card.className = "mini-card";
+    card.innerHTML = `<img src="${s.poster || "https://via.placeholder.com/150x220"}"><p>${s.title}</p>`;
+    card.onclick = () =>
+      (location.href = `/series.html?title=${encodeURIComponent(s.title)}`);
+    cont.appendChild(card);
   });
 }
 
-// 🎥 Актуальні фільми
+// 🎥 АКТУАЛЬНІ ФІЛЬМИ
 async function loadSidebarFilms() {
-  const container = document.querySelector('.sub-category:nth-of-type(2) .mini-grid');
-  if (!container) return;
-  const { data, error } = await supabase
-    .from('films_site')
-    .select('id, title, poster, type')
-    .eq('type', 'Фільм');
+  const cont = document.querySelector(".sub-category:nth-of-type(2) .mini-grid");
+  if (!cont) return;
 
-  if (error || !data?.length) return;
+  const { data } = await supabase
+    .from("films_site")
+    .select("id, title, poster, type")
+    .eq("type", "Фільм");
+
+  if (!data?.length) return;
   const random = data.sort(() => 0.5 - Math.random()).slice(0, 3);
-  container.innerHTML = '';
-  random.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'mini-card';
-    div.innerHTML = `
-      <img src="${item.poster || 'https://via.placeholder.com/150x220?text=No+Image'}">
-      <p>${item.title}</p>`;
-    div.onclick = () => location.href = `/film.html?id=${item.id}`;
-    container.appendChild(div);
+  cont.innerHTML = "";
+  random.forEach((f) => {
+    const card = document.createElement("div");
+    card.className = "mini-card";
+    card.innerHTML = `<img src="${f.poster || "https://via.placeholder.com/150x220"}"><p>${f.title}</p>`;
+    card.onclick = () => (location.href = `/film.html?id=${f.id}`);
+    cont.appendChild(card);
   });
 }
 
-// 🧸 Мультсеріали
+// 🧸 МУЛЬТСЕРІАЛИ
 async function loadSidebarMult() {
-  const container = document.querySelector('.sub-category:nth-of-type(3) .mini-grid');
-  if (!container) return;
-  const { data, error } = await supabase
-    .from('films_site')
-    .select('title, poster, type')
-    .eq('type', 'Мультсеріал');
+  const cont = document.querySelector(".sub-category:nth-of-type(3) .mini-grid");
+  if (!cont) return;
 
-  if (error || !data?.length) return;
+  const { data } = await supabase
+    .from("films_site")
+    .select("title, poster, type")
+    .eq("type", "Мультсеріал");
+
+  if (!data?.length) return;
   const random = data.sort(() => 0.5 - Math.random()).slice(0, 3);
-  container.innerHTML = '';
-  random.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'mini-card';
-    div.innerHTML = `
-      <img src="${item.poster || 'https://via.placeholder.com/150x220?text=No+Image'}">
-      <p>${item.title}</p>`;
-    div.onclick = () => location.href = `/multseries.html?title=${encodeURIComponent(item.title)}`;
-    container.appendChild(div);
+  cont.innerHTML = "";
+  random.forEach((m) => {
+    const card = document.createElement("div");
+    card.className = "mini-card";
+    card.innerHTML = `<img src="${m.poster || "https://via.placeholder.com/150x220"}"><p>${m.title}</p>`;
+    card.onclick = () =>
+      (location.href = `/multseries.html?title=${encodeURIComponent(m.title)}`);
+    cont.appendChild(card);
   });
 }
 
-// 🚀 Запускаємо після завантаження сторінки
-document.addEventListener('DOMContentLoaded', () => {
+// 🚀 Запуск після завантаження сторінки
+document.addEventListener("DOMContentLoaded", () => {
   loadSidebarCollections();
   loadSidebarSeries();
   loadSidebarFilms();
@@ -421,8 +417,10 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 
+
 </body>
 </html>
+
 
 
 
