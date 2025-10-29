@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Збірка — KinoSite</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="header-placeholder"></div>
+<script>
+  fetch("header.html")
+    .then(r => r.text())
+    .then(t => document.getElementById("header-placeholder").innerHTML = t);
+</script>
+
+<main class="container">
+  <h1 id="collectionTitle">🎬 Збірка</h1>
+  <div id="filmsList" class="film-grid"></div>
+</main>
+
+<footer>© 2025 KinoSite</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+  async function loadCollection() {
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get("name");
+    const title = document.getElementById("collectionTitle");
+    const container = document.getElementById("filmsList");
+
+    title.textContent = name;
+
+    const { data, error } = await supabase
+      .from("films_site")
+      .select("*")
+      .ilike("collection", `%${name}%`);
+
+    if (error) {
+      container.innerHTML = "<p style='color:white;'>Помилка завантаження.</p>";
+      return;
+    }
+
+    if (!data.length) {
+      container.innerHTML = "<p style='color:white;'>Поки що немає фільмів у цій збірці.</p>";
+      return;
+    }
+
+    container.innerHTML = "";
+    data.forEach(film => {
+      const card = document.createElement("div");
+      card.className = "film";
+      card.innerHTML = `
+        <div class="poster">
+          <img src="${film.poster}" alt="${film.title}">
+          ${String(film.pro_access || '').toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
+        </div>
+        <div class="title">${film.title}</div>
+        <div class="meta">${film.genre} • ${film.year}</div>
+      `;
+      card.onclick = () => window.location.href = "film.html?id=" + film.id;
+      container.appendChild(card);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", loadCollection);
+</script>
+
+</body>
+</html>
