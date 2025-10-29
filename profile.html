@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Мій кабінет — KinoSite</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    .profile-wrap{max-width:860px;margin:24px auto;padding:16px}
+    .card{background:#0e0f13;border:1px solid #222;border-radius:16px;padding:20px;margin-bottom:16px}
+    .muted{color:#9aa0a6;font-size:13px}
+    .btn{padding:10px 14px;border-radius:10px;border:none;cursor:pointer}
+    .btn-primary{background:#00ffd5;color:#000;font-weight:600}
+    .btn-ghost{background:transparent;border:1px solid #444;color:#ddd}
+    .input{width:100%;padding:10px 12px;border:1px solid #333;border-radius:10px;background:#111;color:#eee}
+  </style>
+</head>
+<body>
+
+<!-- підвантажуємо твій спільний хедер -->
+<div id="header-placeholder"></div>
+<script>
+  fetch("header.html").then(r=>r.text()).then(html=>{
+    document.getElementById("header-placeholder").innerHTML = html;
+  }).catch(console.error);
+</script>
+
+<main class="profile-wrap">
+  <h1>Мій кабінет</h1>
+
+  <!-- картка користувача (поки схована) -->
+  <div class="card" id="user-card" style="display:none;">
+    <h3 id="hello-line">Вітаю!</h3>
+    <p class="muted">Статус: <span id="pro-status">—</span></p>
+    <button class="btn btn-ghost" id="logout-btn">Вийти</button>
+  </div>
+
+  <!-- блок входу (поки без логіки) -->
+  <div class="card" id="auth-card">
+    <h3>Увійти</h3>
+    <p class="muted">Далі додамо кнопки: Telegram та Email/Телефон.</p>
+  </div>
+</main>
+
+<footer style="text-align:center;color:#8a8f98;margin:32px 0">© 2025 KinoSite</footer>
+
+</body>
+</html>
