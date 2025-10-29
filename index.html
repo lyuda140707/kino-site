@@ -154,48 +154,58 @@
     observer.observe(film);
   });
 </script>
+<!-- ✅ Інтро: коректно закритий скрипт -->
 <script>
   // 🕓 Автоматичне приховування інтро після завершення анімації
   window.addEventListener("load", () => {
     const intro = document.getElementById("intro");
-    setTimeout(() => {
-      intro.style.display = "none";
-    }, 2500); // 2.5 секунди
+    if (intro) {
+      setTimeout(() => {
+        intro.style.display = "none";
+      }, 2500); // 2.5 секунди
+    }
   });
+</script>
+
+<!-- ✅ ЄДИНЕ підключення Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // 🔗 Підключення до Supabase
+  // 🔗 Підключення до твоєї бази Supabase
   const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-
-  // ✅ Правильне створення клієнта
   const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-  // 🎬 Завантаження фільмів із таблиці films_site
-  async function loadFilms() {
-    const { data: films, error } = await supabase
+  // 🎬 Завантаження останніх надходжень (нові зверху)
+  async function loadLatestFilms() {
+    const container = document.getElementById("films-list");
+    if (!container) return;
+    container.innerHTML = "<p style='color:#aaa;'>Завантаження...</p>";
+
+    const { data, error } = await supabase
       .from("films_site")
-      .select("id, title, genre, year, country, imdb, pro_access, stream_url, poster, description, type")
+      .select("id, title, genre, year, imdb, pro_access, poster, type")
       .order("id", { ascending: false })
       .limit(20);
 
     if (error) {
-      console.error("❌ Помилка завантаження:", error);
+      console.error("❌ Помилка:", error);
+      container.innerHTML = `<p style="color:white;">Помилка завантаження.</p>`;
       return;
     }
 
-    const grid = document.querySelector(".film-grid");
-    if (!grid) return;
-    grid.innerHTML = "";
+    if (!data || data.length === 0) {
+      container.innerHTML = `<p style="color:white;">Поки що немає надходжень.</p>`;
+      return;
+    }
 
-    films.forEach(film => {
+    container.innerHTML = "";
+    data.forEach(film => {
       const card = document.createElement("div");
       card.className = "film";
-
       card.innerHTML = `
         <div class="poster">
           <img src="${film.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${film.title}">
-          ${film.pro_access?.toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
+          ${film.pro_access?.toString().toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
         </div>
         <div class="title">${film.title}</div>
         <div class="meta">
@@ -204,88 +214,25 @@
           <span>IMDb: ${film.imdb || '—'}</span>
         </div>
       `;
-
-      // 🔹 Натискання відкриває сторінку film.html?id=...
       card.addEventListener("click", () => {
         window.location.href = `film.html?id=${film.id}`;
-      });
-
-      grid.appendChild(card);
-    });
-  }
-
-  loadFilms();
-</script>
-<!-- === Підключення Supabase === -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-  // 🔗 Підключення до твоєї бази Supabase
-  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-  // 🎬 Функція для завантаження фільмів
-  async function loadFilms(genre = null) {
-    let query = supabase.from("films_site").select("*").eq("type", "Фільм");
-    if (genre) query = query.eq("genre", genre);
-
-    const { data, error } = await query;
-    const container = document.getElementById("films-list");
-    container.innerHTML = "";
-
-    if (error) {
-      console.error("❌ Помилка запиту:", error);
-      container.innerHTML = `<p style="color:white;">Помилка завантаження.</p>`;
-      return;
-    }
-
-    // Якщо лише 1 фільм такого жанру → відкриваємо його сторінку
-    if (genre && data.length === 1) {
-      window.location.href = `film.html?id=${data[0].id}`;
-      return;
-    }
-
-    if (data.length === 0) {
-      container.innerHTML = `<p style="color:white;">Фільмів не знайдено.</p>`;
-      return;
-    }
-
-    data.forEach(film => {
-      const card = document.createElement("div");
-      card.classList.add("film");
-      card.innerHTML = `
-        <div class="poster">
-          <img src="${film.poster}" alt="${film.title}">
-          ${film.pro_access?.toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
-        </div>
-        <div class="title">${film.title}</div>
-        <div class="meta">${film.genre} • ${film.year}</div>
-      `;
-      card.addEventListener("click", () => {
-        window.location.href = \`film.html?id=\${film.id}\`;
       });
       container.appendChild(card);
     });
   }
 
-  // 🔹 При завантаженні показуємо всі фільми
-  loadFilms();
-
-  // 🔹 Обробка кліку по жанрам у випадаючому меню
-  document.addEventListener("click", (e) => {
-    const genreLink = e.target.closest(".genre-link");
-    if (!genreLink) return;
-    e.preventDefault();
-    const genre = genreLink.dataset.genre;
-    loadFilms(genre);
-  });
+  // 🚀 Запускаємо після завантаження сторінки
+  document.addEventListener("DOMContentLoaded", loadLatestFilms);
 </script>
+
+</body>
+</html>
 
 
 
 </body>
 </html>
+
 
 
 
