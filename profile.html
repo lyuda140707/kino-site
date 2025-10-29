@@ -59,15 +59,29 @@
     Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
   </p>
 
-  <!-- 🔹 Надійна авторизація через Telegram (працює у всіх браузерах) -->
-  <div style="margin-top:15px;">
-    <a href="https://oauth.telegram.org/auth?bot_id=6670854173&origin=https://kino-site.pages.dev&embed=0&request_access=write"
-       class="btn btn-primary"
-       target="_blank"
-       rel="noopener noreferrer">
-       🔐 Увійти через Telegram
-    </a>
-  </div>
+    <!-- 🔹 Глобальна функція Telegram авторизації -->
+  <script>
+    window.onTelegramAuth = function(user) {
+      if (!user) return;
+      console.log("📩 Telegram повернув користувача:", user);
+      const params = new URLSearchParams(user).toString();
+      // невелика затримка, щоб не закривалося миттєво
+      setTimeout(() => {
+        window.location.href = "https://kino-site.pages.dev/profile?" + params;
+      }, 300);
+    };
+  </script>
+
+  <!-- 🔹 Telegram Login Widget -->
+  <script src="https://telegram.org/js/telegram-widget.js?22"
+          data-telegram-login="RelaxBox_UA_bot"
+          data-size="large"
+          data-userpic="false"
+          data-request-access="write"
+          data-radius="8"
+          data-onauth="onTelegramAuth"
+          defer>
+  </script>
 
 
 
