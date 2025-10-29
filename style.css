@@ -1101,5 +1101,19 @@ header {
   background: transparent;
   z-index: 9998;
 }
+/* === ФІКС: МЕНЮ НЕ ЗНИКАЄ ПРИ НАВЕДЕННІ === */
+
+/* дозволяємо меню бути частиною hover-зони хедера */
+header:hover .mega-menu,
+header:hover .mega-series,
+header:hover .mega-cartoons {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* не змінюємо нічого у розташуванні! */
+
 
 
