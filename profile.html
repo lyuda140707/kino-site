@@ -114,13 +114,21 @@ async function onTelegramAuth(user) {
   document.getElementById("hello-line").innerText =
     `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
 
+  // 🧩 Допоміжна функція форматування
+  function formatExpireDate(dateStr) {
+    if (!dateStr) return "";
+    // якщо приходить "2025-11-19T22:00:00.000Z"
+    return dateStr.split("T")[0].split("-").reverse().join(".");
+  }
+
   // 3️⃣ перевіряємо PRO у Google Таблиці
   try {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbwUj9b-UnLxecIdlOjryNwlaoeiaLJ163NP_9-gAW1ubDvxtO0IBvhlNiZL8il-vFrjtQ/exec?user_id=" + encodeURIComponent(user.id));
+    const res = await fetch("https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" + encodeURIComponent(user.id));
     const json = await res.json();
 
     if (json.isPro) {
-      document.getElementById("pro-status").innerHTML = "✅ PRO активний";
+      const date = formatExpireDate(json.expireDate);
+      document.getElementById("pro-status").innerHTML = `✅ PRO активний до <b>${date}</b>`;
     } else {
       document.getElementById("pro-status").innerText = "❌ Без PRO";
     }
