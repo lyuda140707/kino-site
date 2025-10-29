@@ -50,8 +50,46 @@
     Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
   </p>
 
-  <!-- Telegram Login Widget -->
-  <script async src="https://telegram.org/js/telegram-widget.js?22"
+<!-- 1) Глобальна функція, яку викликає Telegram -->
+<script>
+  window.onTelegramAuth = async function(user) {
+    console.log("✅ Telegram user отриманий:", user);
+
+    // показуємо картку користувача
+    document.getElementById("auth-card").style.display = "none";
+    document.getElementById("user-card").style.display = "block";
+
+    // ім'я
+    document.getElementById("hello-line").innerText =
+      `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
+
+    // формат дати з Apps Script
+    function formatExpireDate(s){
+      if(!s) return "";
+      return s.split("T")[0].split("-").reverse().join(".");
+    }
+
+    // перевірка PRO у Google Script
+    try {
+      const url = "https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" + encodeURIComponent(user.id);
+      const res = await fetch(url);
+      const json = await res.json();
+
+      if (json.isPro) {
+        const date = formatExpireDate(json.expireDate);
+        document.getElementById("pro-status").innerHTML = `✅ PRO активний до <b>${date}</b>`;
+      } else {
+        document.getElementById("pro-status").innerText = "❌ Без PRO";
+      }
+    } catch (e) {
+      console.error(e);
+      document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
+    }
+  };
+</script>
+
+<!-- 2) Сам віджет Telegram (ВАЖЛИВО: auth-url = твій сайт) -->
+<script async src="https://telegram.org/js/telegram-widget.js?22"
         data-telegram-login="RelaxBox_UA_bot"
         data-size="large"
         data-userpic="false"
@@ -60,6 +98,7 @@
         data-auth-url="https://kino-site.pages.dev/profile.html"
         data-onauth="onTelegramAuth">
 </script>
+
 
 
 </div>
@@ -103,42 +142,7 @@ function onUserLoggedIn(user) {
   document.getElementById("hello-line").innerText = "Вітаю, " + (user.email || user.phone);
   document.getElementById("pro-status").innerText = "Free — увійди через Telegram, щоб синхронізувати PRO.";
 }
-window.onTelegramAuth = onTelegramAuth;
-// === Вхід через Telegram ===
-async function onTelegramAuth(user) {
-  console.log("Telegram user:", user);
 
-  // 1️⃣ ховаємо блок входу
-  document.getElementById("auth-card").style.display = "none";
-  document.getElementById("user-card").style.display = "block";
-
-  // 2️⃣ показуємо ім’я користувача
-  document.getElementById("hello-line").innerText =
-    `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
-
-  // 🧩 Допоміжна функція форматування
-  function formatExpireDate(dateStr) {
-    if (!dateStr) return "";
-    // якщо приходить "2025-11-19T22:00:00.000Z"
-    return dateStr.split("T")[0].split("-").reverse().join(".");
-  }
-
-  // 3️⃣ перевіряємо PRO у Google Таблиці
-  try {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" + encodeURIComponent(user.id));
-    const json = await res.json();
-
-    if (json.isPro) {
-      const date = formatExpireDate(json.expireDate);
-      document.getElementById("pro-status").innerHTML = `✅ PRO активний до <b>${date}</b>`;
-    } else {
-      document.getElementById("pro-status").innerText = "❌ Без PRO";
-    }
-  } catch (e) {
-    console.error(e);
-    document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
-  }
-}
 
 </script>
 
