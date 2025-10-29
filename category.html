@@ -9,43 +9,6 @@
   <style>
     body { background: #000; color: #fff; font-family: "Poppins", sans-serif; }
     h1 { text-align: center; color: #00fff2; margin-top: 25px; text-shadow: 0 0 10px #00fff2a0; }
-
-    /* 🔹 Верхня панель */
-    .top-bar {
-      max-width: 1200px;
-      margin: 20px auto 10px auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 20px;
-    }
-
-    .back-btn {
-      background: #0f0f0f;
-      border: 1px solid rgba(0,255,255,0.35);
-      color: #00fff2;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .back-btn:hover {
-      background: #00fff2;
-      color: #000;
-    }
-
-    .sort-select {
-      background: #0f0f0f;
-      color: #fff;
-      border: 1px solid rgba(0,255,255,0.3);
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-    }
-
     .film-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -92,27 +55,17 @@
   </script>
 
   <h1 id="pageTitle">Категорія</h1>
-
-  <!-- 🔹 Верхня панель з кнопкою Назад і сортуванням -->
-  <div class="top-bar">
-    <button class="back-btn" onclick="window.location.href='index.html'">⬅ Назад на головну</button>
-    <select id="sortSelect" class="sort-select">
-      <option value="id_desc">🔹 Сортування: Нові спочатку</option>
-      <option value="year_desc">За роком (новіші)</option>
-      <option value="year_asc">За роком (старіші)</option>
-      <option value="imdb_desc">За рейтингом IMDb</option>
-      <option value="title_asc">За назвою (A–Я)</option>
-    </select>
-  </div>
-
   <div class="film-grid" id="filmGrid"></div>
 
   <footer>© 2025 Relax Kino</footer>
 
 <script>
+  // ✅ якщо сторінка відкрилась як /category (без .html) — перенаправляємо
+
   const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
   const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  console.log("✅ Supabase підключено");
 
   const params = new URLSearchParams(window.location.search);
   const type = (params.get("type") || "Фільм").trim();
@@ -120,22 +73,18 @@
 
   document.getElementById("pageTitle").textContent = `${type} • ${genre || "Усі"}`;
 
-  async function loadFilms(sortMode = "id_desc") {
+  async function loadFilms() {
+    console.log("📥 Починаємо завантаження фільмів...");
+    console.log("🔍 Пошук у таблиці:", { type, genre });
+
     let query = supabase.from("films_site").select("*");
 
     if (type) query = query.ilike("type", `%${type}%`);
     if (genre) query = query.ilike("genre", `%${genre}%`);
 
-    // 🔹 порядок сортування
-    switch (sortMode) {
-      case "year_desc": query = query.order("year", { ascending: false }); break;
-      case "year_asc": query = query.order("year", { ascending: true }); break;
-      case "imdb_desc": query = query.order("imdb", { ascending: false }); break;
-      case "title_asc": query = query.order("title", { ascending: true }); break;
-      default: query = query.order("id", { ascending: false }); break;
-    }
+    const { data, error } = await query.order("id", { ascending: false });
+    console.log("📊 Результат:", data, error);
 
-    const { data, error } = await query;
     const grid = document.getElementById("filmGrid");
     grid.innerHTML = "";
 
@@ -157,19 +106,15 @@
         <h3>${film.title}</h3>
       `;
       card.addEventListener("click", () => {
-        window.location.href = \`/film.html?id=\${film.id}\`;
+        window.location.href = `/film.html?id=${film.id}`;
       });
+
       grid.appendChild(card);
     });
   }
 
-  // Завантаження при старті
   loadFilms();
-
-  // Зміна сортування
-  document.getElementById("sortSelect").addEventListener("change", (e) => {
-    loadFilms(e.target.value);
-  });
 </script>
+
 </body>
 </html>
