@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Мої закладки — KinoSite</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .bookmark-grid {
+      display: flex; flex-wrap: wrap; gap: 20px; padding: 20px;
+    }
+    .bookmark-card {
+      background: #0d0d0d; border: 1px solid rgba(0,255,255,0.2);
+      border-radius: 10px; width: 180px; cursor: pointer;
+      transition: transform .2s ease;
+    }
+    .bookmark-card:hover { transform: scale(1.05); }
+    .bookmark-card img { width: 100%; border-radius: 8px; }
+    .bookmark-card p { color: #fff; text-align: center; margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <script>
+    fetch("header.html").then(r=>r.text()).then(h=>document.getElementById("header-placeholder").innerHTML=h);
+  </script>
+
+  <h1 style="color:#00fff2;text-align:center;">⭐ Мої закладки</h1>
+  <div id="bookmarkList" class="bookmark-grid"></div>
+
+  <script>
+    const list = JSON.parse(localStorage.getItem("bookmarks") || "[]");
+    const container = document.getElementById("bookmarkList");
+    if (!list.length) {
+      container.innerHTML = "<p style='color:#ccc;text-align:center;width:100%'>Поки що порожньо 🕯️</p>";
+    } else {
+      list.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "bookmark-card";
+        div.innerHTML = `
+          <img src="${item.poster}" alt="${item.title}">
+          <p>${item.title}</p>
+        `;
+        div.onclick = () => window.location.href = `film.html?id=${item.id}`;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
