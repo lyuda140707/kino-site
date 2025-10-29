@@ -2,27 +2,21 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8" />
-
-<!-- ✅ Дозволи для Telegram авторизації -->
-<meta http-equiv="Content-Security-Policy"
-      content="
-        default-src * 'self' data: blob: https: http:;
-        script-src 'self' 'unsafe-inline' 'unsafe-eval'
-          https://telegram.org
-          https://oauth.telegram.org
-          https://cdn.jsdelivr.net
-          https://cdn.jsdelivr.net/npm/@supabase/;
-        frame-src https://oauth.telegram.org https://oauth.telegram.org/embed https://kino-site.pages.dev;
-        frame-ancestors https://oauth.telegram.org https://kino-site.pages.dev;
-        connect-src *;
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-        font-src https://fonts.gstatic.com;
-      ">
-
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Мій кабінет — KinoSite</title>
+
+<!-- ✅ Безпечні політики -->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src * 'self' data: blob: https: http:;
+               script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org https://oauth.telegram.org https://cdn.jsdelivr.net;
+               frame-src https://oauth.telegram.org https://kino-site.pages.dev;
+               connect-src *;
+               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+               font-src https://fonts.gstatic.com;">
+
 <link rel="stylesheet" href="style.css" />
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
   .profile-wrap{max-width:860px;margin:24px auto;padding:16px}
   .card{background:#0e0f13;border:1px solid #222;border-radius:16px;padding:20px;margin-bottom:16px}
@@ -35,47 +29,25 @@
 </head>
 <body>
 
-<!-- підвантажуємо хедер -->
+<!-- Хедер -->
 <div id="header-placeholder"></div>
 <script>
   fetch("header.html").then(r=>r.text()).then(html=>{
     document.getElementById("header-placeholder").innerHTML = html;
-  }).catch(console.error);
-
-// 🟢 1. Зберігаємо користувача після авторизації
-function onTelegramAuth(user) {
-  console.log("✅ Telegram авторизував користувача:", user);
-  localStorage.setItem("telegram_user", JSON.stringify(user)); // зберігаємо
-  handleTelegramUser(user);
-}
-
-// 🟢 2. При відкритті сторінки перевіряємо, чи є збережений користувач
-window.addEventListener("DOMContentLoaded", () => {
-  const savedUser = localStorage.getItem("telegram_user");
-  if (savedUser) {
-    try {
-      const user = JSON.parse(savedUser);
-      console.log("🔄 Відновлено користувача з localStorage:", user);
-      handleTelegramUser(user);
-    } catch (e) {
-      console.warn("❌ Не вдалося розпарсити користувача:", e);
-    }
-  }
-});
-
+  });
 </script>
 
 <main class="profile-wrap">
   <h1>Мій кабінет</h1>
 
-  <!-- картка користувача -->
+  <!-- 🧩 Блок користувача -->
   <div class="card" id="user-card" style="display:none;">
     <h3 id="hello-line">Вітаю!</h3>
     <p class="muted">Статус: <span id="pro-status">—</span></p>
     <button class="btn btn-ghost" id="logout-btn">Вийти</button>
   </div>
 
-  <!-- Авторизація Email -->
+  <!-- 📨 Авторизація Email -->
   <div class="card" id="auth-card">
     <h3>Увійти через Email</h3>
     <div style="display:flex;flex-direction:column;gap:8px;max-width:320px;">
@@ -84,28 +56,29 @@ window.addEventListener("DOMContentLoaded", () => {
     </div>
   </div>
 
-  <!-- Авторизація Telegram -->
+  <!-- 🤖 Авторизація Telegram -->
   <div class="card" id="telegram-card">
     <h3>Увійти через Telegram</h3>
     <p class="muted">
       Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
     </p>
 
-    <!-- ✅ Telegram Login Widget -->
-    <script async src="https://telegram.org/js/telegram-widget.js?22"
-            data-telegram-login="RelaxBox_UA_bot"
-            data-size="large"
-            data-radius="8"
-            data-userpic="true"
-            data-request-access="write"
-            data-onauth="onTelegramAuth(user)">
-    </script>
+    <div id="telegram-widget">
+      <script async src="https://telegram.org/js/telegram-widget.js?22"
+              data-telegram-login="RelaxBox_UA_bot"
+              data-size="large"
+              data-radius="8"
+              data-userpic="true"
+              data-request-access="write"
+              data-onauth="onTelegramAuth(user)">
+      </script>
+    </div>
   </div>
 </main>
 
 <footer style="text-align:center;color:#8a8f98;margin:32px 0">© 2025 KinoSite</footer>
 
-<!-- Supabase SDK -->
+<!-- ✅ Підключення Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
@@ -120,38 +93,19 @@ window.addEventListener("DOMContentLoaded", () => {
     alert(error ? "Помилка: " + error.message : "Перевірте пошту, щоб увійти!");
   };
 
-  // ===== Перевірка чи вже залогінений
-  supabase.auth.getUser().then(({ data }) => {
-    if (data?.user) onUserLoggedIn(data.user);
-  });
-
   // ===== Вихід
-  document.getElementById("logout-btn").onclick = async () => {
-    await supabase.auth.signOut();
+  document.getElementById("logout-btn").onclick = () => {
+    localStorage.removeItem("telegram_user");
     location.reload();
   };
 
-  // ===== Обробка входу через Email
-  function onUserLoggedIn(user) {
-    document.getElementById("auth-card").style.display = "none";
-    document.getElementById("user-card").style.display = "block";
-    document.getElementById("hello-line").innerText = "Вітаю, " + (user.email || user.phone);
-    document.getElementById("pro-status").innerText = "Free — увійдіть через Telegram, щоб синхронізувати PRO.";
-  }
-
-  // ===== Telegram callback
-  function onTelegramAuth(user) {
-    console.log("✅ Telegram авторизував користувача:", user);
-    handleTelegramUser(user);
-  }
-
-  // ===== Обробка Telegram-користувача
+  // ===== Основна функція обробки користувача
   async function handleTelegramUser(user) {
     document.getElementById("auth-card").style.display = "none";
     document.getElementById("telegram-card").style.display = "none";
     document.getElementById("user-card").style.display = "block";
-    document.getElementById("hello-line").innerText =
-      `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
+
+    document.getElementById("hello-line").innerText = `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
 
     try {
       const res = await fetch(
@@ -170,6 +124,28 @@ window.addEventListener("DOMContentLoaded", () => {
       document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
     }
   }
+
+  // ===== Telegram callback
+  function onTelegramAuth(user) {
+    console.log("✅ Telegram авторизував користувача:", user);
+    localStorage.setItem("telegram_user", JSON.stringify(user)); // зберігаємо
+    handleTelegramUser(user);
+  }
+
+  // ===== Перевірка при відкритті сторінки
+  window.addEventListener("DOMContentLoaded", () => {
+    const savedUser = localStorage.getItem("telegram_user");
+    if (savedUser) {
+      try {
+        const user = JSON.parse(savedUser);
+        console.log("🔄 Відновлено користувача з localStorage:", user);
+        document.getElementById("telegram-card").style.display = "none";
+        handleTelegramUser(user);
+      } catch (e) {
+        console.warn("❌ Не вдалося розпарсити користувача:", e);
+      }
+    }
+  });
 </script>
 
 </body>
