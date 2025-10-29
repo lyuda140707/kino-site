@@ -133,12 +133,21 @@
         event.origin === "https://oauth.telegram.org" ||
         event.origin === "https://oauth.telegram.org/embed";
 
-      const payload = event.data?.user || event.data;
+      // 🟢 Витягуємо дані незалежно від формату
+let payload = null;
+if (event.data?.user?.id) {
+  payload = event.data.user;
+} else if (event.data?.auth_data?.id) {
+  payload = event.data.auth_data;
+} else if (event.data?.id) {
+  payload = event.data;
+}
 
-      if (okOrigin && payload?.id) {
-        console.log("✅ Отримано дані від Telegram:", payload);
-        handleTelegramUser(payload);
-      }
+if (okOrigin && payload?.id) {
+  console.log("✅ Отримано дані від Telegram:", payload);
+  handleTelegramUser(payload);
+}
+
     });
   });
 
