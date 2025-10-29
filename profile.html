@@ -123,38 +123,50 @@ function onUserLoggedIn(user) {
 document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(window.location.search);
 
+  // 🟢 1. Якщо користувач увійшов через Telegram popup (старий варіант)
   if (params.has("id") && params.has("first_name")) {
-    const user = {
+    handleTelegramUser({
       id: params.get("id"),
       first_name: params.get("first_name"),
       last_name: params.get("last_name"),
       username: params.get("username")
-    };
-    console.log("✅ Telegram user:", user);
-
-    document.getElementById("auth-card").style.display = "none";
-    document.getElementById("user-card").style.display = "block";
-    document.getElementById("hello-line").innerText =
-      `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
-
-    try {
-      const res = await fetch(
-        "https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" + encodeURIComponent(user.id)
-      );
-      const json = await res.json();
-      if (json.isPro) {
-        const d = json.expireDate?.split("T")[0]?.split("-").reverse().join(".");
-        document.getElementById("pro-status").innerHTML = `✅ PRO активний до <b>${d}</b>`;
-      } else {
-        document.getElementById("pro-status").innerText = "❌ Без PRO";
-      }
-    } catch (err) {
-      console.error(err);
-      document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
-    }
+    });
   }
+
+  // 🟢 2. Якщо користувач увійшов через Telegram iframe (новий варіант)
+  window.addEventListener("message", (event) => {
+    if (event.origin === "https://oauth.telegram.org" && event.data?.id) {
+      console.log("✅ Отримано дані від Telegram:", event.data);
+      handleTelegramUser(event.data);
+    }
+  });
 });
+
+// 🟣 Окрема функція для обробки користувача
+async function handleTelegramUser(user) {
+  document.getElementById("auth-card").style.display = "none";
+  document.getElementById("user-card").style.display = "block";
+  document.getElementById("hello-line").innerText =
+    `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
+
+  try {
+    const res = await fetch(
+      "https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" + encodeURIComponent(user.id)
+    );
+    const json = await res.json();
+    if (json.isPro) {
+      const d = json.expireDate?.split("T")[0]?.split("-").reverse().join(".");
+      document.getElementById("pro-status").innerHTML = `✅ PRO активний до <b>${d}</b>`;
+    } else {
+      document.getElementById("pro-status").innerText = "❌ Без PRO";
+    }
+  } catch (err) {
+    console.error(err);
+    document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
+  }
+}
 </script>
+
 
 
 </body>
