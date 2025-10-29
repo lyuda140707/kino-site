@@ -64,6 +64,9 @@
         <div><span>Рік</span><span id="seriesYear"></span></div>
         <div><span>IMDb</span><span id="seriesImdb"></span></div>
       </div>
+  <button id="bookmarkSeriesBtn" class="ep-btn" style="margin-top:10px;width:100%;">
+  ⭐ Додати в закладки
+</button>
     </div>
 
     <div class="series-right">
@@ -211,6 +214,61 @@
   }
 
   document.addEventListener("DOMContentLoaded", loadSeries);
+  // ==== ⭐ Закладки (series) ====
+function getBookmarks() {
+  try { return JSON.parse(localStorage.getItem("bookmarks") || "[]"); }
+  catch { return []; }
+}
+function setBookmarks(arr) {
+  localStorage.setItem("bookmarks", JSON.stringify(arr));
+}
+function isSeriesBookmarked(title) {
+  const list = getBookmarks();
+  return list.some(x => x.type === "Серіал" && x.title === title);
+}
+function refreshSeriesBtn(title) {
+  const btn = document.getElementById("bookmarkSeriesBtn");
+  if (!btn) return;
+  btn.textContent = isSeriesBookmarked(title) ? "⭐ У закладках" : "⭐ Додати в закладки";
+}
+
+document.getElementById("bookmarkSeriesBtn")?.addEventListener("click", () => {
+  const title = document.getElementById("seriesTitle")?.textContent?.trim() || "";
+  if (!title) return;
+
+  const series = {
+    type: "Серіал",
+    id: title, // ключ - назва (серії мають багато рядків)
+    title,
+    poster: document.getElementById("seriesPoster")?.src || "",
+    year: document.getElementById("seriesYear")?.textContent?.trim() || "",
+    genre: document.getElementById("seriesGenre")?.textContent?.trim() || "",
+    imdb: document.getElementById("seriesImdb")?.textContent?.trim() || "—",
+    link: `series.html?title=${encodeURIComponent(title)}`
+  };
+
+  let list = getBookmarks();
+  const exists = isSeriesBookmarked(title);
+
+  if (exists) {
+    list = list.filter(x => !(x.type === "Серіал" && x.title === title));
+    setBookmarks(list);
+    refreshSeriesBtn(title);
+    alert("❌ Видалено із закладок");
+  } else {
+    list.push(series);
+    setBookmarks(list);
+    refreshSeriesBtn(title);
+    alert("✅ Додано у закладки");
+  }
+});
+
+// Синхронізація тексту при відкритті
+document.addEventListener("DOMContentLoaded", () => {
+  const title = document.getElementById("seriesTitle")?.textContent?.trim() || "";
+  if (title) refreshSeriesBtn(title);
+});
+
 </script>
 </body>
 </html>
