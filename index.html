@@ -310,10 +310,90 @@ async function loadLatestSeries() {
     loadTopFilms();
   });
 </script>
+<script>
+/* === 🎬 Рандомні блоки збоку === */
+
+// Рандомно 3 серіали
+async function loadSidebarSeries() {
+  const container = document.querySelector('.sub-category:nth-of-type(1) .mini-grid');
+  if (!container) return;
+  const { data, error } = await supabase
+    .from('films_site')
+    .select('title, poster, type')
+    .eq('type', 'Серіал');
+
+  if (error || !data?.length) return;
+  const random = data.sort(() => 0.5 - Math.random()).slice(0, 3);
+  container.innerHTML = '';
+  random.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'mini-card';
+    div.innerHTML = `
+      <img src="${item.poster || 'https://via.placeholder.com/150x220?text=No+Image'}">
+      <p>${item.title}</p>`;
+    div.onclick = () => location.href = `/series.html?title=${encodeURIComponent(item.title)}`;
+    container.appendChild(div);
+  });
+}
+
+// Рандомно 3 фільми
+async function loadSidebarFilms() {
+  const container = document.querySelector('.sub-category:nth-of-type(2) .mini-grid');
+  if (!container) return;
+  const { data, error } = await supabase
+    .from('films_site')
+    .select('id, title, poster, type')
+    .eq('type', 'Фільм');
+
+  if (error || !data?.length) return;
+  const random = data.sort(() => 0.5 - Math.random()).slice(0, 3);
+  container.innerHTML = '';
+  random.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'mini-card';
+    div.innerHTML = `
+      <img src="${item.poster || 'https://via.placeholder.com/150x220?text=No+Image'}">
+      <p>${item.title}</p>`;
+    div.onclick = () => location.href = `/film.html?id=${item.id}`;
+    container.appendChild(div);
+  });
+}
+
+// Рандомно 3 мультсеріали
+async function loadSidebarMult() {
+  const container = document.querySelector('.sub-category:nth-of-type(3) .mini-grid');
+  if (!container) return;
+  const { data, error } = await supabase
+    .from('films_site')
+    .select('title, poster, type')
+    .eq('type', 'Мультсеріал');
+
+  if (error || !data?.length) return;
+  const random = data.sort(() => 0.5 - Math.random()).slice(0, 3);
+  container.innerHTML = '';
+  random.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'mini-card';
+    div.innerHTML = `
+      <img src="${item.poster || 'https://via.placeholder.com/150x220?text=No+Image'}">
+      <p>${item.title}</p>`;
+    div.onclick = () => location.href = `/multseries.html?title=${encodeURIComponent(item.title)}`;
+    container.appendChild(div);
+  });
+}
+
+// 🚀 Запускаємо після завантаження сторінки
+document.addEventListener('DOMContentLoaded', () => {
+  loadSidebarSeries();
+  loadSidebarFilms();
+  loadSidebarMult();
+});
+</script>
 
 
 </body>
 </html>
+
 
 
 
