@@ -37,20 +37,52 @@
   <!-- Стрілки -->
   <button class="slider-btn left" onclick="scrollSlider(-1)">❮</button>
   <button class="slider-btn right" onclick="scrollSlider(1)">❯</button>
-
-  <div class="slider-row" id="sliderRow">
-    <div class="slide"><img src="https://i.postimg.cc/VLHxgJsg/dragon.jpg"><p>Дракон Раджа</p></div>
-    <div class="slide"><img src="https://i.postimg.cc/V6z1QntN/anemone.jpg"><p>Анемона</p></div>
-    <div class="slide"><img src="https://i.postimg.cc/mkzLz6nK/enigma.jpg"><p>Енігма</p></div>
-    <div class="slide"><img src="https://i.postimg.cc/VvY5YBgJ/afterburn.jpg"><p>Afterburn</p></div>
-    <div class="slide"><img src="https://i.postimg.cc/YS6M4JtP/primitivewar.jpg"><p>Примітивна війна</p></div>
-    <div class="slide"><img src="https://i.postimg.cc/tCxyY6Y4/gachiakuta.jpg"><p>Гачіакута</p></div>
-    <div class="slide"><img src="https://i.postimg.cc/BQcx0vRt/darkmission.jpg"><p>Темна місія</p></div>
-    <div class="slide"><img src="https://i.postimg.cc/yNgfDNtw/ranma.jpg"><p>Ранма 1/2</p></div>
-    <div class="slide"><img src="https://i.postimg.cc/pTV7bD2M/mirage.jpg"><p>Маревокрай</p></div>
-    <div class="slide"><img src="https://i.postimg.cc/DzZ7CVzV/12fail.jpg"><p>12-та невдача</p></div>
-  </div>
 </section>
+<!-- ✅ Завантаження Топ 10 з Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+  async function loadTopFilms() {
+    const slider = document.getElementById("sliderRow");
+    slider.innerHTML = "<p style='color:#aaa;'>Завантаження...</p>";
+
+    const { data, error } = await supabase
+      .from("films_site")
+      .select("id, title, poster, top")
+      .ilike("top", "%ТОП%")  // 🔹 шукаємо ті, де в полі top є “ТОП”
+      .limit(10);
+
+    if (error) {
+      console.error("❌ Помилка завантаження ТОП:", error);
+      slider.innerHTML = "<p style='color:white;'>Помилка завантаження</p>";
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      slider.innerHTML = "<p style='color:white;'>Немає фільмів у ТОПі</p>";
+      return;
+    }
+
+    slider.innerHTML = "";
+    data.forEach(film => {
+      const card = document.createElement("div");
+      card.className = "slide";
+      card.innerHTML = `
+        <img src="${film.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${film.title}">
+        <p>${film.title}</p>
+      `;
+      card.addEventListener("click", () => {
+        window.location.href = \`film.html?id=\${film.id}\`;
+      });
+      slider.appendChild(card);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", loadTopFilms);
+</script>
 
 <!-- JS керування слайдером -->
 <script>
@@ -232,6 +264,7 @@
 
 </body>
 </html>
+
 
 
 
