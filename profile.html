@@ -82,6 +82,15 @@
   scrolling="no">
 </iframe>
 
+<script>
+  // 🔹 Telegram callback після входу
+  function onTelegramAuth(user) {
+    console.log("✅ Telegram повернув користувача через onauth:", user);
+    handleTelegramUser(user);
+  }
+</script>
+
+
   </div>
 </main>
 
