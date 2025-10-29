@@ -1102,12 +1102,15 @@ header {
   background: transparent;
   z-index: 9998;
 }
-/* === ФІКС: МЕНЮ НЕ ЗНИКАЄ ПРИ НАВЕДЕННІ === */
+/* === ФІКС: КОЖНЕ МЕНЮ ВІДКРИВАЄТЬСЯ ОКРЕМО І НЕ ХОВАЄТЬСЯ === */
 
-/* дозволяємо меню бути частиною hover-зони хедера */
-header:hover .mega-menu,
-header:hover .mega-series,
-header:hover .mega-cartoons {
+/* показуємо тільки потрібне меню */
+.dropdown:hover .mega-menu,
+.dropdown:hover .mega-series,
+.dropdown:hover .mega-cartoons,
+.mega-menu:hover,
+.mega-series:hover,
+.mega-cartoons:hover {
   opacity: 1;
   visibility: visible;
   pointer-events: all;
@@ -1115,6 +1118,7 @@ header:hover .mega-cartoons {
 }
 
 /* не змінюємо нічого у розташуванні! */
+
 
 
 
