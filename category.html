@@ -61,13 +61,11 @@
 
 <script>
   // ✅ якщо сторінка відкрилась як /category (без .html) — перенаправляємо
-  if (location.pathname === "/category") {
-    location.replace("/category.html" + location.search);
-  }
 
   const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
   const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  console.log("✅ Supabase підключено");
 
   const params = new URLSearchParams(window.location.search);
   const type = (params.get("type") || "Фільм").trim();
@@ -76,6 +74,7 @@
   document.getElementById("pageTitle").textContent = `${type} • ${genre || "Усі"}`;
 
   async function loadFilms() {
+    console.log("📥 Починаємо завантаження фільмів...");
     console.log("🔍 Пошук у таблиці:", { type, genre });
 
     let query = supabase.from("films_site").select("*");
