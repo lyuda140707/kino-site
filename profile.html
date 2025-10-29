@@ -143,6 +143,7 @@
       });
     }
 
+// 📨 Отримуємо повідомлення від Telegram iframe
 window.addEventListener("message", (event) => {
   console.log("📩 Отримано повідомлення:", event.origin, event.data);
 
@@ -153,16 +154,20 @@ window.addEventListener("message", (event) => {
   // 🟢 Витягуємо дані незалежно від формату
   let payload = null;
 
-  if (event.data?.auth_data?.id) {
+  // 🔹 Головний випадок — стандартна відповідь Telegram
+  if (event.data?.event === "auth_user" && event.data?.auth_data?.id) {
+    payload = event.data.auth_data;
+  }
+  // 🔹 Альтернативні формати (на випадок інших реалізацій)
+  else if (event.data?.auth_data?.id) {
     payload = event.data.auth_data;
   } else if (event.data?.user?.id) {
     payload = event.data.user;
   } else if (event.data?.id) {
     payload = event.data;
-  } else if (event.data?.event === "auth_user" && event.data?.auth_data?.id) {
-    payload = event.data.auth_data;
   }
 
+  // 🔹 Якщо Telegram дійсно прислав користувача — обробляємо
   if (okOrigin && payload?.id) {
     console.log("✅ Отримано дані від Telegram:", payload);
     handleTelegramUser(payload);
@@ -171,7 +176,7 @@ window.addEventListener("message", (event) => {
   }
 });
 
-  });
+
 
   async function handleTelegramUser(user) {
     document.getElementById("auth-card").style.display = "none";
