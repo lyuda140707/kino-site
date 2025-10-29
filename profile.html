@@ -51,16 +51,28 @@
     Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
   </p>
 
+<script>
+  // Telegram вимагає глобальну функцію для onauth
+  function onTelegramAuth(user) {
+    if (!user) return;
+    // створюємо посилання з параметрами
+    const params = new URLSearchParams(user).toString();
+    // редіректимо назад у /profile
+    window.location.href = "https://kino-site.pages.dev/profile?" + params;
+  }
+</script>
+
+</script>
 
 <!-- 2) Сам віджет Telegram (ВАЖЛИВО: auth-url = твій сайт) -->
 <script async src="https://telegram.org/js/telegram-widget.js?22"
-        data-telegram-login="RelaxBox_UA_bot"
-        data-size="large"
-        data-userpic="false"
-        data-request-access="write"
-        data-radius="8"
-        data-auth-url="https://kino-site.pages.dev/profile.html"
-        data-onauth="onTelegramAuth">
+  data-telegram-login="RelaxBox_UA_bot"
+  data-size="large"
+  data-userpic="false"
+  data-request-access="write"
+  data-radius="8"
+  data-auth-url="https://kino-site.pages.dev/profile"
+  data-onauth="onTelegramAuth">
 </script>
 
 
@@ -113,7 +125,6 @@ function onUserLoggedIn(user) {
 document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(window.location.search);
 
-  // Якщо Telegram надіслав дані користувача
   if (params.has("id") && params.has("first_name")) {
     const user = {
       id: params.get("id"),
@@ -130,8 +141,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const res = await fetch(
-        "https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" +
-        encodeURIComponent(user.id)
+        "https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" + encodeURIComponent(user.id)
       );
       const json = await res.json();
       if (json.isPro) {
@@ -147,6 +157,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 </script>
+
 
 </body>
 </html>
