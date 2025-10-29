@@ -72,49 +72,58 @@
   document.addEventListener("DOMContentLoaded", loadCollection);
 </script>
 <style>
-/* Сітка фільмів */
+/* === СІТКА ФІЛЬМІВ === */
 .film-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* ✅ менші картки */
-  gap: 18px;
-  padding: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+  padding: 30px 20px;
   justify-items: center;
 }
 
-/* Картка фільму */
+/* === КАРТКА ФІЛЬМУ === */
 .film {
-  background: #111;
-  border-radius: 10px;
+  position: relative;
+  background: rgba(10,10,10,0.8);
+  border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  border: 1px solid rgba(0,255,255,0.15);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  width: 160px; /* ✅ зменшення ширини */
+  border: 1px solid rgba(0,255,255,0.1);
+  width: 160px;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 15px rgba(0,255,255,0.05);
 }
 
 .film:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(0,255,255,0.25);
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(0,255,255,0.3);
 }
 
-/* Зображення */
+/* === ПОСТЕР === */
 .film .poster img {
   width: 100%;
-  height: 220px; /* ✅ нижча висота постера */
+  height: 220px;
   object-fit: cover;
-  border-bottom: 1px solid rgba(0,255,255,0.1);
+  border-radius: 14px;
+  filter: brightness(0.9);
+  transition: 0.3s;
 }
 
-/* Назва фільму */
+.film:hover .poster img {
+  filter: brightness(1);
+}
+
+/* === НАЗВА === */
 .film .title {
   color: #fff;
-  font-size: 14px; /* ✅ менше шрифт */
+  font-size: 14px;
   font-weight: 600;
   text-align: center;
-  margin: 8px 0 4px;
+  margin: 8px 6px 4px;
+  text-shadow: 0 0 6px rgba(0,255,255,0.25);
 }
 
-/* Метадані (жанр, рік) */
+/* === ЖАНР / РІК === */
 .film .meta {
   color: #aaa;
   font-size: 12px;
@@ -122,7 +131,7 @@
   margin-bottom: 10px;
 }
 
-/* PRO-бейдж */
+/* === БЕЙДЖ PRO === */
 .badge.plus {
   position: absolute;
   top: 8px;
@@ -132,6 +141,12 @@
   font-size: 10px;
   border-radius: 6px;
   color: #fff;
+  box-shadow: 0 0 6px rgba(255,0,200,0.6);
+}
+
+/* === ГРАДІЄНТ ПІД ФОНОМ === */
+body {
+  background: radial-gradient(circle at top, #0a0a0a, #000);
 }
 </style>
 
