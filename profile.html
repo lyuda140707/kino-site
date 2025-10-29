@@ -151,30 +151,30 @@ window.addEventListener("message", (event) => {
   const okOrigin =
     event.origin === "https://oauth.telegram.org" ||
     event.origin === "https://oauth.telegram.org/embed";
+// 🟢 Витягуємо дані незалежно від формату
+let payload = null;
 
-  // 🟢 Витягуємо дані незалежно від формату
-  let payload = null;
+// 🔹 Головний формат, який Telegram реально надсилає
+if (event.data?.event === "auth_user" && event.data?.auth_data?.id) {
+  payload = event.data.auth_data;
+  console.log("🎯 Виявлено auth_user подію:", payload);
+}
+// 🔹 Резервні формати (на випадок інших реалізацій)
+else if (event.data?.auth_data?.id) {
+  payload = event.data.auth_data;
+} else if (event.data?.user?.id) {
+  payload = event.data.user;
+} else if (event.data?.id) {
+  payload = event.data;
+}
 
-  // 🔹 Головний випадок — стандартна відповідь Telegram
-  if (event.data?.event === "auth_user" && event.data?.auth_data?.id) {
-    payload = event.data.auth_data;
-  }
-  // 🔹 Альтернативні формати (на випадок інших реалізацій)
-  else if (event.data?.auth_data?.id) {
-    payload = event.data.auth_data;
-  } else if (event.data?.user?.id) {
-    payload = event.data.user;
-  } else if (event.data?.id) {
-    payload = event.data;
-  }
+if (okOrigin && payload?.id) {
+  console.log("✅ Отримано дані від Telegram:", payload);
+  handleTelegramUser(payload);
+} else {
+  console.warn("⚠️ Не знайдено auth_data у події:", event.data);
+}
 
-  // 🔹 Якщо Telegram дійсно прислав користувача — обробляємо
-  if (okOrigin && payload?.id) {
-    console.log("✅ Отримано дані від Telegram:", payload);
-    handleTelegramUser(payload);
-  } else {
-    console.warn("⚠️ Не знайдено auth_data у події:", event.data);
-  }
 });
 
 
