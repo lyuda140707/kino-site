@@ -173,13 +173,14 @@ async function loadFilms(sortMode = currentSort) {
 
   // ✅ якщо це серіали — групуємо за назвою
   let items = [...data];
-  if (type.toLowerCase().includes("серіал")) {
+  if (type.toLowerCase().includes("серіал") || type.toLowerCase().includes("мультсеріал")) {
     const map = new Map();
     items.forEach(row => {
       if (!map.has(row.title)) map.set(row.title, row);
     });
     items = [...map.values()];
   }
+
 
   // фільтрація за роком
   if (selectedYear) {
