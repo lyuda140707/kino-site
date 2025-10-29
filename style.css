@@ -1028,122 +1028,64 @@ header {
 
 
 
-.mega-menu .genres a:hover {
-  color: #00fff2;
-  transform: translateY(-1px);
-}
-
-/* === Індивідуальні стилі для підменю === */
-
-/* 🎬 ФІЛЬМИ */
-.dropdown .mega-menu {
-  background: #000;
-  box-shadow: 0 4px 15px rgba(0, 255, 255, 0.25);
-  border-top: 1px solid rgba(0, 255, 255, 0.25);
-}
-
-.dropdown .mega-menu .genres a:hover {
-  color: #00fff2;
-}
-
-/* 📺 СЕРІАЛИ */
-.dropdown .mega-series {
-  background: #0b0015;
-  box-shadow: 0 4px 15px rgba(176, 0, 255, 0.25);
-  border-top: 1px solid rgba(176, 0, 255, 0.25);
-}
-
-.dropdown .mega-series .genres a:hover {
-  color: #b34eff;
-}
-
-/* 🧸 МУЛЬТФІЛЬМИ */
-.dropdown .mega-cartoons {
-  background: #160400;
-  box-shadow: 0 4px 15px rgba(255, 115, 0, 0.25);
-  border-top: 1px solid rgba(255, 115, 0, 0.25);
-}
-
-.dropdown .mega-cartoons .genres a:hover {
-  color: #ff9944;
-}
-
-
-/* невелика затримка закриття */
-.dropdown:not(:hover) .mega-menu,
-.dropdown:not(:hover) .mega-series,
-.dropdown:not(:hover) .mega-cartoons {
-  transition-delay: 0.3s;
-}
-/* === ЗОНА БЕЗПЕКИ, ЩОБ МЕНЮ НЕ ХОВАЛОСЬ === */
-.dropdown {
-  position: relative;
-}
-
-/* === ФІКС — УСІ МЕНЮ СТАЮТЬ ПО ЦЕНТРУ, НЕ ПІД КНОПКОЮ === */
-header {
-  position: relative;
-  z-index: 3000;
-}
-
-/* Вирівнюємо відносно всього header */
-header .mega-menu,
-header .mega-series,
-header .mega-cartoons {
-  position: absolute;
-  top: 100%;          /* під верхньою панеллю */
-  left: 50%;          /* центр сайту */
-  transform: translateX(-50%); /* центрування */
-  width: 1150px;      /* така сама ширина, як банер */
-  margin-top: 0;
+/* === ФІКС ВИРІВНЮВАННЯ МЕГА-МЕНЮ ПО ЦЕНТРУ САЙТУ === */
+.mega-menu,
+.mega-series,
+.mega-cartoons {
+  position: fixed !important; /* прив’язуємо до вікна, а не до header */
+  top: 110px; /* 🔹 опусти або підніми, якщо треба (залежно від висоти шапки) */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1150px; /* 🔹 ширина як банер */
+  margin: 0 auto;
   padding: 50px 80px 60px;
   border-radius: 0 0 16px 16px;
+  box-sizing: border-box;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease;
-  z-index: 6000;
-  box-sizing: border-box;
+  z-index: 9999;
 }
 
-/* Фони */
-header .mega-menu {
+/* індивідуальні кольори */
+.mega-menu {
   background: #000;
   border-top: 2px solid #00fff2;
   box-shadow: 0 8px 25px rgba(0, 255, 242, 0.3);
 }
-header .mega-series {
+.mega-series {
   background: #100016;
   border-top: 2px solid #ff00c8;
   box-shadow: 0 8px 25px rgba(255, 0, 200, 0.25);
 }
-header .mega-cartoons {
+.mega-cartoons {
   background: #160800;
   border-top: 2px solid #ffcc00;
   box-shadow: 0 8px 25px rgba(255, 204, 0, 0.25);
 }
 
-/* Показ тільки при наведенні */
+/* показ при наведенні */
 .dropdown:hover .mega-menu,
 .dropdown:hover .mega-series,
 .dropdown:hover .mega-cartoons,
-header .mega-menu:hover,
-header .mega-series:hover,
-header .mega-cartoons:hover {
+.mega-menu:hover,
+.mega-series:hover,
+.mega-cartoons:hover {
   opacity: 1;
   visibility: visible;
   pointer-events: all;
   transform: translateX(-50%) translateY(0);
 }
 
-/* Початкова позиція для плавного відкриття */
-header .mega-menu,
-header .mega-series,
-header .mega-cartoons {
+/* плавна поява */
+.mega-menu,
+.mega-series,
+.mega-cartoons {
   transform: translateX(-50%) translateY(-10px);
 }
 
-/* Зона безпеки */
+/* зона безпеки */
 .dropdown::after {
   content: "";
   position: absolute;
@@ -1153,6 +1095,3 @@ header .mega-cartoons {
   height: 12px;
   background: transparent;
 }
-
-
-
