@@ -40,6 +40,19 @@
       color: #fff;
       text-align: center;
     }
+    /* === ФІЛЬТРИ НАД КАРТКАМИ === */
+.filter-bar{
+  max-width:1200px; margin:10px auto 0; padding:0 30px;
+  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+}
+.filter-btn{
+  background:#0f0f0f; color:#00fff2; border:1px solid rgba(0,255,255,.35);
+  padding:8px 14px; border-radius:10px; font-weight:600; cursor:pointer;
+  transition:.2s; user-select:none
+}
+.filter-btn:hover{ background:#00fff2; color:#000 }
+.filter-btn.active{ background:#00fff2; color:#000; box-shadow:0 0 10px rgba(0,255,255,.35) }
+
     footer { text-align:center; padding:20px; color:#777; }
   </style>
 </head>
@@ -55,6 +68,12 @@
   </script>
 
   <h1 id="pageTitle">Категорія</h1>
+  <!-- === ПАНЕЛЬ ФІЛЬТРІВ === -->
+  <div class="filter-bar">
+    <button id="btn-latest" class="filter-btn active">🆕 Останні</button>
+    <button id="btn-best"   class="filter-btn">⭐ Найкращі (IMDb)</button>
+    <button id="btn-year"   class="filter-btn">📅 За роком</button>
+  </div>
   <div class="film-grid" id="filmGrid"></div>
 
   <footer>© 2025 Relax Kino</footer>
@@ -73,47 +92,73 @@
 
   document.getElementById("pageTitle").textContent = `${type} • ${genre || "Усі"}`;
 
-  async function loadFilms() {
-    console.log("📥 Починаємо завантаження фільмів...");
-    console.log("🔍 Пошук у таблиці:", { type, genre });
+  let currentSort = 'latest'; // latest | best | year
 
-    let query = supabase.from("films_site").select("*");
+async function loadFilms(sortMode = currentSort) {
+  currentSort = sortMode;
 
-    if (type) query = query.ilike("type", `%${type}%`);
-    if (genre) query = query.ilike("genre", `%${genre}%`);
+  // базовий вибір з Supabase
+  let query = supabase.from("films_site").select("*");
+  if (type)  query = query.ilike("type",  `%${type}%`);
+  if (genre) query = query.ilike("genre", `%${genre}%`);
 
-    const { data, error } = await query.order("id", { ascending: false });
-    console.log("📊 Результат:", data, error);
+  // беремо «останні» як дефолт — id ↓ (як у тебе було)
+  const { data, error } = await query.order("id", { ascending: false });
 
-    const grid = document.getElementById("filmGrid");
-    grid.innerHTML = "";
+  const grid = document.getElementById("filmGrid");
+  grid.innerHTML = "";
 
-    if (error) {
-      grid.innerHTML = `<p style="color:#ff6b6b;">Помилка: ${error.message}</p>`;
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      grid.innerHTML = `<p style="color:#ccc;text-align:center;">Нічого не знайдено для жанру "${genre}"</p>`;
-      return;
-    }
-
-    data.forEach(film => {
-      const card = document.createElement("div");
-      card.className = "film-card";
-      card.innerHTML = `
-        <img src="${film.poster || 'https://via.placeholder.com/200x280?text=No+Image'}" alt="${film.title}">
-        <h3>${film.title}</h3>
-      `;
-      card.addEventListener("click", () => {
-        window.location.href = `/film.html?id=${film.id}`;
-      });
-
-      grid.appendChild(card);
-    });
+  if (error) {
+    grid.innerHTML = `<p style="color:#ff6b6b;">Помилка: ${error.message}</p>`;
+    return;
+  }
+  if (!data || data.length === 0) {
+    grid.innerHTML = `<p style="color:#ccc;text-align:center;">Нічого не знайдено для жанру "${genre}"</p>`;
+    return;
   }
 
-  loadFilms();
+  // локальне сортування для «Найкращі» та «За роком»,
+  // бо imdb/year можуть бути текстом у таблиці
+  let items = [...data];
+  if (sortMode === 'best') {
+    items.sort((a,b) => (parseFloat(b.imdb||0) || 0) - (parseFloat(a.imdb||0) || 0));
+  } else if (sortMode === 'year') {
+    items.sort((a,b) => (parseInt(b.year||0) || 0) - (parseInt(a.year||0) || 0));
+  }
+  // 'latest' вже відсортовано з бази по id ↓
+
+  // відмалювати картки
+  for (const film of items) {
+    const card = document.createElement("div");
+    card.className = "film-card";
+    card.innerHTML = `
+      <img src="${film.poster || 'https://via.placeholder.com/200x280?text=No+Image'}" alt="${film.title}">
+      <h3>${film.title}</h3>
+    `;
+    card.addEventListener("click", () => {
+      window.location.href = `/film.html?id=${film.id}`;
+    });
+    grid.appendChild(card);
+  }
+}
+
+// кнопки фільтрів
+const btnLatest = document.getElementById('btn-latest');
+const btnBest   = document.getElementById('btn-best');
+const btnYear   = document.getElementById('btn-year');
+
+function setActive(btn){
+  [btnLatest, btnBest, btnYear].forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+btnLatest.addEventListener('click', () => { setActive(btnLatest); loadFilms('latest'); });
+btnBest  .addEventListener('click', () => { setActive(btnBest);   loadFilms('best');   });
+btnYear  .addEventListener('click', () => { setActive(btnYear);   loadFilms('year');   });
+
+// перше завантаження
+loadFilms('latest');
+
 </script>
 
 </body>
