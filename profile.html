@@ -143,36 +143,34 @@
       });
     }
 
-    window.addEventListener("message", (event) => {
-      console.log("📩 Отримано повідомлення:", event.origin, event.data);
+window.addEventListener("message", (event) => {
+  console.log("📩 Отримано повідомлення:", event.origin, event.data);
 
-      const okOrigin =
-        event.origin === "https://oauth.telegram.org" ||
-        event.origin === "https://oauth.telegram.org/embed";
+  const okOrigin =
+    event.origin === "https://oauth.telegram.org" ||
+    event.origin === "https://oauth.telegram.org/embed";
 
-      // 🟢 Витягуємо дані незалежно від формату
-// 🟢 Витягуємо дані незалежно від формату
-let payload = null;
+  // 🟢 Витягуємо дані незалежно від формату
+  let payload = null;
 
-if (event.data?.auth_data?.id) {
-  payload = event.data.auth_data; // головний формат
-} else if (event.data?.user?.id) {
-  payload = event.data.user;
-} else if (event.data?.id) {
-  payload = event.data;
-} else if (event.data?.event === "auth_user" && event.data?.auth_data?.id) {
-  payload = event.data.auth_data;
-}
+  if (event.data?.auth_data?.id) {
+    payload = event.data.auth_data;
+  } else if (event.data?.user?.id) {
+    payload = event.data.user;
+  } else if (event.data?.id) {
+    payload = event.data;
+  } else if (event.data?.event === "auth_user" && event.data?.auth_data?.id) {
+    payload = event.data.auth_data;
+  }
 
-if (okOrigin && payload?.id) {
-  console.log("✅ Отримано дані від Telegram:", payload);
-  handleTelegramUser(payload);
-} else {
-  console.warn("⚠️ Не знайдено auth_data у події:", event.data);
-}
+  if (okOrigin && payload?.id) {
+    console.log("✅ Отримано дані від Telegram:", payload);
+    handleTelegramUser(payload);
+  } else {
+    console.warn("⚠️ Не знайдено auth_data у події:", event.data);
+  }
+});
 
-
-    });
   });
 
   async function handleTelegramUser(user) {
