@@ -156,15 +156,15 @@
   });
 </script>
 
-<!-- ✅ ЄДИНЕ підключення Supabase -->
+<!-- ✅ Підключення Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // 🔗 Підключення до твоєї бази Supabase
+  // 🔗 Створюємо клієнт Supabase
   const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
   const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-  // 🎬 Завантаження останніх надходжень (нові зверху)
+  // 🎬 Завантаження останніх надходжень
   async function loadLatestFilms() {
     const container = document.getElementById("films-list");
     if (!container) return;
@@ -172,17 +172,17 @@
 
     const { data, error } = await supabase
       .from("films_site")
-      .select("id, title, genre, year, imdb, pro_access, poster, type")
+      .select("*")
       .order("id", { ascending: false })
       .limit(20);
 
     if (error) {
-      console.error("❌ Помилка:", error);
+      console.error("❌ Помилка завантаження останніх:", error);
       container.innerHTML = `<p style="color:white;">Помилка завантаження.</p>`;
       return;
     }
 
-    if (!data || data.length === 0) {
+    if (!data?.length) {
       container.innerHTML = `<p style="color:white;">Поки що немає надходжень.</p>`;
       return;
     }
@@ -193,10 +193,10 @@
       card.className = "film";
       card.innerHTML = `
         <div class="poster">
-          <img src="${film.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${film.title}">
-          ${film.pro_access?.toString().toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
+          <img src="${film.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${film.title || ''}">
+          ${String(film.pro_access || '').toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
         </div>
-        <div class="title">${film.title}</div>
+        <div class="title">${film.title || ''}</div>
         <div class="meta">
           <span>${film.genre || ''}</span> • 
           <span>${film.year || ''}</span> • 
@@ -204,61 +204,63 @@
         </div>
       `;
       card.addEventListener("click", () => {
-        window.location.href = `film.html?id=${film.id}`;
+        window.location.href = "film.html?id=" + film.id;
       });
       container.appendChild(card);
     });
   }
 
-</script>
-<script>
-async function loadTopFilms() {
-  const slider = document.getElementById("sliderRow");
-  if (!slider) return;
-  slider.innerHTML = "<p style='color:#aaa;'>Завантаження...</p>";
+  // 🔥 Завантаження Топ-10 фільмів
+  async function loadTopFilms() {
+    const slider = document.getElementById("sliderRow");
+    if (!slider) return;
+    slider.innerHTML = "<p style='color:#aaa;'>Завантаження...</p>";
 
-  const { data, error } = await supabase
-    .from("films_site")
-    .select("*")
-    .ilike("top", "%топ%")
-    .not("poster", "is", null)
-    .order("id", { ascending: false })
-    .limit(10);
+    const { data, error } = await supabase
+      .from("films_site")
+      .select("*")
+      .ilike("top", "%топ%")
+      .not("poster", "is", null)
+      .order("id", { ascending: false })
+      .limit(10);
 
-  if (error) {
-    console.error("❌ ТОП error:", error);
-    slider.innerHTML = `<p style="color:white;">Помилка завантаження ТОП.</p>`;
-    return;
-  }
+    if (error) {
+      console.error("❌ Помилка завантаження ТОП:", error);
+      slider.innerHTML = `<p style="color:white;">Помилка завантаження ТОП.</p>`;
+      return;
+    }
 
-  if (!data || data.length === 0) {
-    slider.innerHTML = `<p style="color:white;">Немає фільмів у ТОПі.</p>`;
-    return;
-  }
+    if (!data?.length) {
+      slider.innerHTML = `<p style="color:white;">Немає фільмів у ТОПі.</p>`;
+      return;
+    }
 
-  slider.innerHTML = "";
-  data.forEach(film => {
-    const card = document.createElement("div");
-    card.className = "slide";
-    card.innerHTML = `
-      <img src="${film.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${film.title || ''}">
-      <p>${film.title || ''}</p>
-    `;
-    card.addEventListener("click", () => {
-      window.location.href = \`film.html?id=\${film.id}\`;
+    slider.innerHTML = "";
+    data.forEach(film => {
+      const card = document.createElement("div");
+      card.className = "slide";
+      card.innerHTML = `
+        <img src="${film.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${film.title || ''}">
+        <p>${film.title || ''}</p>
+      `;
+      card.addEventListener("click", () => {
+        window.location.href = "film.html?id=" + film.id;
+      });
+      slider.appendChild(card);
     });
-    slider.appendChild(card);
-  });
-}
+  }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadLatestFilms();
-  loadTopFilms();
-});
+  // 🚀 Автоматичний запуск
+  document.addEventListener("DOMContentLoaded", () => {
+    loadLatestFilms();
+    loadTopFilms();
+  });
 </script>
+
 
 </body>
 </html>
+
 
 
 
