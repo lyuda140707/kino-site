@@ -288,11 +288,11 @@ async function loadDynamicSidebar() {
   const sidebar = document.querySelector(".sidebar");
   if (!sidebar) return;
 
-  // 🧩 Підбірки
+    // 🧩 Підбірки
   const { data: collections } = await supabase
     .from("films_site")
     .select("id, title, poster, type")
-    .eq("type", "Збірка");
+    .ilike("type", "%збірк%");
 
   if (collections?.length) {
     const random = collections.sort(() => 0.5 - Math.random()).slice(0, 5);
@@ -308,11 +308,16 @@ async function loadDynamicSidebar() {
       .join("");
   }
 
+
   // 🎬 Актуальні серіали
   const { data: series } = await supabase
     .from("films_site")
-    .select("id, title, poster, type")
+    .select("title, poster, type")
     .eq("type", "Серіал");
+
+  // залишаємо лише унікальні назви серіалів
+  const uniqueSeries = Array.from(new Map(series.map(s => [s.title, s])).values());
+  const random = uniqueSeries.sort(() => 0.5 - Math.random()).slice(0, 3);
 
   if (series?.length) {
     const random = series.sort(() => 0.5 - Math.random()).slice(0, 3);
@@ -359,10 +364,15 @@ async function loadDynamicSidebar() {
   }
 
   // 🧸 Мультсеріали
-  const { data: cartoons } = await supabase
+    const { data: cartoons } = await supabase
     .from("films_site")
-    .select("id, title, poster, type")
+    .select("title, poster, type")
     .eq("type", "Мультсеріал");
+
+  // залишаємо лише унікальні мультсеріали
+  const uniqueCartoons = Array.from(new Map(cartoons.map(c => [c.title, c])).values());
+  const random = uniqueCartoons.sort(() => 0.5 - Math.random()).slice(0, 3);
+
 
   if (cartoons?.length) {
     const random = cartoons.sort(() => 0.5 - Math.random()).slice(0, 3);
@@ -392,6 +402,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
