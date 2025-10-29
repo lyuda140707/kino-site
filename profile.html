@@ -66,21 +66,7 @@
   <div class="card">
     <h3>Увійти через Telegram</h3>
     <p class="muted">Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.</p>
-<script>
-  // 🟣 Telegram вбудований callback
-  function onTelegramAuth(user) {
-  console.log("✅ Telegram повернув користувача через onauth:", user);
 
-  // Якщо Telegram повертає об'єкт типу {auth_data:{...}}
-  const data = user.auth_data || user;
-  if (data?.id) {
-    handleTelegramUser(data);
-  } else {
-    console.warn("⚠️ Не вдалося отримати дані користувача від Telegram:", user);
-  }
-}
-
-</script>
 <iframe
   src="https://oauth.telegram.org/embed/RelaxBox_UA_bot?origin=https://kino-site.pages.dev&request_access=write"
   data-onauth="onTelegramAuth(user)"
@@ -89,12 +75,19 @@
   frameborder="0"
   scrolling="no">
 </iframe>
-
 <script>
-  // 🔹 Telegram callback після входу
+  // 🔹 Telegram викликає цю функцію автоматично після входу
   function onTelegramAuth(user) {
     console.log("✅ Telegram повернув користувача через onauth:", user);
-    handleTelegramUser(user);
+
+    // якщо Telegram передає auth_data, дістаємо звідти id
+    const data = user.auth_data || user;
+
+    if (data?.id) {
+      handleTelegramUser(data);
+    } else {
+      console.warn("⚠️ Не вдалося знайти ID користувача у відповіді Telegram:", user);
+    }
   }
 </script>
 
