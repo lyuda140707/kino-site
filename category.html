@@ -106,8 +106,9 @@
         <h3>${film.title}</h3>
       `;
       card.addEventListener("click", () => {
-        window.location.href = \`/film.html?id=\${film.id}\`;
+        window.location.href = `/film.html?id=${film.id}`;
       });
+
       grid.appendChild(card);
     });
   }
