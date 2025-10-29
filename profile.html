@@ -62,90 +62,93 @@
     </div>
   </div>
 
-<!-- Авторизація Telegram -->
-<div class="card">
-  <h3>Увійти через Telegram</h3>
-  <p class="muted">
-    Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
-  </p>
+  <!-- Авторизація Telegram -->
+  <div class="card" id="telegram-card">
+    <h3>Увійти через Telegram</h3>
+    <p class="muted">
+      Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
+    </p>
 
-  <!-- ✅ ЄДИНИЙ робочий Telegram Login Widget -->
-  <script async src="https://telegram.org/js/telegram-widget.js?22"
-          data-telegram-login="RelaxBox_UA_bot"
-          data-size="large"
-          data-radius="8"
-          data-userpic="true"
-          data-request-access="write"
-          data-onauth="onTelegramAuth(user)">
-  </script>
-
-</div>
-
-
+    <!-- ✅ Telegram Login Widget -->
+    <script async src="https://telegram.org/js/telegram-widget.js?22"
+            data-telegram-login="RelaxBox_UA_bot"
+            data-size="large"
+            data-radius="8"
+            data-userpic="true"
+            data-request-access="write"
+            data-onauth="onTelegramAuth(user)">
+    </script>
+  </div>
 </main>
 
 <footer style="text-align:center;color:#8a8f98;margin:32px 0">© 2025 KinoSite</footer>
 
-<!-- ✅ Telegram Login Widget -->
-<script async src="https://telegram.org/js/telegram-widget.js?22"
-        data-telegram-login="RelaxBox_UA_bot"
-        data-size="large"
-        data-radius="8"
-        data-userpic="true"
-        data-request-access="write"
-        data-onauth="onTelegramAuth(user)">
-</script>
-
-<!-- ✅ Основна логіка -->
+<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-// ===== Вхід через Email
-document.getElementById("email-login-btn").onclick = async () => {
-  const email = document.getElementById("email-input").value.trim();
-  if (!email) return alert("Введіть email");
-  const { error } = await supabase.auth.signInWithOtp({ email });
-  alert(error ? "Помилка: " + error.message : "Перевірте пошту, щоб увійти!");
-};
+  // ===== Вхід через Email
+  document.getElementById("email-login-btn").onclick = async () => {
+    const email = document.getElementById("email-input").value.trim();
+    if (!email) return alert("Введіть email");
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    alert(error ? "Помилка: " + error.message : "Перевірте пошту, щоб увійти!");
+  };
 
-// ===== Вихід
-document.getElementById("logout-btn").onclick = async () => {
-  await supabase.auth.signOut();
-  location.reload();
-};
+  // ===== Перевірка чи вже залогінений
+  supabase.auth.getUser().then(({ data }) => {
+    if (data?.user) onUserLoggedIn(data.user);
+  });
 
-// ===== Telegram callback
-function onTelegramAuth(user) {
-  console.log("✅ Telegram авторизував користувача:", user);
-  handleTelegramUser(user);
-}
+  // ===== Вихід
+  document.getElementById("logout-btn").onclick = async () => {
+    await supabase.auth.signOut();
+    location.reload();
+  };
 
-// ===== Обробка Telegram-користувача
-async function handleTelegramUser(user) {
-  document.getElementById("auth-card").style.display = "none";
-  document.getElementById("user-card").style.display = "block";
-  document.getElementById("hello-line").innerText =
-    `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
-
-  try {
-    const res = await fetch(
-      "https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" + encodeURIComponent(user.id)
-    );
-    const json = await res.json();
-    if (json.isPro) {
-      const d = json.expireDate?.split("T")[0]?.split("-").reverse().join(".");
-      document.getElementById("pro-status").innerHTML = `✅ PRO активний до <b>${d}</b>`;
-    } else {
-      document.getElementById("pro-status").innerText = "❌ Без PRO";
-    }
-  } catch (err) {
-    console.error(err);
-    document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
+  // ===== Обробка входу через Email
+  function onUserLoggedIn(user) {
+    document.getElementById("auth-card").style.display = "none";
+    document.getElementById("user-card").style.display = "block";
+    document.getElementById("hello-line").innerText = "Вітаю, " + (user.email || user.phone);
+    document.getElementById("pro-status").innerText = "Free — увійдіть через Telegram, щоб синхронізувати PRO.";
   }
-}
+
+  // ===== Telegram callback
+  function onTelegramAuth(user) {
+    console.log("✅ Telegram авторизував користувача:", user);
+    handleTelegramUser(user);
+  }
+
+  // ===== Обробка Telegram-користувача
+  async function handleTelegramUser(user) {
+    document.getElementById("auth-card").style.display = "none";
+    document.getElementById("telegram-card").style.display = "none";
+    document.getElementById("user-card").style.display = "block";
+    document.getElementById("hello-line").innerText =
+      `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
+
+    try {
+      const res = await fetch(
+        "https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" +
+          encodeURIComponent(user.id)
+      );
+      const json = await res.json();
+      if (json.isPro) {
+        const d = json.expireDate?.split("T")[0]?.split("-").reverse().join(".");
+        document.getElementById("pro-status").innerHTML = `✅ PRO активний до <b>${d}</b>`;
+      } else {
+        document.getElementById("pro-status").innerText = "❌ Без PRO";
+      }
+    } catch (err) {
+      console.error(err);
+      document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
+    }
+  }
 </script>
+
 </body>
 </html>
