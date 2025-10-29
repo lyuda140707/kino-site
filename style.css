@@ -791,7 +791,7 @@ header {
 .genres {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 20px 40px;
+  gap: 10px 25px;
   justify-items: start;
   max-width: 950px;
   margin: 0 auto;
@@ -823,7 +823,7 @@ header {
 .mega-series .genres {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 20px 45px;
+  gap: 10px 25px;
   max-width: 1000px;
   margin: 0 auto;
 }
@@ -854,7 +854,7 @@ header {
 .mega-cartoons .genres {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 20px 45px;
+  gap: 10px 25px;
   max-width: 950px;
   margin: 0 auto;
 }
@@ -862,14 +862,15 @@ header {
 .mega-menu .genres a,
 .mega-series .genres a,
 .mega-cartoons .genres a {
-  color: #f5f5f5;
+  color: #e4e4e4;
   font-family: "Poppins", sans-serif;
-  font-size: 18px; /* 🔹 стало більшим */
-  font-weight: 600;
-  letter-spacing: 0.3px;
+  font-size: 14px; /* 🔹 було 18px */
+  font-weight: 500; /* 🔹 легше */
+  line-height: 1.4;
   text-decoration: none;
-  transition: 0.25s ease;
-  text-shadow: 0 0 10px rgba(0, 255, 242, 0.15);
+  padding: 4px 0; /* 🔹 компактніше */
+  transition: color 0.25s ease, transform 0.25s ease;
+  text-shadow: 0 0 6px rgba(0, 255, 242, 0.15);
 }
 
 /* Ефект при наведенні — для кожного меню свій неон */
@@ -1033,13 +1034,13 @@ header {
 .mega-series,
 .mega-cartoons {
   position: fixed;
-  top: 55px; /* 🔹 під шапкою, не в банері */
+  top: 55px;
   left: 50%;
   transform: translateX(-50%);
   width: 1150px;
   margin: 0 auto;
-  padding: 50px 80px 60px;
-  border-radius: 0 0 16px 16px;
+  padding: 25px 60px 35px; /* 🔹 було 50px 80px 60px → компактніше */
+  border-radius: 0 0 12px 12px;
   box-sizing: border-box;
   opacity: 0;
   visibility: hidden;
@@ -1118,6 +1119,7 @@ header {
 }
 
 /* не змінюємо нічого у розташуванні! */
+
 
 
 
