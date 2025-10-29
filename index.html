@@ -52,56 +52,6 @@
     });
   }
 </script>
-<!-- ✅ Завантаження Топ 10 фільмів з Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-  async function loadTopFilms() {
-    const slider = document.getElementById("sliderRow");
-    if (!slider) return;
-    slider.innerHTML = "<p style='color:#aaa;'>Завантаження...</p>";
-
-    const { data, error } = await supabase
-      .from("films_site")
-      .select("id, title, poster, top")
-      .or("top.ilike.%ТОП%, top.ilike.%топ%")   // шукаємо ті, де поле top містить слово "ТОП"
-      .not("poster", "is", null)
-      .limit(10);
-
-    if (error) {
-      console.error("❌ Помилка:", error);
-      slider.innerHTML = `<p style="color:white;">Помилка завантаження.</p>`;
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      slider.innerHTML = `<p style="color:white;">Немає фільмів у ТОПі.</p>`;
-      return;
-    }
-
-    // Якщо більше 10 — перемішуємо випадково
-    const shuffled = data.sort(() => Math.random() - 0.5).slice(0, 10);
-
-    slider.innerHTML = "";
-    shuffled.forEach(film => {
-      const card = document.createElement("div");
-      card.className = "slide";
-      card.innerHTML = `
-        <img src="${film.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${film.title}">
-        <p>${film.title}</p>
-      `;
-      card.addEventListener("click", () => {
-        window.location.href = \`film.html?id=\${film.id}\`;
-      });
-      slider.appendChild(card);
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", loadTopFilms);
-</script>
 
 
       <!-- === ОСНОВНА СІТКА === -->
@@ -262,6 +212,52 @@
 
   // 🚀 Запускаємо після завантаження сторінки
   document.addEventListener("DOMContentLoaded", loadLatestFilms);
+// 🔥 Завантаження Топ 10 фільмів у банер
+async function loadTopFilms() {
+  const slider = document.getElementById("sliderRow");
+  if (!slider) return;
+  slider.innerHTML = "<p style='color:#aaa;'>Завантаження...</p>";
+
+  const { data, error } = await supabase
+    .from("films_site")
+    .select("id, title, poster, top")
+    .or("top.ilike.%ТОП%, top.ilike.%топ%")
+    .not("poster", "is", null)
+    .limit(10);
+
+  if (error) {
+    console.error("❌ Помилка ТОП:", error);
+    slider.innerHTML = `<p style="color:white;">Помилка завантаження.</p>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    slider.innerHTML = `<p style="color:white;">Немає фільмів у ТОПі.</p>`;
+    return;
+  }
+
+  const shuffled = data.sort(() => Math.random() - 0.5).slice(0, 10);
+  slider.innerHTML = "";
+
+  shuffled.forEach(film => {
+    const card = document.createElement("div");
+    card.className = "slide";
+    card.innerHTML = `
+      <img src="${film.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${film.title}">
+      <p>${film.title}</p>
+    `;
+    card.addEventListener("click", () => {
+      window.location.href = \`film.html?id=\${film.id}\`;
+    });
+    slider.appendChild(card);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadLatestFilms();
+  loadTopFilms();
+});
+
 </script>
 
 </body>
@@ -271,6 +267,7 @@
 
 </body>
 </html>
+
 
 
 
