@@ -149,7 +149,7 @@ async function loadLatestFilms() {
   const { data, error } = await supabase
     .from("films_site")
     .select("*")
-    .eq("type", "Фільм")
+    .in("type", ["Фільм", "Мультфільм", "Мультсеріал", "Серіал"])
     .order("id", { ascending: false })
     .limit(20);
 
@@ -392,6 +392,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
