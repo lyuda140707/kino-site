@@ -2,6 +2,21 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8" />
+<!-- ✅ Безпечні дозволи для Telegram авторизації -->
+<meta http-equiv="Content-Security-Policy"
+      content="
+        default-src * 'self' data: blob: https: http:;
+        script-src 'self' 'unsafe-inline' 'unsafe-eval'
+          https://telegram.org
+          https://oauth.telegram.org
+          https://cdn.jsdelivr.net
+          https://cdn.jsdelivr.net/npm/@supabase/;
+        frame-src https://oauth.telegram.org https://oauth.telegram.org/embed https://kino-site.pages.dev;
+        frame-ancestors https://oauth.telegram.org https://kino-site.pages.dev;
+        connect-src *;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src https://fonts.gstatic.com;
+      ">
 
 
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -120,11 +135,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 🟢 2. Якщо користувач увійшов через Telegram iframe (новий варіант)
   window.addEventListener("message", (event) => {
-    if (event.origin === "https://oauth.telegram.org" && event.data?.id) {
-      console.log("✅ Отримано дані від Telegram:", event.data);
-      handleTelegramUser(event.data);
-    }
-  });
+  console.log("📩 Отримано повідомлення:", event.origin, event.data);
+
+  const okOrigin =
+    event.origin === "https://oauth.telegram.org" ||
+    event.origin === "https://oauth.telegram.org/embed";
+
+  const payload = event.data?.user || event.data;
+
+  if (okOrigin && payload?.id) {
+    console.log("✅ Отримано дані від Telegram:", payload);
+    handleTelegramUser(payload);
+  }
+});
+
+
+
 });
 
 // 🟣 Окрема функція для обробки користувача
