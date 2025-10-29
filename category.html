@@ -203,16 +203,21 @@ async function loadFilms(sortMode = currentSort) {
       <h3>${film.title}</h3>
     `;
 
-    // 🔹 логіка переходу
-    if (film.type === "Серіал") {
-      card.addEventListener("click", () => {
-        window.location.href = `/series.html?title=${encodeURIComponent(film.title)}`;
-      });
-    } else {
-      card.addEventListener("click", () => {
-        window.location.href = `/film.html?id=${film.id}`;
-      });
-    }
+  // 🔹 логіка переходу
+if (film.type === "Серіал") {
+  card.addEventListener("click", () => {
+    window.location.href = `/series.html?title=${encodeURIComponent(film.title)}`;
+  });
+} else if (film.type === "Мультсеріал") {
+  card.addEventListener("click", () => {
+    window.location.href = `/multseries.html?title=${encodeURIComponent(film.title)}`;
+  });
+} else {
+  card.addEventListener("click", () => {
+    window.location.href = `/film.html?id=${film.id}`;
+  });
+}
+
 
     grid.appendChild(card);
   }
