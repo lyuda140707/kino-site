@@ -87,8 +87,13 @@
 
   // Відкриваємо сторінку збірки
   function openCollection(name) {
-    window.location.href = \`collection.html?name=\${encodeURIComponent(name)}\`;
+    // Підтримка обох варіантів — з .html і без
+    const target = window.location.hostname.includes("pages.dev")
+      ? `/collection?name=${encodeURIComponent(name)}`
+      : `collection.html?name=${encodeURIComponent(name)}`;
+    window.location.href = target;
   }
+
 </script>
 
 <style>
