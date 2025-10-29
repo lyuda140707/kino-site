@@ -10,19 +10,16 @@
     body { background: #000; color: #fff; font-family: "Poppins", sans-serif; }
     h1 {
       text-align: center;
-      color: #000;
-      margin-top: 25px;
-      font-weight: 800;
       font-size: 2rem;
+      font-weight: 800;
       letter-spacing: 1px;
-      /* неонова обводка */
-      text-shadow:
-        0 0 2px #00fff2,
-        0 0 4px #00fff2,
-        0 0 8px #00fff2,
-        0 0 12px #00fff2;
-      -webkit-text-stroke: 1px #00fff2; /* бірюзова обводка */
+      margin-top: 25px;
+      background: linear-gradient(90deg, #cfcfcf, #9e9e9e, #e0e0e0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
     }
+
     .film-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
