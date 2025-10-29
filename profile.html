@@ -86,130 +86,66 @@
 
 <footer style="text-align:center;color:#8a8f98;margin:32px 0">© 2025 KinoSite</footer>
 
-<!-- Supabase SDK -->
+<!-- ✅ Telegram Login Widget -->
+<script async src="https://telegram.org/js/telegram-widget.js?22"
+        data-telegram-login="RelaxBox_UA_bot"
+        data-size="large"
+        data-radius="8"
+        data-userpic="true"
+        data-request-access="write"
+        data-onauth="onTelegramAuth(user)">
+</script>
+
+<!-- ✅ Основна логіка -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-  // ===== Вхід через Email (magic link)
-  document.getElementById("email-login-btn").onclick = async () => {
-    const email = document.getElementById("email-input").value.trim();
-    if (!email) return alert("Введіть email");
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    alert(error ? "Помилка: " + error.message : "Перевірте пошту, щоб увійти!");
-  };
+// ===== Вхід через Email
+document.getElementById("email-login-btn").onclick = async () => {
+  const email = document.getElementById("email-input").value.trim();
+  if (!email) return alert("Введіть email");
+  const { error } = await supabase.auth.signInWithOtp({ email });
+  alert(error ? "Помилка: " + error.message : "Перевірте пошту, щоб увійти!");
+};
 
-  // ===== Перевірка чи вже залогінений
-  supabase.auth.getUser().then(({ data }) => {
-    if (data?.user) onUserLoggedIn(data.user);
-  });
+// ===== Вихід
+document.getElementById("logout-btn").onclick = async () => {
+  await supabase.auth.signOut();
+  location.reload();
+};
 
-  // ===== Вихід
-  document.getElementById("logout-btn").onclick = async () => {
-    await supabase.auth.signOut();
-    location.reload();
-  };
+// ===== Telegram callback
+function onTelegramAuth(user) {
+  console.log("✅ Telegram авторизував користувача:", user);
+  handleTelegramUser(user);
+}
 
-  // ===== Коли користувач увійшов
-  function onUserLoggedIn(user) {
-    document.getElementById("auth-card").style.display = "none";
-    document.getElementById("user-card").style.display = "block";
-    document.getElementById("hello-line").innerText = "Вітаю, " + (user.email || user.phone);
-    document.getElementById("pro-status").innerText = "Free — увійди через Telegram, щоб синхронізувати PRO.";
-  }
+// ===== Обробка Telegram-користувача
+async function handleTelegramUser(user) {
+  document.getElementById("auth-card").style.display = "none";
+  document.getElementById("user-card").style.display = "block";
+  document.getElementById("hello-line").innerText =
+    `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
 
-  // ===== Авторизація через Telegram
-  document.addEventListener("DOMContentLoaded", async () => {
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.has("id") && params.has("first_name")) {
-      handleTelegramUser({
-        id: params.get("id"),
-        first_name: params.get("first_name"),
-        last_name: params.get("last_name"),
-        username: params.get("username")
-      });
+  try {
+    const res = await fetch(
+      "https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" + encodeURIComponent(user.id)
+    );
+    const json = await res.json();
+    if (json.isPro) {
+      const d = json.expireDate?.split("T")[0]?.split("-").reverse().join(".");
+      document.getElementById("pro-status").innerHTML = `✅ PRO активний до <b>${d}</b>`;
+    } else {
+      document.getElementById("pro-status").innerText = "❌ Без PRO";
     }
-});
-
-// 📨 Отримуємо повідомлення від Telegram iframe
-window.addEventListener("message", (event) => {
-  console.log("📩 Отримано повідомлення:", event.origin, event.data);
-
-  const okOrigin =
-    event.origin === "https://oauth.telegram.org" ||
-    event.origin === "https://oauth.telegram.org/embed";
-// 🟢 Витягуємо дані незалежно від формату
-let payload = null;
-
-// 🔹 Головний формат, який Telegram реально надсилає
-if (event.data?.event === "auth_user" && event.data?.auth_data?.id) {
-  payload = event.data.auth_data;
-  console.log("🎯 Виявлено auth_user подію:", payload);
-}
-// 🔹 Резервні формати (на випадок інших реалізацій)
-else if (event.data?.auth_data?.id) {
-  payload = event.data.auth_data;
-} else if (event.data?.user?.id) {
-  payload = event.data.user;
-} else if (event.data?.id) {
-  payload = event.data;
-}
-
-if (okOrigin && payload?.id) {
-  console.log("✅ Отримано дані від Telegram:", payload);
-  handleTelegramUser(payload);
-} else {
-  console.warn("⚠️ Не знайдено auth_data у події:", event.data);
-}
-
-});
-
-
-
-  async function handleTelegramUser(user) {
-    document.getElementById("auth-card").style.display = "none";
-    document.getElementById("user-card").style.display = "block";
-    document.getElementById("hello-line").innerText =
-      `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
-
-    try {
-      const res = await fetch(
-        "https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" + encodeURIComponent(user.id)
-      );
-      const json = await res.json();
-      if (json.isPro) {
-        const d = json.expireDate?.split("T")[0]?.split("-").reverse().join(".");
-        document.getElementById("pro-status").innerHTML = `✅ PRO активний до <b>${d}</b>`;
-      } else {
-        document.getElementById("pro-status").innerText = "❌ Без PRO";
-      }
-    } catch (err) {
-      console.error(err);
-      document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
-    }
+  } catch (err) {
+    console.error(err);
+    document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
   }
+}
 </script>
-<script>
-  // 🟢 Функція, яку викликає Telegram Login Widget
-  function onTelegramAuth(user) {
-    console.log("✅ Telegram авторизував користувача:", user);
-
-    // Зберігаємо ID користувача в localStorage
-    localStorage.setItem("telegram_user", JSON.stringify(user));
-
-    // Відображаємо ім’я користувача на сторінці
-    const card = document.querySelector(".card");
-    card.innerHTML = `
-      <h3>Вітаємо, ${user.first_name}!</h3>
-      <p>Ваш Telegram ID: ${user.id}</p>
-      <p>Статус: <b>PRO синхронізовано</b> 💎</p>
-      <img src="${user.photo_url}" alt="avatar" style="width:100px;border-radius:50%;margin-top:10px;">
-    `;
-  }
-</script>
-
 </body>
 </html>
