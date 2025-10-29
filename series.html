@@ -9,7 +9,20 @@
   <style>
     .series-wrap{display:flex;gap:32px;flex-wrap:wrap;margin-top:28px}
     .series-left{flex:1;min-width:280px;max-width:360px;background:#0b0b0b;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px}
-    .series-left img{width:100%;border-radius:10px;display:block;box-shadow:0 0 20px rgba(0,255,255,.25);border:1px solid rgba(0,255,255,.25)}
+    .series-left img {
+      width: 95%;
+      max-width: 275px;
+      border-radius: 10px;
+      margin: 0 auto;
+      display: block;
+      box-shadow: 0 0 20px rgba(0,255,255,0.25);
+      border: 1px solid rgba(0,255,255,0.25);
+      transition: transform 0.3s ease;
+    }
+    .series-left img:hover {
+      transform: scale(1.05);
+    }
+
     .series-title{font-size:36px;color:#00fff2;text-shadow:0 0 12px rgba(0,255,255,.35);font-weight:700;margin:0 0 10px}
     .series-meta{margin-top:12px;background:#101010;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px}
     .series-meta div{display:flex;justify-content:space-between;background:#151515;color:#ddd;padding:7px 10px;border-radius:6px;margin-bottom:6px}
@@ -28,6 +41,8 @@
     #bigPlayOverlay>div{width:100px;height:100px;border-radius:50%;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;box-shadow:0 0 25px rgba(0,255,255,.5)}
     #bigPlayOverlay svg{width:58px;height:58px;fill:#00fff2}
     #bigPlayOverlay:hover svg{transform:scale(1.08);filter:drop-shadow(0 0 8px #00fff2)}
+
+    
   </style>
 </head>
 <body>
@@ -158,6 +173,7 @@
 
     // встановлюємо перше джерело
     useSource(first.stream_url || "");
+    player.pause();
 
     // малюємо список серій, згруповано по сезонах
     const container = document.getElementById("episodesContainer");
@@ -178,11 +194,10 @@
         btn.className = "ep-btn";
         btn.textContent = `Серія ${ep.episode || "?"}`;
         btn.addEventListener("click", ()=>{
-          // зняти .active з інших
           container.querySelectorAll(".ep-btn.active").forEach(b=>b.classList.remove("active"));
           btn.classList.add("active");
           useSource(ep.stream_url || "");
-          player.play().catch(()=>{});
+          // ▶️ Автоплей прибрано — користувач сам натискає Play
         });
         // активуємо першу кнопку
         if (ep === first) btn.classList.add("active");
