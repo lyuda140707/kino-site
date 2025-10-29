@@ -116,7 +116,7 @@ async function onTelegramAuth(user) {
 
   // 3️⃣ перевіряємо PRO у Google Таблиці
   try {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbzOjYKusC8dGy6Dy73uvY8-9De7zVtNowd-XkiFVuhEhmm1QpaKQxTEAl6VTAGKqrqeSA/exec?user_id=" + encodeURIComponent(user.id));
+    const res = await fetch("https://script.google.com/macros/s/AKfycbzdELyAWdIxRolZMWaYkRMEyu1TNDStBlsNOqYM1A3xN82ZHO64VmHCSQnZvzldIGDr3Q/exec?user_id=" + encodeURIComponent(user.id));
     const json = await res.json();
 
     if (json.isPro) {
