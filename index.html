@@ -118,20 +118,6 @@
     </div>
     <div id="films-list" class="film-grid"></div>
 
-
-    <div class="film-grid">
-      <div class="film"><div class="poster"><img src="https://i.postimg.cc/5Nt4b6rP/film1.jpg"><span class="badge plus">+2</span><span class="badge quality">1080p</span></div><div class="title">Хороший хлопчик</div></div>
-      <div class="film"><div class="poster"><img src="https://i.postimg.cc/59bWb0bg/film2.jpg"><span class="badge plus">+3</span><span class="badge quality">HD 720p</span><span class="badge meta">2 сезон / 1-1 серія</span></div><div class="title">По дорозі з Норманом</div></div>
-      <div class="film"><div class="poster"><img src="https://i.postimg.cc/tR4V8Q2f/film3.jpg"><span class="badge quality">1080p</span></div><div class="title">Години відчаю</div></div>
-      <div class="film"><div class="poster"><img src="https://i.postimg.cc/6p0p2J7j/film4.jpg"><span class="badge quality">1080p</span></div><div class="title">Школа хороших дружин</div></div>
-      <div class="film"><div class="poster"><img src="https://i.postimg.cc/9Q2j8F3x/film5.jpg"><span class="badge quality">1080p</span></div><div class="title">Хороший, поганий, злий</div></div>
-      <div class="film"><div class="poster"><img src="https://i.postimg.cc/8z8cVh0P/film6.jpg"><span class="badge quality">1080p</span></div><div class="title">Світлий настрій</div></div>
-      <div class="film"><div class="poster"><img src="https://i.postimg.cc/4Nw3Q1Q8/film7.jpg"><span class="badge quality">1080p</span></div><div class="title">Вівці кохання</div></div>
-      <div class="film"><div class="poster"><img src="https://i.postimg.cc/hG1L8bYd/film8.jpg"><span class="badge quality">1080p</span></div><div class="title">Вампірки</div></div>
-      <div class="film"><div class="poster"><img src="https://i.postimg.cc/rmRkQ51t/film9.jpg"><span class="badge quality">1080p</span></div><div class="title">Старим тут не місце</div></div>
-      <div class="film"><div class="poster"><img src="https://i.postimg.cc/sg0sC1Qk/film10.jpg"><span class="badge quality">1080p</span></div><div class="title">Класика криміналу</div></div>
-    </div>
-
     <div class="pagination">
       <button>«</button>
       <button class="active">1</button>
@@ -230,64 +216,77 @@
 
   loadFilms();
 </script>
+<!-- === Підключення Supabase === -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  // 🔗 Підключення до твоєї бази Supabase
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-async function loadFilms(genre = null) {
-  let query = supabase.from("films_site").select("*").eq("type", "Фільм");
-  if (genre) query = query.eq("genre", genre);
+  // 🎬 Функція для завантаження фільмів
+  async function loadFilms(genre = null) {
+    let query = supabase.from("films_site").select("*").eq("type", "Фільм");
+    if (genre) query = query.eq("genre", genre);
 
-  const { data, error } = await query;
-  if (error) {
-    console.error("Помилка запиту:", error);
-    return;
-  }
+    const { data, error } = await query;
+    const container = document.getElementById("films-list");
+    container.innerHTML = "";
 
-  const container = document.getElementById("films-list");
-  container.innerHTML = "";
+    if (error) {
+      console.error("❌ Помилка запиту:", error);
+      container.innerHTML = `<p style="color:white;">Помилка завантаження.</p>`;
+      return;
+    }
 
-  if (!data.length) {
-    container.innerHTML = `<p style="color:#fff;">Фільмів не знайдено.</p>`;
-    return;
-  }
+    // Якщо лише 1 фільм такого жанру → відкриваємо його сторінку
+    if (genre && data.length === 1) {
+      window.location.href = `film.html?id=${data[0].id}`;
+      return;
+    }
 
-  data.forEach(film => {
-    const card = document.createElement("div");
-    card.classList.add("film");
-    card.innerHTML = `
-      <div class="poster">
-        <img src="${film.poster}" alt="${film.title}">
-        ${film.pro_access?.toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
-      </div>
-      <div class="title">${film.title}</div>
-      <div class="meta">${film.genre} • ${film.year}</div>
-    `;
-    card.addEventListener("click", () => {
-      window.location.href = \`film.html?id=\${film.id}\`;
+    if (data.length === 0) {
+      container.innerHTML = `<p style="color:white;">Фільмів не знайдено.</p>`;
+      return;
+    }
+
+    data.forEach(film => {
+      const card = document.createElement("div");
+      card.classList.add("film");
+      card.innerHTML = `
+        <div class="poster">
+          <img src="${film.poster}" alt="${film.title}">
+          ${film.pro_access?.toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
+        </div>
+        <div class="title">${film.title}</div>
+        <div class="meta">${film.genre} • ${film.year}</div>
+      `;
+      card.addEventListener("click", () => {
+        window.location.href = \`film.html?id=\${film.id}\`;
+      });
+      container.appendChild(card);
     });
-    container.appendChild(card);
-  });
-}
-
-// 🔹 При завантаженні показати всі фільми
-loadFilms();
-
-// 🔹 Обробка кліків на жанри
-document.addEventListener("click", e => {
-  if (e.target.classList.contains("genre-link")) {
-    e.preventDefault();
-    const genre = e.target.dataset.genre;
-    loadFilms(genre);
   }
-});
+
+  // 🔹 При завантаженні показуємо всі фільми
+  loadFilms();
+
+  // 🔹 Обробка кліку по жанрам у випадаючому меню
+  document.addEventListener("click", (e) => {
+    const genreLink = e.target.closest(".genre-link");
+    if (!genreLink) return;
+    e.preventDefault();
+    const genre = genreLink.dataset.genre;
+    loadFilms(genre);
+  });
 </script>
+
 
 
 </body>
 </html>
+
 
 
 
