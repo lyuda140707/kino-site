@@ -41,6 +41,28 @@
   fetch("header.html").then(r=>r.text()).then(html=>{
     document.getElementById("header-placeholder").innerHTML = html;
   }).catch(console.error);
+
+// 🟢 1. Зберігаємо користувача після авторизації
+function onTelegramAuth(user) {
+  console.log("✅ Telegram авторизував користувача:", user);
+  localStorage.setItem("telegram_user", JSON.stringify(user)); // зберігаємо
+  handleTelegramUser(user);
+}
+
+// 🟢 2. При відкритті сторінки перевіряємо, чи є збережений користувач
+window.addEventListener("DOMContentLoaded", () => {
+  const savedUser = localStorage.getItem("telegram_user");
+  if (savedUser) {
+    try {
+      const user = JSON.parse(savedUser);
+      console.log("🔄 Відновлено користувача з localStorage:", user);
+      handleTelegramUser(user);
+    } catch (e) {
+      console.warn("❌ Не вдалося розпарсити користувача:", e);
+    }
+  }
+});
+
 </script>
 
 <main class="profile-wrap">
