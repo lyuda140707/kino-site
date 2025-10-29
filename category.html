@@ -59,52 +59,62 @@
 
   <footer>© 2025 Relax Kino</footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+<script>
+  // ✅ якщо сторінка відкрилась як /category (без .html) — перенаправляємо
+  if (location.pathname === "/category") {
+    location.replace("/category.html" + location.search);
+  }
 
-    const params = new URLSearchParams(window.location.search);
-    const type = params.get("type") || "Фільм";
-    const genre = params.get("genre") || "Усі";
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    document.getElementById("pageTitle").textContent = `${type} — ${genre}`;
+  const params = new URLSearchParams(window.location.search);
+  const type = (params.get("type") || "Фільм").trim();
+  const genre = (params.get("genre") || "").trim();
 
-    async function loadFilms() {
-      let query = supabase.from("films_site").select("*").eq("type", type);
-      if (genre && genre !== "Усі") query = query.ilike("genre", `%${genre}%`);
+  document.getElementById("pageTitle").textContent = `${type} • ${genre || "Усі"}`;
 
-      const { data, error } = await query;
-      const grid = document.getElementById("filmGrid");
-      grid.innerHTML = "";
+  async function loadFilms() {
+    console.log("🔍 Пошук у таблиці:", { type, genre });
 
-      if (error) {
-        console.error("Помилка Supabase:", error);
-        grid.innerHTML = `<p>Не вдалося завантажити дані.</p>`;
-        return;
-      }
+    let query = supabase.from("films_site").select("*");
 
-      if (!data || data.length === 0) {
-        grid.innerHTML = `<p style="text-align:center;">Нічого не знайдено у категорії "${genre}"</p>`;
-        return;
-      }
+    if (type) query = query.ilike("type", `%${type}%`);
+    if (genre) query = query.ilike("genre", `%${genre}%`);
 
-      data.forEach(film => {
-        const card = document.createElement("div");
-        card.className = "film-card";
-        card.innerHTML = `
-          <img src="${film.poster || 'https://via.placeholder.com/200x280?text=No+Image'}" alt="${film.title}">
-          <h3>${film.title}</h3>
-        `;
-        card.addEventListener("click", () => {
-          window.location.href = \`film.html?id=\${film.id}\`;
-        });
-        grid.appendChild(card);
-      });
+    const { data, error } = await query.order("id", { ascending: false });
+    console.log("📊 Результат:", data, error);
+
+    const grid = document.getElementById("filmGrid");
+    grid.innerHTML = "";
+
+    if (error) {
+      grid.innerHTML = `<p style="color:#ff6b6b;">Помилка: ${error.message}</p>`;
+      return;
     }
 
-    loadFilms();
-  </script>
+    if (!data || data.length === 0) {
+      grid.innerHTML = `<p style="color:#ccc;text-align:center;">Нічого не знайдено для жанру "${genre}"</p>`;
+      return;
+    }
+
+    data.forEach(film => {
+      const card = document.createElement("div");
+      card.className = "film-card";
+      card.innerHTML = `
+        <img src="${film.poster || 'https://via.placeholder.com/200x280?text=No+Image'}" alt="${film.title}">
+        <h3>${film.title}</h3>
+      `;
+      card.addEventListener("click", () => {
+        window.location.href = \`/film.html?id=\${film.id}\`;
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  loadFilms();
+</script>
+
 </body>
 </html>
