@@ -453,6 +453,9 @@
         </div>
         <!-- 🟠 Кнопка для скарги -->
         <button id="reportBtn" class="report-btn">⚠️ Повідомити про проблему</button>
+        <!-- ⭐ Кнопка додати в закладки -->
+        <button id="bookmarkBtn" class="report-btn" style="color:#00fff2;margin-left:10px;">⭐ Додати в закладки</button>
+
 
         <div class="player-box">
   <div class="player-wrapper" style="position:relative;">
@@ -759,6 +762,45 @@ function getYouTubeId(url) {
 
     // Завантаження сторінки
     loadFilm();
+// === ⭐ ЗАКЛАДКИ ===
+function toggleBookmark(film) {
+  const key = "bookmarks";
+  let list = JSON.parse(localStorage.getItem(key) || "[]");
+
+  const exists = list.some(item => item.id === film.id);
+  if (exists) {
+    list = list.filter(item => item.id !== film.id);
+    localStorage.setItem(key, JSON.stringify(list));
+    alert("❌ Видалено із закладок");
+    document.getElementById("bookmarkBtn").textContent = "⭐ Додати в закладки";
+  } else {
+    list.push(film);
+    localStorage.setItem(key, JSON.stringify(list));
+    alert("✅ Додано у закладки");
+    document.getElementById("bookmarkBtn").textContent = "⭐ У закладках";
+  }
+}
+
+document.getElementById("bookmarkBtn")?.addEventListener("click", () => {
+  const film = {
+    id: movieUrl || Date.now(),
+    title: document.getElementById("filmTitle").textContent.trim(),
+    poster: document.getElementById("filmPoster").src,
+    year: document.getElementById("filmYear").textContent.trim(),
+    genre: document.getElementById("filmGenre").textContent.trim(),
+    imdb: document.getElementById("filmImdb").textContent.trim()
+  };
+  toggleBookmark(film);
+});
+
+// При відкритті сторінки — оновлюємо текст кнопки
+window.addEventListener("DOMContentLoaded", () => {
+  const title = document.getElementById("filmTitle")?.textContent?.trim();
+  const list = JSON.parse(localStorage.getItem("bookmarks") || "[]");
+  const exists = list.some(item => item.title === title);
+  if (exists) document.getElementById("bookmarkBtn").textContent = "⭐ У закладках";
+});
+
     // ===== 🎬 Рекомендовані фільми =====
 // 🎬 Рекомендовані фільми — шукає схожі за назвою або жанром
 async function loadRecommendedFilms(title, genre) {
