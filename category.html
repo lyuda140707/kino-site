@@ -150,7 +150,6 @@
 let currentSort = 'latest'; // latest | best | year
 let selectedYear = '';      // значення з випадаючого списку
 
-// === основне завантаження ===
 async function loadFilms(sortMode = currentSort) {
   currentSort = sortMode;
 
@@ -172,8 +171,17 @@ async function loadFilms(sortMode = currentSort) {
     return;
   }
 
-  // фільтрація за роком, якщо вибрано
+  // ✅ якщо це серіали — групуємо за назвою
   let items = [...data];
+  if (type.toLowerCase().includes("серіал")) {
+    const map = new Map();
+    items.forEach(row => {
+      if (!map.has(row.title)) map.set(row.title, row);
+    });
+    items = [...map.values()];
+  }
+
+  // фільтрація за роком
   if (selectedYear) {
     items = items.filter(f => String(f.year).trim() === selectedYear);
   }
@@ -193,12 +201,22 @@ async function loadFilms(sortMode = currentSort) {
       <img src="${film.poster || 'https://via.placeholder.com/200x280?text=No+Image'}" alt="${film.title}">
       <h3>${film.title}</h3>
     `;
-    card.addEventListener("click", () => {
-      window.location.href = `/film.html?id=${film.id}`;
-    });
+
+    // 🔹 логіка переходу
+    if (film.type === "Серіал") {
+      card.addEventListener("click", () => {
+        window.location.href = `/series.html?title=${encodeURIComponent(film.title)}`;
+      });
+    } else {
+      card.addEventListener("click", () => {
+        window.location.href = `/film.html?id=${film.id}`;
+      });
+    }
+
     grid.appendChild(card);
   }
 }
+
 
 // === кнопки фільтрів ===
 const btnLatest = document.getElementById('btn-latest');
