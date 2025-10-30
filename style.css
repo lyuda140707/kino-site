@@ -1183,41 +1183,60 @@ header {
   transform: scale(1.05);
   box-shadow: 0 0 15px rgba(123,47,255,0.6);
 }
-/* === Неонове пульсування кнопок === */
+/* === Неонове пульсування кнопок (оновлено) === */
 
-/* Бот — бірюзово-синє світіння */
+/* 🤖 Бот — бірюзово-синій пульс */
 .tg-btn.bot {
   background: linear-gradient(90deg, #00fff2, #0075ff);
-  animation: pulseBlue 4s infinite ease-in-out;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
 }
-
+.tg-btn.bot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+  box-shadow: 0 0 12px rgba(0,255,255,0.6), 0 0 24px rgba(0,117,255,0.3);
+  animation: pulseBlue 3.5s infinite ease-in-out;
+}
 @keyframes pulseBlue {
   0%, 100% {
-    box-shadow: 0 0 10px rgba(0,255,255,0.4), 0 0 20px rgba(0,117,255,0.2);
+    box-shadow: 0 0 8px rgba(0,255,255,0.3), 0 0 16px rgba(0,117,255,0.2);
   }
   50% {
-    box-shadow: 0 0 25px rgba(0,255,255,0.8), 0 0 45px rgba(0,117,255,0.5);
+    box-shadow: 0 0 30px rgba(0,255,255,0.9), 0 0 60px rgba(0,117,255,0.7);
   }
 }
 
-/* Канал — рожево-фіолетове світіння */
+/* 📢 Канал — рожево-фіолетовий пульс */
 .tg-btn.channel {
   background: linear-gradient(90deg, #ff00ff, #ff6ec7);
-  animation: pulsePink 4.5s infinite ease-in-out;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
 }
-
+.tg-btn.channel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+  box-shadow: 0 0 12px rgba(255,0,255,0.5), 0 0 24px rgba(255,110,199,0.3);
+  animation: pulsePink 4s infinite ease-in-out;
+}
 @keyframes pulsePink {
   0%, 100% {
-    box-shadow: 0 0 10px rgba(255,0,255,0.3), 0 0 20px rgba(255,110,199,0.2);
+    box-shadow: 0 0 8px rgba(255,0,255,0.3), 0 0 16px rgba(255,110,199,0.2);
   }
   50% {
-    box-shadow: 0 0 25px rgba(255,0,255,0.7), 0 0 45px rgba(255,110,199,0.6);
+    box-shadow: 0 0 35px rgba(255,0,255,0.8), 0 0 70px rgba(255,110,199,0.7);
   }
 }
 
-/* При наведенні — посилене світіння */
-.tg-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 30px rgba(255,255,255,0.7);
+/* При наведенні — трохи підсилюємо світіння */
+.tg-btn:hover::before {
+  animation-duration: 1.5s;
 }
 
