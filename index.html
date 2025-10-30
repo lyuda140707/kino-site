@@ -434,16 +434,21 @@ async function loadDynamicSidebar() {
           </div>
         </div>`;
     }
-  // 🌐 Telegram блок у сайдбарі
+// 🌐 Telegram блок у сайдбарі
 const telegramBlock = `
-  <div class="telegram-side">
+  <div class="sidebar-block telegram-side">
     <h3>💫 Ми в Telegram</h3>
-    <p>Отримуй новинки першими 👇</p>
-    <a href="https://t.me/RelaxBox_UA_bot" target="_blank" class="tg-side-btn bot">🤖 Відкрити Бота</a>
-    <a href="https://t.me/RelaxBoxMedia2" target="_blank" class="tg-side-btn channel">📢 Канал</a>
+    <div class="telegram-content">
+      <p>Отримуй новинки першими 👇</p>
+      <div class="tg-links">
+        <a href="https://t.me/RelaxBox_UA_bot" target="_blank" class="tg-btn bot">🤖 Відкрити Бота</a>
+        <a href="https://t.me/RelaxBoxMedia2" target="_blank" class="tg-btn channel">📢 Канал</a>
+      </div>
+    </div>
   </div>
 `;
 document.querySelector(".sidebar").insertAdjacentHTML("beforeend", telegramBlock);
+
 
   } catch (e) {
     console.error("❌ Помилка мультсеріалів:", e);
@@ -458,6 +463,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 <script src="auth.js"></script>
 </body>
 </html>
+
 
 
 
