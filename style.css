@@ -1171,9 +1171,6 @@ header {
   box-shadow: 0 0 10px rgba(0,255,255,0.2);
 }
 
-.tg-btn.bot {
-  background: linear-gradient(90deg, #00fff2, #0075ff);
-}
 
 .tg-btn.channel {
   background: linear-gradient(90deg, #ff00ff, #ff6ec7);
@@ -1239,3 +1236,4 @@ header {
 .tg-btn:hover::before {
   animation-duration: 2s;
 }
+
