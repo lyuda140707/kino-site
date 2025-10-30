@@ -18,32 +18,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-  .profile-wrap {
-  max-width: 680px;
-  margin: 20px auto;
-  padding: 10px;
-}
-
-.card {
-  background: #0e0f13;
-  border: 1px solid #1c1c1c;
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 14px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.4);
-}
-
-.card h3 {
-  margin-top: 0;
-  margin-bottom: 6px;
-  font-size: 17px;
-  color: #00fff2;
-}
-
-#messages-card {
-  position: relative;
-}
-
+  .profile-wrap{max-width:860px;margin:24px auto;padding:16px}
+  .card{background:#0e0f13;border:1px solid #222;border-radius:16px;padding:20px;margin-bottom:16px}
   .muted{color:#9aa0a6;font-size:13px}
   .btn{padding:10px 14px;border-radius:10px;border:none;cursor:pointer}
   .btn-primary{background:#00ffd5;color:#000;font-weight:600}
@@ -117,53 +93,7 @@
   cursor: pointer;
 }
 .fav-clear:hover { box-shadow: 0 0 12px rgba(255, 77, 77, 0.35); }
-/* === 🗑 Повідомлення === */
-.message-item {
-  background: #0f1117;
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 10px;
-  position: relative;
-}
-.message-item.new::before {
-  content: "• Нове";
-  position: absolute;
-  top: 6px;
-  right: 10px;
-  color: #00fff2;
-  font-size: 12px;
-  font-weight: 600;
-}
-.message-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.message-body {
-  margin-top: 6px;
-  color: #ddd;
-  font-size: 14px;
-  white-space: pre-wrap;
-}
-.msg-delete {
-  background: transparent;
-  border: 1px solid rgba(255,77,77,0.4);
-  color: #ff6b6b;
-  border-radius: 6px;
-  padding: 3px 8px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.msg-delete:hover {
-  background: rgba(255,77,77,0.15);
-}
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.3; }
-  100% { opacity: 1; }
-}
+
 </style>
 </head>
 <body>
@@ -416,46 +346,20 @@ async function loadMessagesForUser(userId){
     return;
   }
 
-  // зберігаємо кількість у localStorage для позначки “нове”
-  const lastCount = Number(localStorage.getItem("last_msg_count") || 0);
-  localStorage.setItem("last_msg_count", data.length);
-
-  // якщо стало більше — підсвічуємо “нові”
-  const isNew = data.length > lastCount;
-  if (isNew) {
-    const badge = document.createElement("div");
-    badge.textContent = "🆕 Нове повідомлення!";
-    badge.style.cssText = `
-      position:absolute;top:-8px;right:10px;
-      color:#00fff2;font-size:13px;font-weight:600;
-      animation: pulse 1.5s infinite;
-    `;
-    document.getElementById("messages-card").appendChild(badge);
-  }
-
   box.innerHTML = "";
   data.forEach(m=>{
     const card = document.createElement("div");
-    card.className = "message-item" + (isNew ? " new" : "");
+    card.style.cssText = "border:1px solid #2a2d33;border-radius:10px;padding:10px;margin:8px 0;background:#0f1014";
     card.innerHTML = `
-      <div class="message-header">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
         <b>${m.title || "Повідомлення"}</b>
         <small style="color:#9aa0a6">${new Date(m.created_at).toLocaleString()}</small>
       </div>
-      <div class="message-body">${m.body || ""}</div>
+      <p style="margin:6px 0 0;color:#ddd;white-space:pre-wrap">${m.body || ""}</p>
       ${m.from_name ? `<small style="color:#7bd9ff">— ${m.from_name}</small>` : ""}
-      <button class="msg-delete">🗑 Видалити</button>
     `;
-    const delBtn = card.querySelector(".msg-delete");
-    delBtn.addEventListener("click", async ()=>{
-      if (!confirm("Видалити це повідомлення?")) return;
-      await supabase.from("user_messages").delete().eq("id", m.id);
-      card.remove();
-    });
     box.appendChild(card);
   });
-}
-
 }
 
 </script>
