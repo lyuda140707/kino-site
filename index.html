@@ -160,11 +160,35 @@ async function loadLatestFilms() {
     return;
   }
 
-  // 🔹 Групуємо унікальні за назвою (щоб серіали/мультсеріали не дублювались)
-  const unique = Array.from(new Map(data.map(item => [item.title, item])).values());
+  // 🔹 Групуємо за title і мерджимо жанри
+  const map = new Map();
+  data.forEach(item => {
+    const key = item.title.trim();
+    if (map.has(key)) {
+      const existing = map.get(key);
+      if (item.genre && !existing.genre.includes(item.genre)) {
+        existing.genre = existing.genre ? `${existing.genre}, ${item.genre}` : item.genre;
+      }
+      if ((item.id || 0) > (existing.id || 0)) {
+        // для "останніх" орієнтуємось на найбільший id як на найсвіжіший
+        existing.id = item.id;
+        existing.poster = item.poster || existing.poster;
+        existing.type = item.type || existing.type;
+        existing.year = item.year || existing.year;
+        existing.imdb = item.imdb || existing.imdb;
+        existing.pro_access = item.pro_access || existing.pro_access;
+      }
+    } else {
+      map.set(key, { ...item });
+    }
+  });
+  const unique = Array.from(map.values());
+  
+  // 🔹 Беремо 20 останніх (після злиття)
+  const latest = unique
+    .sort((a, b) => (b.id || 0) - (a.id || 0))
+    .slice(0, 20);
 
-  // 🔹 Беремо 20 останніх
-  const latest = unique.slice(0, 20);
 
   container.innerHTML = "";
   latest.forEach(item => {
@@ -403,6 +427,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 <script src="auth.js"></script>
 </body>
 </html>
+
 
 
 
