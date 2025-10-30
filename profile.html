@@ -105,20 +105,23 @@
     document.getElementById("header-placeholder").innerHTML = html;
   });
 // ===== Кнопки у профілі
-document.getElementById("get-pro")?.addEventListener("click", () => {
-  window.location.href = "/pro.html"; // сторінка з оплатою PRO
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("get-pro")?.addEventListener("click", () => {
+    window.location.href = "/pro.html";
+  });
+
+  document.getElementById("messages")?.addEventListener("click", () => {
+    alert("📩 Розділ 'Повідомлення' у розробці");
+  });
+
+  document.getElementById("bookmarks")?.addEventListener("click", () => {
+    const favSection = document.getElementById("favorites-card");
+    if (favSection) {
+      favSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
 });
 
-document.getElementById("messages")?.addEventListener("click", () => {
-  alert("📩 Розділ 'Повідомлення' у розробці");
-});
-
-document.getElementById("bookmarks")?.addEventListener("click", () => {
-  const favSection = document.getElementById("favorites-card");
-  if (favSection) {
-    favSection.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-});
 
       
 </script>
@@ -140,13 +143,14 @@ document.getElementById("bookmarks")?.addEventListener("click", () => {
   </div>
 </div>
 <!-- ⭐ Мої закладки у кабінеті -->
-<div class="card" id="favorites-card" style="display:none;">
+<div class="card" id="favorites-card">
   <div class="fav-head">
     <h3 style="margin:0;color:#00fff2;">⭐ Мої закладки</h3>
     <button id="favClearBtn" class="fav-clear">🗑 Очистити все</button>
   </div>
   <div id="favoritesList" class="bookmark-grid"></div>
 </div>
+
   <!-- 📨 Авторизація Email -->
   <div class="card" id="auth-card">
     <h3>Увійти через Email</h3>
