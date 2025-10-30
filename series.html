@@ -334,6 +334,7 @@ document.getElementById("bookmarkSeriesBtn")?.addEventListener("click", () => {
     alert("❌ Видалено із закладок");
   } else {
     list.push({
+      id: first.id || "", // 🆕 додаємо ID для переходу
       title,
       poster,
       year,
