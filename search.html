@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔍 Пошук — KinoSite</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <script>
+    fetch("header.html")
+      .then(res => res.text())
+      .then(html => document.getElementById("header-placeholder").innerHTML = html)
+      .catch(err => console.error("Помилка хедера:", err));
+  </script>
+
+  <main class="container" style="padding: 20px;">
+    <h1 style="text-align:center;color:#00fff2;">🔍 Результати пошуку</h1>
+    <div id="search-results" class="film-grid" style="margin-top:20px;"></div>
+  </main>
+
+  <footer>© 2025 KinoSite • Усі права захищені</footer>
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function runSearch() {
+      const box = document.getElementById("search-results");
+      const query = localStorage.getItem("searchQuery") || "";
+      if (!query) {
+        box.innerHTML = "<p style='color:#aaa;'>Введіть запит у поле пошуку.</p>";
+        return;
+      }
+
+      box.innerHTML = `<p style='color:#aaa;'>Пошук: <b>${query}</b>...</p>`;
+
+      const { data, error } = await supabase
+        .from("films_site")
+        .select("id, title, poster, genre, year, type, imdb, pro_access")
+        .or(`title.ilike.%${query}%,genre.ilike.%${query}%`)
+        .order("id", { ascending: false });
+
+      if (error) {
+        console.error("❌ Помилка пошуку:", error);
+        box.innerHTML = "<p style='color:#aaa;'>Сталася помилка під час пошуку.</p>";
+        return;
+      }
+
+      if (!data?.length) {
+        box.innerHTML = "<p style='color:#aaa;'>Нічого не знайдено.</p>";
+        return;
+      }
+
+      // 🔹 Унікальні за title
+      const unique = Array.from(new Map(data.map(f => [f.title, f])).values());
+
+      box.innerHTML = "";
+      unique.forEach(f => {
+        const card = document.createElement("div");
+        card.className = "film";
+        card.innerHTML = `
+          <div class="poster">
+            <img src="${f.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${f.title}">
+            ${String(f.pro_access || '').toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
+          </div>
+          <div class="title">${f.title}</div>
+          <div class="meta">
+            <span>${f.type || ''}</span> • 
+            <span>${f.genre || ''}</span> • 
+            <span>${f.year || ''}</span>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+          if (f.type === "Серіал") {
+            window.location.href = "series.html?title=" + encodeURIComponent(f.title);
+          } else if (f.type === "Мультсеріал") {
+            window.location.href = "multseries.html?title=" + encodeURIComponent(f.title);
+          } else {
+            window.location.href = "film.html?id=" + f.id;
+          }
+        });
+        box.appendChild(card);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", runSearch);
+  </script>
+
+  <script src="auth.js"></script>
+</body>
+</html>
