@@ -77,7 +77,52 @@
   box-shadow: 0 0 25px rgba(255,215,0,0.5);
 }
 
-    
+ /* === Рядок з назвою та кнопкою над плеєром === */
+.series-top-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:6px 0 12px 0;
+}
+.series-top-title{
+  margin:0;
+  color:#00fff2;
+}
+
+/* кнопка закладок (як і раніше) + активний стан */
+.bookmark-btn{
+  background:transparent;
+  border:1px solid rgba(0,255,255,.4);
+  color:#00fff2;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  border-radius:8px;
+  padding:6px 14px;
+  transition:all .25s ease;
+  text-shadow:0 0 8px rgba(0,255,255,.6);
+}
+.bookmark-btn:hover{
+  transform:scale(1.08);
+  box-shadow:0 0 14px rgba(0,255,255,.45);
+}
+.bookmark-btn.active{
+  border-color:gold;
+  color:gold;
+  text-shadow:0 0 10px gold, 0 0 20px rgba(255,215,0,.6);
+  box-shadow:0 0 15px rgba(255,215,0,.3);
+}
+.bookmark-btn.active:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 25px rgba(255,215,0,.5);
+}
+
+/* адаптив: на вузьких екранах — перенос назви і кнопки у два рядки */
+@media (max-width:640px){
+  .series-top-row{flex-wrap:wrap;justify-content:flex-start;gap:8px}
+}
+   
   </style>
 </head>
 <body>
@@ -99,13 +144,15 @@
         <div><span>Рік</span><span id="seriesYear"></span></div>
         <div><span>IMDb</span><span id="seriesImdb"></span></div>
       </div>
-      <div class="source-row">
-        <button id="bookmarkSeriesBtn" class="bookmark-btn">⭐ Додати в закладки</button>
-      </div>
+     
 
     </div>
 
     <div class="series-right">
+      <div class="series-top-row">
+        <h3 class="series-top-title">🎬 Перегляд</h3>
+        <button id="bookmarkSeriesBtn" class="bookmark-btn">⭐ Додати в закладки</button>
+      </div>
       <div class="player-box">
         <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
         <div id="bigPlayOverlay"><div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
