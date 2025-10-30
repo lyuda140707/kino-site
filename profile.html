@@ -317,6 +317,7 @@ footer {
   <!-- 🧩 Блок користувача -->
   <div class="card" id="user-card" style="display:none;">
   <h3 id="hello-line">Вітаю!</h3>
+  <p id="auth-type" class="muted"></p> <!-- 🆕 ДОДАЙ ЦЕ -->
   <p class="muted">Статус: <span id="pro-status">—</span></p>
   <button class="btn btn-ghost" id="logout-btn">Вийти</button>
 
@@ -463,12 +464,52 @@ renderBookmarksInProfile();
     const { error } = await supabase.auth.signInWithOtp({ email });
     alert(error ? "Помилка: " + error.message : "Перевірте пошту, щоб увійти!");
   };
+  // ✅ Коли користувач повернувся по лінку з пошти — підхоплюємо сесію і показуємо кабінет
+window.addEventListener("DOMContentLoaded", async () => {
+  const { data, error } = await supabase.auth.getUser();
+  const user = data?.user || null;
+
+  if (user) {
+    // збережемо мінімальні дані користувача локально
+    localStorage.setItem("email_user", JSON.stringify({ id: user.id, email: user.email }));
+
+    // показати кабінет / сховати форми входу
+    document.getElementById("auth-card").style.display = "none";
+    document.getElementById("telegram-card").style.display = "none";
+    document.getElementById("user-card").style.display = "block";
+    document.getElementById("hello-line").innerText = `Вітаю, ${user.email}`;
+    document.getElementById("auth-type").innerText = "🔑 Вхід через Email";
+
+    // оновити статус PRO та кнопки, якщо функції вже завантажені
+    if (typeof checkProStatus === "function") checkProStatus();
+    if (typeof updateProUI === "function") updateProUI();
+  }
+});
+
+// ✅ Реагуємо на будь-яку зміну стану (щоб кабінет з’явився одразу після підтвердження e-mail)
+supabase.auth.onAuthStateChange(async (event, session) => {
+  if (session?.user) {
+    localStorage.setItem("email_user", JSON.stringify({ id: session.user.id, email: session.user.email }));
+    document.getElementById("auth-card").style.display = "none";
+    document.getElementById("telegram-card").style.display = "none";
+    document.getElementById("user-card").style.display = "block";
+    document.getElementById("hello-line").innerText = `Вітаю, ${session.user.email}`;
+    document.getElementById("auth-type").innerText = "🔑 Вхід через Email";
+    if (typeof checkProStatus === "function") checkProStatus();
+    if (typeof updateProUI === "function") updateProUI();
+  }
+});
+
 
   // ===== Вихід
-  document.getElementById("logout-btn").onclick = () => {
+  document.getElementById("logout-btn").onclick = async () => {
+    try { await supabase.auth.signOut(); } catch(e) { console.warn(e); }
     localStorage.removeItem("telegram_user");
+    localStorage.removeItem("email_user");
+    localStorage.removeItem("pro_payment_started");
     location.reload();
   };
+
 
   // ===== Основна функція обробки користувача
   async function handleTelegramUser(user) {
