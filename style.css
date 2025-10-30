@@ -1120,54 +1120,66 @@ header {
 
 /* не змінюємо нічого у розташуванні! */
 
-/* === Telegram блок у сайдбарі === */
+/* === Telegram block in sidebar === */
 .telegram-side {
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(0,255,255,0.15);
-  border-radius: 16px;
+  border: 1px solid rgba(0,255,255,0.1);
+  border-radius: 14px;
   padding: 16px 14px 20px;
   margin-top: 25px;
   text-align: center;
   backdrop-filter: blur(8px);
-  box-shadow: 0 0 25px rgba(0,255,255,0.1);
+  box-shadow: 0 0 18px rgba(0,255,255,0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.telegram-side:hover {
+  box-shadow: 0 0 28px rgba(123,47,255,0.4);
 }
 
 .telegram-side h3 {
   color: #00fff2;
-  margin-bottom: 6px;
   font-size: 17px;
-  font-weight: 600;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-shadow: 0 0 8px rgba(0,255,255,0.3);
 }
 
-.telegram-side p {
-  color: #ccc;
+.telegram-content p {
+  color: #ddd;
   font-size: 14px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
-.tg-side-btn {
-  display: block;
-  margin: 6px auto;
-  padding: 8px 14px;
-  border-radius: 10px;
-  font-weight: 600;
-  color: #fff;
-  text-decoration: none;
-  transition: all 0.25s ease;
+.tg-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.tg-btn {
+  display: inline-block;
   width: 90%;
+  padding: 9px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  font-size: 14px;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 10px rgba(0,255,255,0.2);
 }
 
-.tg-side-btn.bot {
-  background: linear-gradient(90deg, #00ffd5, #0075ff);
+.tg-btn.bot {
+  background: linear-gradient(90deg, #00fff2, #0075ff);
 }
 
-.tg-side-btn.channel {
+.tg-btn.channel {
   background: linear-gradient(90deg, #ff00ff, #ff6ec7);
 }
 
-.tg-side-btn:hover {
-  transform: scale(1.06);
+.tg-btn:hover {
+  transform: scale(1.05);
   box-shadow: 0 0 15px rgba(123,47,255,0.6);
 }
-
-
