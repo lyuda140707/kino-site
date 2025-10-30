@@ -41,6 +41,41 @@
     #bigPlayOverlay>div{width:100px;height:100px;border-radius:50%;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;box-shadow:0 0 25px rgba(0,255,255,.5)}
     #bigPlayOverlay svg{width:58px;height:58px;fill:#00fff2}
     #bigPlayOverlay:hover svg{transform:scale(1.08);filter:drop-shadow(0 0 8px #00fff2)}
+/* === ⭐ КНОПКА ЗАКЛАДОК === */
+.source-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.bookmark-btn {
+  background: transparent;
+  border: 1px solid rgba(0,255,255,0.4);
+  color: #00fff2;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 6px 14px;
+  transition: all 0.25s ease;
+  text-shadow: 0 0 8px rgba(0,255,255,0.6);
+}
+.bookmark-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 14px rgba(0,255,255,0.45);
+}
+
+/* 🟡 Активна (в закладках) */
+.bookmark-btn.active {
+  border-color: gold;
+  color: gold;
+  text-shadow: 0 0 10px gold, 0 0 20px rgba(255,215,0,0.6);
+  box-shadow: 0 0 15px rgba(255,215,0,0.3);
+}
+.bookmark-btn.active:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 25px rgba(255,215,0,0.5);
+}
 
     
   </style>
@@ -64,6 +99,10 @@
         <div><span>Рік</span><span id="seriesYear"></span></div>
         <div><span>IMDb</span><span id="seriesImdb"></span></div>
       </div>
+      <div class="source-row">
+        <button id="bookmarkSeriesBtn" class="bookmark-btn">⭐ Додати в закладки</button>
+      </div>
+
     </div>
 
     <div class="series-right">
@@ -211,6 +250,55 @@
   }
 
   document.addEventListener("DOMContentLoaded", loadSeries);
+  // === ⭐ ЗАКЛАДКИ (СЕРІАЛИ) ===
+function getBookmarks() {
+  try { return JSON.parse(localStorage.getItem("bookmarks") || "[]"); }
+  catch { return []; }
+}
+function setBookmarks(arr) {
+  localStorage.setItem("bookmarks", JSON.stringify(arr));
+}
+function isSeriesBookmarked(title) {
+  const list = getBookmarks();
+  return list.some(x => x.title === title && x.type === "Серіал");
+}
+function updateSeriesBookmarkBtn(title) {
+  const btn = document.getElementById("bookmarkSeriesBtn");
+  if (!btn) return;
+  const active = isSeriesBookmarked(title);
+  btn.textContent = active ? "⭐ У закладках" : "⭐ Додати в закладки";
+  btn.classList.toggle("active", active);
+}
+
+document.getElementById("bookmarkSeriesBtn")?.addEventListener("click", () => {
+  const title = document.getElementById("seriesTitle")?.textContent.trim();
+  const poster = document.getElementById("seriesPoster")?.src;
+  const year = document.getElementById("seriesYear")?.textContent.trim();
+  const genre = document.getElementById("seriesGenre")?.textContent.trim();
+  const imdb = document.getElementById("seriesImdb")?.textContent.trim();
+
+  let list = getBookmarks();
+  const exists = isSeriesBookmarked(title);
+
+  if (exists) {
+    list = list.filter(x => !(x.title === title && x.type === "Серіал"));
+    setBookmarks(list);
+    updateSeriesBookmarkBtn(title);
+    alert("❌ Видалено із закладок");
+  } else {
+    list.push({ title, poster, year, genre, imdb, type: "Серіал" });
+    setBookmarks(list);
+    updateSeriesBookmarkBtn(title);
+    alert("✅ Додано у закладки");
+  }
+});
+
+// При відкритті сторінки
+document.addEventListener("DOMContentLoaded", () => {
+  const title = document.getElementById("seriesTitle")?.textContent.trim();
+  if (title) updateSeriesBookmarkBtn(title);
+});
+
 </script>
 </body>
 </html>
