@@ -239,10 +239,11 @@
     const { data, error } = await supabase
       .from("films_site")
       .select("*")
-      .eq("type", "Мультсеріал")
-      .eq("title", seriesTitle)
+      .ilike("type", "Мультсеріал")       // нечутливий до регістру
+      .ilike("title", `%${seriesTitle}%`) // частковий збіг (враховує і великі, і малі)
       .order("season", { ascending: true })
       .order("episode", { ascending: true });
+
 
     if (error || !data || !data.length){
       document.body.innerHTML = "<h2 style='color:#fff;text-align:center'>Серіал не знайдено</h2>";
