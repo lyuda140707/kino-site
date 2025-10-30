@@ -21,8 +21,33 @@
 <body>
   <div id="header-placeholder"></div>
   <script>
-    fetch("header.html").then(r=>r.text()).then(h=>document.getElementById("header-placeholder").innerHTML=h);
-  </script>
+  // 🟢 Функція для активації пошуку після завантаження хедера
+  function bindHeaderSearch() {
+    const input = document.getElementById("search-input");
+    if (!input) return;
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const query = input.value.trim();
+        if (query.length > 1) {
+          localStorage.setItem("searchQuery", query);
+          window.location.href = "/search.html";
+        }
+      }
+    });
+  }
+
+  // 🟢 Завантаження хедера + підключення пошуку
+  fetch("header.html")
+    .then(r => r.text())
+    .then(h => {
+      document.getElementById("header-placeholder").innerHTML = h;
+      bindHeaderSearch(); // активуємо пошук після вставки
+    })
+    .catch(err => console.error("Помилка завантаження хедера:", err));
+</script>
+
 
   <h1 style="color:#00fff2;text-align:center;">⭐ Мої закладки</h1>
   <div id="bookmarkList" class="bookmark-grid"></div>
