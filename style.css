@@ -1183,11 +1183,11 @@ header {
   transform: scale(1.05);
   box-shadow: 0 0 15px rgba(123,47,255,0.6);
 }
-/* === Неонове пульсування кнопок (оновлено) === */
+/* === М’яке неонове пульсування === */
 
-/* 🤖 Бот — бірюзово-синій пульс */
+/* 🤖 Бот — бірюзово-голубий */
 .tg-btn.bot {
-  background: linear-gradient(90deg, #00fff2, #0075ff);
+  background: linear-gradient(90deg, #00d4d0, #0090ff);
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -1198,21 +1198,21 @@ header {
   inset: 0;
   border-radius: inherit;
   z-index: -1;
-  box-shadow: 0 0 12px rgba(0,255,255,0.6), 0 0 24px rgba(0,117,255,0.3);
-  animation: pulseBlue 3.5s infinite ease-in-out;
+  box-shadow: 0 0 10px rgba(0,210,220,0.25), 0 0 20px rgba(0,140,255,0.2);
+  animation: pulseSoftBlue 4s infinite ease-in-out;
 }
-@keyframes pulseBlue {
+@keyframes pulseSoftBlue {
   0%, 100% {
-    box-shadow: 0 0 8px rgba(0,255,255,0.3), 0 0 16px rgba(0,117,255,0.2);
+    box-shadow: 0 0 6px rgba(0,210,220,0.15), 0 0 12px rgba(0,140,255,0.15);
   }
   50% {
-    box-shadow: 0 0 30px rgba(0,255,255,0.9), 0 0 60px rgba(0,117,255,0.7);
+    box-shadow: 0 0 18px rgba(0,210,220,0.45), 0 0 30px rgba(0,140,255,0.35);
   }
 }
 
-/* 📢 Канал — рожево-фіолетовий пульс */
+/* 📢 Канал — фіолетово-рожевий */
 .tg-btn.channel {
-  background: linear-gradient(90deg, #ff00ff, #ff6ec7);
+  background: linear-gradient(90deg, #c94bff, #ff73c4);
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -1223,20 +1223,19 @@ header {
   inset: 0;
   border-radius: inherit;
   z-index: -1;
-  box-shadow: 0 0 12px rgba(255,0,255,0.5), 0 0 24px rgba(255,110,199,0.3);
-  animation: pulsePink 4s infinite ease-in-out;
+  box-shadow: 0 0 10px rgba(200,75,255,0.25), 0 0 20px rgba(255,115,196,0.2);
+  animation: pulseSoftPink 4.5s infinite ease-in-out;
 }
-@keyframes pulsePink {
+@keyframes pulseSoftPink {
   0%, 100% {
-    box-shadow: 0 0 8px rgba(255,0,255,0.3), 0 0 16px rgba(255,110,199,0.2);
+    box-shadow: 0 0 6px rgba(200,75,255,0.15), 0 0 12px rgba(255,115,196,0.15);
   }
   50% {
-    box-shadow: 0 0 35px rgba(255,0,255,0.8), 0 0 70px rgba(255,110,199,0.7);
+    box-shadow: 0 0 18px rgba(200,75,255,0.45), 0 0 30px rgba(255,115,196,0.35);
   }
 }
 
-/* При наведенні — трохи підсилюємо світіння */
+/* При наведенні — лише легке посилення */
 .tg-btn:hover::before {
-  animation-duration: 1.5s;
+  animation-duration: 2s;
 }
-
