@@ -203,6 +203,25 @@
   transform:scale(1.1);
   box-shadow:0 0 25px rgba(255,215,0,.5);
 }
+/* --- блок кнопок праворуч --- */
+.series-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+/* ⚠ текстове посилання замість кнопки */
+.report-link {
+  font-size: 13px;
+  color: #ffae42;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color .2s;
+}
+.report-link:hover {
+  color: #ffc374;
+}
 
 /* адаптив: на вузьких екранах — перенос назви і кнопки у два рядки */
 @media (max-width:640px){
@@ -237,8 +256,11 @@
     <div class="series-right">
       <div class="series-top-row">
         <h3 class="series-top-title">🎬 Перегляд</h3>
-        <button id="bookmarkSeriesBtn" class="bookmark-btn">⭐ Додати в закладки</button>
-        <button id="reportIssueBtn" class="report-btn">⚠ Повідомити про проблему</button>
+      
+        <div class="series-actions">
+          <button id="bookmarkSeriesBtn" class="bookmark-btn">⭐ Додати в закладки</button>
+          <div id="reportIssueBtn" class="report-link">⚠ Повідомити про проблему</div>
+        </div>
       </div>
       <div class="player-box">
         <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
