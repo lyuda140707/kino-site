@@ -220,7 +220,16 @@ function renderBookmarksInProfile() {
         <img src="${poster}" alt="${title}">
         <p>${title}</p>
       `;
-      div.onclick = () => (window.location.href = href);
+      div.onclick = () => {
+        // якщо випадково сторінку відкриває без .html — додаємо її
+        if (!href.endsWith(".html") && !href.includes(".html?")) {
+          if (href.includes("series")) href = "series.html" + href.split("series")[1];
+          else if (href.includes("multseries")) href = "multseries.html" + href.split("multseries")[1];
+          else if (href.includes("film")) href = "film.html" + href.split("film")[1];
+        }
+        window.location.href = href;
+      };
+
       listEl.appendChild(div);
     });
   }
