@@ -114,8 +114,12 @@ document.getElementById("messages")?.addEventListener("click", () => {
 });
 
 document.getElementById("bookmarks")?.addEventListener("click", () => {
-  window.location.href = "/bookmarks.html"; // сторінка збережених фільмів
+  const favSection = document.getElementById("favorites-card");
+  if (favSection) {
+    favSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 });
+
       
 </script>
 
