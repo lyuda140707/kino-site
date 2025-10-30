@@ -68,8 +68,27 @@
 
 <!-- === ПРАВА ЧАСТИНА === -->
 <div class="top-right">
-  <input type="text" placeholder="Пошук…" class="search" />
+  <input type="text" id="search-input" placeholder="Пошук…" class="search" />
   <a href="/profile.html" class="profile-btn">👑 Мій кабінет</a>
 </div>
 </div>
 </header>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("search-input");
+  if (!input) return;
+
+  input.addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const query = input.value.trim();
+      if (query.length > 1) {
+        // зберігаємо запит у localStorage
+        localStorage.setItem("searchQuery", query);
+        // переходимо на сторінку пошуку
+        window.location.href = "/search.html";
+      }
+    }
+  });
+});
+</script>
