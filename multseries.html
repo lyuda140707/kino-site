@@ -325,6 +325,7 @@ document.getElementById("bookmarkSeriesBtn")?.addEventListener("click", () => {
   const genre = document.getElementById("seriesGenre")?.textContent.trim();
   const imdb = document.getElementById("seriesImdb")?.textContent.trim();
 
+  // 🟢 отримуємо дані з localStorage
   let list = getBookmarks();
   const exists = isCartoonBookmarked(title);
 
@@ -334,14 +335,15 @@ document.getElementById("bookmarkSeriesBtn")?.addEventListener("click", () => {
     updateCartoonBookmarkBtn(title);
     alert("❌ Видалено із закладок");
   } else {
+    // ✅ додаємо мультсеріал
     list.push({
-      id: first.id || "", // 🆕 додаємо ID для переходу
+      id: "", // мультсеріали у тебе відкриваються по title, тому id не критичний
       title,
       poster,
       year,
       genre,
       imdb,
-      type: "Серіал"
+      type: "Мультсеріал"
     });
     setBookmarks(list);
     updateCartoonBookmarkBtn(title);
