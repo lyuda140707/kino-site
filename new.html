@@ -89,12 +89,35 @@
 <body>
   <!-- === HEADER === -->
   <div id="header-placeholder"></div>
-  <script>
-    fetch("header.html")
-      .then(res => res.text())
-      .then(html => document.getElementById("header-placeholder").innerHTML = html)
-      .catch(err => console.error("Помилка хедера:", err));
-  </script>
+  <div id="header-placeholder"></div>
+<script>
+  // 🟢 Функція для активації пошуку після вставки хедера
+  function bindHeaderSearch() {
+    const input = document.getElementById("search-input");
+    if (!input) return;
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const query = input.value.trim();
+        if (query.length > 1) {
+          localStorage.setItem("searchQuery", query);
+          window.location.href = "/search.html";
+        }
+      }
+    });
+  }
+
+  // 🟢 Завантажуємо header.html і активуємо пошук після вставки
+  fetch("header.html")
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("header-placeholder").innerHTML = html;
+      bindHeaderSearch(); // активуємо пошук
+    })
+    .catch(err => console.error("Помилка хедера:", err));
+</script>
+
 
   <!-- === MAIN === -->
   <main class="container" style="padding: 20px;">
