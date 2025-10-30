@@ -5,9 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🔍 Пошук — KinoSite</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+  /* === 🔍 Компактні картки лише на сторінці пошуку === */
+  .search-page .film-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* було ~220–250px */
+    gap: 12px;
+  }
+
+  .search-page .film {
+    width: auto;           /* прибираємо фіксовану ширину картки */
+    max-width: none;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .search-page .film .poster img {
+    width: 100%;
+    height: 210px;         /* було 300–350px */
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+  }
+
+  .search-page .film .title {
+    font-size: 14px;       /* було 16–18px */
+    line-height: 1.25;
+    margin-top: 6px;
+  }
+
+  .search-page .film .meta {
+    font-size: 12px;       /* було 13–14px+ */
+    opacity: 0.85;
+  }
+
+  /* Бейдж PRO — трохи менший */
+  .search-page .film .badge.plus {
+    transform: scale(0.9);
+    transform-origin: top right;
+  }
+
+  /* На дуже вузьких екранах — ще компактніше */
+  @media (max-width: 420px) {
+    .search-page .film-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .search-page .film .poster img { height: 180px; }
+    .search-page .film .title { font-size: 13px; }
+    .search-page .film .meta { font-size: 11.5px; }
+  }
+</style>
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="search-page">
   <div id="header-placeholder"></div>
   <script>
   // 🟢 Функція, яка активує пошук після вставки хедера
