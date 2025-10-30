@@ -513,11 +513,16 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
   // ===== Основна функція обробки користувача
   async function handleTelegramUser(user) {
-    document.getElementById("auth-card").style.display = "none";
-    document.getElementById("telegram-card").style.display = "none";
-    document.getElementById("user-card").style.display = "block";
+  document.getElementById("auth-card").style.display = "none";
+  document.getElementById("telegram-card").style.display = "none";
+  document.getElementById("user-card").style.display = "block";
 
-    document.getElementById("hello-line").innerText = `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
+  document.getElementById("hello-line").innerText =
+    `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
+  // 🆕 показуємо тип входу — Telegram
+  const typeLine = document.getElementById("auth-type");
+  if (typeLine) typeLine.innerText = "🤖 Вхід через Telegram";
+
 
     try {
       const res = await fetch(
