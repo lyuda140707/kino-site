@@ -42,6 +42,57 @@
   transform: scale(1.03);
   box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
 }
+/* === ⭐ Сітка закладок у "Мій кабінет" === */
+.bookmark-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 14px;
+}
+.bookmark-card {
+  background: #0d0f14;
+  border: 1px solid rgba(0,255,255,0.18);
+  border-radius: 10px;
+  width: 150px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+.bookmark-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 14px rgba(0,255,255,0.28);
+}
+.bookmark-card img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+}
+.bookmark-card p {
+  color: #fff;
+  text-align: center;
+  font-size: 13.5px;
+  margin: 6px 8px 10px;
+}
+
+/* верхній рядок секції — заголовок + кнопка */
+.fav-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+}
+.fav-clear {
+  background: transparent;
+  border: 1px solid rgba(255, 77, 77, 0.4);
+  color: #ff6b6b;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.fav-clear:hover { box-shadow: 0 0 12px rgba(255, 77, 77, 0.35); }
 
 </style>
 </head>
@@ -84,6 +135,14 @@ document.getElementById("bookmarks")?.addEventListener("click", () => {
     <button id="bookmarks" class="btn btn-ghost">⭐ Мої закладки</button>
   </div>
 </div>
+<!-- ⭐ Мої закладки у кабінеті -->
+<div class="card" id="favorites-card" style="display:none;">
+  <div class="fav-head">
+    <h3 style="margin:0;color:#00fff2;">⭐ Мої закладки</h3>
+    <button id="favClearBtn" class="fav-clear">🗑 Очистити все</button>
+  </div>
+  <div id="favoritesList" class="bookmark-grid"></div>
+</div>
   <!-- 📨 Авторизація Email -->
   <div class="card" id="auth-card">
     <h3>Увійти через Email</h3>
@@ -108,6 +167,56 @@ document.getElementById("bookmarks")?.addEventListener("click", () => {
               data-userpic="true"
               data-request-access="write"
               data-onauth="onTelegramAuth(user)">
+// === ⭐ Закладки в кабінеті ===
+function getLocalBookmarks() {
+  try { return JSON.parse(localStorage.getItem("bookmarks") || "[]"); }
+  catch { return []; }
+}
+
+function renderBookmarksInProfile() {
+  const card = document.getElementById("favorites-card");
+  const listEl = document.getElementById("favoritesList");
+  if (!card || !listEl) return;
+
+  const list = getLocalBookmarks();
+  listEl.innerHTML = "";
+
+  if (!list.length) {
+    listEl.innerHTML = "<p style='color:#9aa0a6;text-align:center;width:100%;margin:6px 0 2px;'>Поки що порожньо 🕯️</p>";
+  } else {
+    list.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "bookmark-card";
+      div.innerHTML = `
+        <img src="${item.poster || 'https://via.placeholder.com/150x210?text=No+Image'}" alt="${item.title || ''}">
+        <p>${item.title || 'Без назви'}</p>
+      `;
+      div.onclick = () => {
+        if (item.type === "Фільм") {
+          window.location.href = `film.html?id=${encodeURIComponent(item.id)}`;
+        } else if (item.type === "Серіал") {
+          window.location.href = `series.html?title=${encodeURIComponent(item.title)}`;
+        } else if (item.type === "Мультсеріал") {
+          window.location.href = `multseries.html?title=${encodeURIComponent(item.title)}`;
+        } else {
+          window.location.href = `film.html?id=${encodeURIComponent(item.id || "")}`;
+        }
+      };
+      listEl.appendChild(div);
+    });
+  }
+
+  card.style.display = "block";
+}
+
+document.getElementById("favClearBtn")?.addEventListener("click", () => {
+  if (!confirm("Видалити всі закладки?")) return;
+  localStorage.removeItem("bookmarks");
+  renderBookmarksInProfile();
+});
+
+window.addEventListener("DOMContentLoaded", renderBookmarksInProfile);
+
       </script>
     </div>
   </div>
