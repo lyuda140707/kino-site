@@ -204,6 +204,24 @@ footer {
   50% { transform: scale(1.2); opacity: 0.7; }
   100% { transform: scale(1); opacity: 1; }
 }
+/* === 🔔 Бейдж на кнопці "Повідомлення" === */
+.msg-btn-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: linear-gradient(45deg, #00fff2, #4a00e0);
+  color: #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 8px rgba(0,255,255,0.4);
+  animation: pulseBadge 1.5s infinite;
+}
 
 </style>
 
@@ -463,11 +481,25 @@ async function loadMessagesForUser(userId) {
 
   const isNew = data.length > lastCount;
   if (isNew) {
-  const badge = document.createElement("div");
-  badge.className = "new-badge";
-  badge.textContent = data.length - lastCount; // показує кількість нових
-  document.getElementById("messages-card").appendChild(badge);
-}
+        const newCount = data.length - lastCount;
+      
+        // 🟢 Бейдж у самому блоці "Повідомлення"
+        const badge = document.createElement("div");
+        badge.className = "new-badge";
+        badge.textContent = newCount;
+        document.getElementById("messages-card").appendChild(badge);
+      
+        // 🟢 Бейдж на кнопці "Повідомлення" у профілі
+        const msgBtn = document.getElementById("messages");
+        if (msgBtn) {
+          msgBtn.style.position = "relative";
+          const btnBadge = document.createElement("div");
+          btnBadge.className = "msg-btn-badge";
+          btnBadge.textContent = newCount;
+          msgBtn.appendChild(btnBadge);
+        }
+      }
+
 
   box.innerHTML = "";
   data.forEach((m) => {
