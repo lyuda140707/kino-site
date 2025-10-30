@@ -10,11 +10,33 @@
 <body>
   <div id="header-placeholder"></div>
   <script>
-    fetch("header.html")
-      .then(res => res.text())
-      .then(html => document.getElementById("header-placeholder").innerHTML = html)
-      .catch(err => console.error("Помилка хедера:", err));
-  </script>
+  // 🟢 Функція, яка активує пошук після вставки хедера
+  function bindHeaderSearch() {
+    const input = document.getElementById("search-input");
+    if (!input) return;
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const query = input.value.trim();
+        if (query.length > 1) {
+          localStorage.setItem("searchQuery", query);
+          window.location.href = "/search.html";
+        }
+      }
+    });
+  }
+
+  // 🟢 Завантажуємо хедер і одразу активуємо пошук
+  fetch("header.html")
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("header-placeholder").innerHTML = html;
+      bindHeaderSearch(); // Підключаємо пошук після вставки
+    })
+    .catch(err => console.error("Помилка завантаження хедера:", err));
+</script>
+
 
   <main class="container" style="padding: 20px;">
     <h1 style="text-align:center;color:#00fff2;">🔍 Результати пошуку</h1>
