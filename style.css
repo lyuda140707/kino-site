@@ -1222,3 +1222,94 @@ header {
   animation-duration: 2s;
   filter: brightness(1.15);
 }
+/* === ВИПРАВЛЕННЯ ШАПКИ === */
+header {
+  background: #000;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap; /* перенос на вузьких екранах */
+  padding: 12px 20px;
+}
+
+.main-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.main-nav a {
+  color: #e4e4e4;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: color 0.2s ease;
+}
+
+.main-nav a:hover {
+  color: #00fff2;
+}
+
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: #0a0a0a;
+  color: #fff;
+  width: 180px;
+  transition: all 0.25s ease;
+}
+.search:focus {
+  outline: none;
+  border-color: #00fff2;
+  box-shadow: 0 0 8px rgba(0,255,255,.25);
+}
+
+.profile-btn {
+  background: transparent;
+  border: 1px solid rgba(0,255,255,0.3);
+  color: #00fff2;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+.profile-btn:hover {
+  background: rgba(0,255,255,0.1);
+  box-shadow: 0 0 12px rgba(0,255,255,0.25);
+}
+
+/* === адаптив для мобілок === */
+@media (max-width: 700px) {
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .main-nav {
+    justify-content: center;
+  }
+  .search {
+    width: 100%;
+  }
+  .top-right {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
