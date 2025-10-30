@@ -7,6 +7,75 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    /* --- модальне вікно (як у film.html) --- */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.75);
+}
+
+.modal-content {
+  background: #121212;
+  color: #e0e0e0;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  color: #ff6b2b;
+}
+
+.modal-content textarea {
+  width: 100%;
+  background: #1b1b1b;
+  border: 1px solid #444;
+  color: #fff;
+  border-radius: 6px;
+  padding: 8px;
+  resize: none;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.modal-buttons button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.modal-buttons .cancel {
+  background: #333;
+  color: #ccc;
+}
+
+.modal-buttons .send {
+  background: #ff6b2b;
+  color: #fff;
+}
+
+.close-modal {
+  float: right;
+  font-size: 22px;
+  cursor: pointer;
+  color: #777;
+}
+.close-modal:hover { color: #fff; }
+
     .report-btn{
       background:transparent; 
       border:1px solid rgba(255,140,0,.6);
@@ -375,18 +444,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 </script>
-<div id="reportModal" class="modal-backdrop">
-  <div class="modal">
+<!-- 🧾 Модальне вікно -->
+<div id="reportModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
     <h3>⚠ Повідомити про проблему</h3>
-    <p style="color:#9aa0a6; margin:6px 0 10px">Опишіть, що саме не працює (посилання, серія, плеєр тощо).</p>
-    <textarea id="reportText" placeholder="Коротко опишіть проблему..."></textarea>
-    <div class="row">
-      <button id="reportCancel" class="btn-ghost">Скасувати</button>
-      <button id="reportSend" class="btn-send">Надіслати</button>
+    <p>Опишіть коротко, що не працює (посилання, серія, плеєр тощо):</p>
+    <textarea id="reportText" rows="4" placeholder="Коротко опишіть проблему..."></textarea>
+    <div class="modal-buttons">
+      <button id="reportCancel" class="cancel">Скасувати</button>
+      <button id="reportSend" class="send">Надіслати</button>
     </div>
   </div>
 </div>
+
 <script>
+// === ⚠ Повідомити про проблему ===
 (function(){
   const modal   = document.getElementById("reportModal");
   const txt     = document.getElementById("reportText");
@@ -396,9 +469,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (!btnOpen || !modal) return;
 
-  btnOpen.addEventListener("click", ()=>{ modal.style.display="flex"; txt.focus(); });
+  btnOpen.addEventListener("click", ()=>{ modal.style.display="block"; txt.focus(); });
   btnCancel.addEventListener("click", ()=>{ modal.style.display="none"; txt.value=""; });
   modal.addEventListener("click", (e)=>{ if (e.target===modal) modal.style.display="none"; });
+  document.querySelector(".close-modal")?.addEventListener("click", ()=>{ modal.style.display="none"; });
 
   async function sendReport(item_type, titleElId){
     const message = (txt.value || "").trim();
@@ -428,6 +502,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnSend.onclick = ()=>sendReport("Серіал", "seriesTitle");
 })();
 </script>
+
 
 </body>
 </html>
