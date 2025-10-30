@@ -394,7 +394,21 @@
   transform: scale(1.08);
   box-shadow: 0 0 14px rgba(0,255,255,0.45);
 }
-  
+ /* === 🎬 Рядок із кнопками Фільм / Трейлер + Закладка === */
+.source-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 10px 0 14px 0;
+}
+
+/* Щоб кнопки Фільм / Трейлер не злипалися */
+.source-switch {
+  display: flex;
+  gap: 10px;
+}
+ 
   </style>
 </head>
 
@@ -465,12 +479,14 @@
     
 
         <!-- Перемикач Фільм / Трейлер -->
-        <div class="source-switch">
-          <button id="btnMovie" class="active">🎬 Фільм</button>
-          <button id="btnTrailer">🎞️ Трейлер</button>
-        </div>
-        <!-- 🟠 Кнопка для скарги -->
-        <button id="bookmarkBtn" class="bookmark-btn">⭐ Додати в закладки</button>
+        <div class="source-row">
+  <div class="source-switch">
+    <button id="btnMovie" class="active">🎬 Фільм</button>
+    <button id="btnTrailer">🎞️ Трейлер</button>
+  </div>
+  <button id="bookmarkBtn" class="bookmark-btn">⭐ Додати в закладки</button>
+</div>
+
 
         <div class="player-box">
   <div class="player-wrapper" style="position:relative;">
