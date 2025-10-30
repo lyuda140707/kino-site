@@ -830,7 +830,8 @@ function updateBookmarkBtn(id) {
 
 document.getElementById("bookmarkBtn")?.addEventListener("click", () => {
   const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
+  const idParam = params.get("id"); // ⚠️ отримаємо id=3 з URL
+
   const title = document.getElementById("filmTitle")?.textContent.trim();
   const poster = document.getElementById("filmPoster")?.src;
   const year = document.getElementById("filmYear")?.textContent.trim();
@@ -838,20 +839,29 @@ document.getElementById("bookmarkBtn")?.addEventListener("click", () => {
   const imdb = document.getElementById("filmImdb")?.textContent.trim();
 
   let list = getBookmarks();
-  const exists = isBookmarked(id);
+  const exists = isBookmarked(idParam);
 
   if (exists) {
-    list = list.filter(x => !(String(x.id) === String(id) && x.type === "Фільм"));
+    list = list.filter(x => !(String(x.id) === String(idParam) && x.type === "Фільм"));
     setBookmarks(list);
-    updateBookmarkBtn(id);
+    updateBookmarkBtn(idParam);
     alert("❌ Видалено із закладок");
   } else {
-    list.push({ id, title, poster, year, genre, imdb, type: "Фільм" });
+    list.push({
+      id: idParam, // ⚠️ ось головне — зберігаємо ID фільму
+      title,
+      poster,
+      year,
+      genre,
+      imdb,
+      type: "Фільм"
+    });
     setBookmarks(list);
-    updateBookmarkBtn(id);
+    updateBookmarkBtn(idParam);
     alert("✅ Додано у закладки");
   }
 });
+
 
 // При відкритті сторінки — оновлюємо текст кнопки
 window.addEventListener("DOMContentLoaded", () => {
