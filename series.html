@@ -324,6 +324,8 @@ document.getElementById("bookmarkSeriesBtn")?.addEventListener("click", () => {
   const genre = document.getElementById("seriesGenre")?.textContent.trim();
   const imdb = document.getElementById("seriesImdb")?.textContent.trim();
 
+  if (!title) return alert("⚠️ Серіал ще не завантажився");
+
   let list = getBookmarks();
   const exists = isSeriesBookmarked(title);
 
@@ -334,7 +336,7 @@ document.getElementById("bookmarkSeriesBtn")?.addEventListener("click", () => {
     alert("❌ Видалено із закладок");
   } else {
     list.push({
-      id: first.id || "", // 🆕 додаємо ID для переходу
+      id: "", // серіали відкриваються по title, id необов’язковий
       title,
       poster,
       year,
@@ -347,6 +349,7 @@ document.getElementById("bookmarkSeriesBtn")?.addEventListener("click", () => {
     alert("✅ Додано у закладки");
   }
 });
+
 
 
 // При відкритті сторінки
