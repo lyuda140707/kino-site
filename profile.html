@@ -755,21 +755,20 @@ btnClose.addEventListener("click", () => {
 // 3️⃣ Підтвердження → відкриваємо Monobank і показуємо кнопку "Я оплатив"
 btnConfirmPay.addEventListener("click", () => {
   modal.style.display = "none";
-  localStorage.setItem("pro_payment_started", "true"); // 👈 додай цю стрічку
 
-  // відкриваємо Monobank банку у новій вкладці
+  // 💾 Запам’ятовуємо, що користувач почав оплату
+  localStorage.setItem("pro_payment_started", "true");
+
+  // 💡 Одразу оновлюємо інтерфейс, щоб показати кнопки "Я оплатив(ла)"
+  updateProUI();
+
+  // 🔗 Відкриваємо Monobank банку у новій вкладці
   const monoUrl = "https://send.monobank.ua/jar/8FbfB4fY6S";
   window.open(monoUrl, "_blank");
 
- // після відкриття — показуємо кнопки "Я оплатив"
-const btnTg = document.getElementById("btn-paid-tg");
-const btnWeb = document.getElementById("btn-paid-web");
-if (btnTg) btnTg.style.removeProperty("display");
-if (btnWeb) btnWeb.style.removeProperty("display");
-
-
   alert("💳 Оплата відкрилась у новій вкладці.\nПісля переказу натисніть «Я оплатив(ла)»!");
 });
+
 
 // Закриття при кліку поза модалкою
 window.onclick = (e) => {
