@@ -10,10 +10,33 @@
 
 <div id="header-placeholder"></div>
 <script>
+  // 🟢 Функція для активації пошуку після завантаження хедера
+  function bindHeaderSearch() {
+    const input = document.getElementById("search-input");
+    if (!input) return;
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const query = input.value.trim();
+        if (query.length > 1) {
+          localStorage.setItem("searchQuery", query);
+          window.location.href = "/search.html";
+        }
+      }
+    });
+  }
+
+  // 🟢 Завантаження хедера + підключення пошуку
   fetch("header.html")
     .then(r => r.text())
-    .then(t => document.getElementById("header-placeholder").innerHTML = t);
+    .then(t => {
+      document.getElementById("header-placeholder").innerHTML = t;
+      bindHeaderSearch(); // активуємо пошук після вставки
+    })
+    .catch(err => console.error("Помилка завантаження хедера:", err));
 </script>
+
 
 <main class="container">
   <h1 id="collectionTitle">🎬 Збірка</h1>
