@@ -159,14 +159,22 @@ document.getElementById("bookmarks")?.addEventListener("click", () => {
       Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
     </p>
 
-    <div id="telegram-widget">
-      <script async src="https://telegram.org/js/telegram-widget.js?22"
-              data-telegram-login="RelaxBox_UA_bot"
-              data-size="large"
-              data-radius="8"
-              data-userpic="true"
-              data-request-access="write"
-              data-onauth="onTelegramAuth(user)">
+<div id="telegram-widget">
+  <script async src="https://telegram.org/js/telegram-widget.js?22"
+          data-telegram-login="RelaxBox_UA_bot"
+          data-size="large"
+          data-radius="8"
+          data-userpic="true"
+          data-request-access="write"
+          data-onauth="onTelegramAuth(user)">
+  </script>
+</div>
+
+  </div>
+</main>
+
+<footer style="text-align:center;color:#8a8f98;margin:32px 0">© 2025 KinoSite</footer>
+<script>
 // === ⭐ Закладки в кабінеті ===
 function getLocalBookmarks() {
   try { return JSON.parse(localStorage.getItem("bookmarks") || "[]"); }
@@ -193,13 +201,13 @@ function renderBookmarksInProfile() {
       `;
       div.onclick = () => {
         if (item.type === "Фільм") {
-          window.location.href = `film.html?id=${encodeURIComponent(item.id)}`;
+          window.location.href = \`film.html?id=\${encodeURIComponent(item.id)}\`;
         } else if (item.type === "Серіал") {
-          window.location.href = `series.html?title=${encodeURIComponent(item.title)}`;
+          window.location.href = \`series.html?title=\${encodeURIComponent(item.title)}\`;
         } else if (item.type === "Мультсеріал") {
-          window.location.href = `multseries.html?title=${encodeURIComponent(item.title)}`;
+          window.location.href = \`multseries.html?title=\${encodeURIComponent(item.title)}\`;
         } else {
-          window.location.href = `film.html?id=${encodeURIComponent(item.id || "")}`;
+          window.location.href = \`film.html?id=\${encodeURIComponent(item.id || "")}\`;
         }
       };
       listEl.appendChild(div);
@@ -216,13 +224,7 @@ document.getElementById("favClearBtn")?.addEventListener("click", () => {
 });
 
 window.addEventListener("DOMContentLoaded", renderBookmarksInProfile);
-
-      </script>
-    </div>
-  </div>
-</main>
-
-<footer style="text-align:center;color:#8a8f98;margin:32px 0">© 2025 KinoSite</footer>
+</script>
 
 <!-- ✅ Підключення Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
