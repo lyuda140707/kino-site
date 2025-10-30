@@ -1,0 +1,177 @@
+/* ===============================
+   БАЗОВІ "гумові" речі (не ламають стиль)
+   =============================== */
+
+/* Контейнери: стають гумовими, але з максимумом */
+.container {
+  width: min(1150px, 92%);
+  margin-inline: auto;
+}
+
+/* Зображення не вилазять */
+img { max-width: 100%; height: auto; object-fit: cover; }
+
+/* Сітки карток: fallback якщо десь задали фіксовану ширину */
+.films-grid, .cards, .grid, .film-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.card, .film-card { min-width: 0; }
+
+/* Верхня панель: щоб елементи не роз’їжджались */
+.topbar, .main-nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* Банер/слайдер ряд — даємо горизонтальний скрол, якщо не влазить */
+.slider-row, .banner-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 220px;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+.slider-row > * { scroll-snap-align: start; }
+
+/* Сайдбар за замовчуванням праворуч (далі сховаємо на мобільному) */
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+}
+
+/* Велике мега-меню поверх (щоб не "провалювалось") */
+.mega-menu, .mega-series, .mega-cartoons {
+  position: absolute;
+  left: 0; right: 0;
+  width: 100%;
+  max-width: 1150px;
+  margin: 0 auto;
+  background: #0b0b0b;   /* щільний чорний, не прозорий */
+  border: 1px solid rgba(255,255,255,.06);
+  z-index: 50;
+}
+
+/* Кнопки не виходять за межі */
+button, .btn { max-width: 100%; }
+
+/* Типографіка за замовчуванням */
+html { font-size: 16px; }
+h1 { font-size: clamp(20px, 2.4vw, 28px); }
+h2 { font-size: clamp(18px, 2.1vw, 24px); }
+h3 { font-size: clamp(16px, 1.9vw, 20px); }
+
+/* ===============================
+   BREAKPOINTS
+   =============================== */
+
+/* 💻 ≥ 1200px — 4 колонки карток */
+@media (min-width: 1200px) {
+  .films-grid, .cards, .grid, .film-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 🖥️ 993–1199px — 3 колонки, сайдбар трохи вужчий */
+@media (min-width: 993px) and (max-width: 1199px) {
+  .films-grid, .cards, .grid, .film-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .main-layout {
+    grid-template-columns: 1fr 300px;
+  }
+}
+
+/* 📟 601–992px (планшети) — 2 колонки, сайдбар вниз */
+@media (min-width: 601px) and (max-width: 992px) {
+  html { font-size: 15px; }
+
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar { order: 2; }        /* контент зверху, сайдбар під ним */
+  .content { order: 1; }
+
+  .films-grid, .cards, .grid, .film-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Навігація більш компактна */
+  .main-nav { gap: 10px; }
+  .main-nav a { font-size: 15px; }
+
+  /* Мега-меню займає всю ширину екрану */
+  .mega-menu, .mega-series, .mega-cartoons {
+    left: 0; right: 0; max-width: none; border-radius: 0;
+  }
+}
+
+/* 📱 ≤ 600px (телефони) — 1 колонка, приховати сайдбар */
+@media (max-width: 600px) {
+  html { font-size: 14px; }
+
+  .container { width: min(640px, 94%); }
+  .main-layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+
+  .films-grid, .cards, .grid, .film-list {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* Шапка — в одну лінію з переносом */
+  .topbar, .main-nav {
+    gap: 10px;
+  }
+  .main-nav a { font-size: 14px; }
+
+  /* Банер — повноекранний по ширині, стрілки не перекривають */
+  .slider-row, .banner-row { grid-auto-columns: 70vw; }
+
+  /* Карточки компактніші, тексти обрізаються м’яко */
+  .film-card .title, .card .title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Мега-меню на мобілці — блочне (щоб не треба було "наводити") */
+  .mega-menu, .mega-series, .mega-cartoons {
+    position: static;
+    width: 100%;
+    margin-top: 6px;
+  }
+}
+
+/* Дрібні правки профілю/кабінету на вузьких екранах */
+@media (max-width: 600px) {
+  .profile-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .profile-actions .btn { width: 100%; }
+}
+
+/* Футер: колонки стають рядами */
+@media (max-width: 768px) {
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* Стрілки в слайдері не перекривають контент на мобілці */
+@media (max-width: 600px) {
+  .slider-btn.left, .slider-btn.right {
+    transform: scale(.9);
+    top: auto; bottom: -6px;
+  }
+}
+
+/* Якщо десь є таблиці — додаємо горизонтальний скрол */
+.responsive-table { overflow-x: auto; }
+.responsive-table table { min-width: 600px; }
