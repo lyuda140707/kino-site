@@ -267,10 +267,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
   <!-- 🔹 Додаткові дії користувача -->
   <div class="profile-actions">
-    <button id="get-pro" class="btn btn-primary">💎 Отримати PRO</button>
-    
-
-  </div>
+  <button id="get-pro" class="btn btn-primary">💎 Отримати PRO</button>
+  <button id="messages" class="btn btn-ghost">📩 Повідомлення</button>
+</div>
 </div>
 <!-- ⭐ Мої закладки у кабінеті -->
 <div class="card" id="favorites-card">
@@ -281,7 +280,7 @@ window.addEventListener("DOMContentLoaded", () => {
   <div id="favoritesList" class="bookmark-grid"></div>
 </div>
 <!-- 📩 Повідомлення від адміністрації -->
-<div class="card" id="messages-card">
+<div class="card" id="messages-card" style="display:none;">
   <h3 style="margin:0 0 10px;color:#00fff2;">📩 Повідомлення</h3>
   <div id="messagesList"></div>
 </div>
@@ -480,25 +479,31 @@ async function loadMessagesForUser(userId) {
   localStorage.setItem("last_msg_count", data.length);
 
   const isNew = data.length > lastCount;
-  if (isNew) {
-        const newCount = data.length - lastCount;
-      
-        // 🟢 Бейдж у самому блоці "Повідомлення"
-        const badge = document.createElement("div");
-        badge.className = "new-badge";
-        badge.textContent = newCount;
-        document.getElementById("messages-card").appendChild(badge);
-      
-        // 🟢 Бейдж на кнопці "Повідомлення" у профілі
-        const msgBtn = document.getElementById("messages");
-        if (msgBtn) {
-          msgBtn.style.position = "relative";
-          const btnBadge = document.createElement("div");
-          btnBadge.className = "msg-btn-badge";
-          btnBadge.textContent = newCount;
-          msgBtn.appendChild(btnBadge);
-        }
-      }
+  const msgBtn = document.getElementById("messages");
+const msgCard = document.getElementById("messages-card");
+
+// 🟢 Якщо є нові повідомлення — додаємо бейдж
+if (isNew && msgBtn) {
+  msgBtn.style.position = "relative";
+  const btnBadge = document.createElement("div");
+  btnBadge.className = "msg-btn-badge";
+  msgBtn.appendChild(btnBadge);
+}
+
+// 🟣 При кліку на кнопку — відкривати / закривати блок повідомлень
+if (msgBtn && msgCard) {
+  msgBtn.addEventListener("click", () => {
+    const isVisible = msgCard.style.display === "block";
+    msgCard.style.display = isVisible ? "none" : "block";
+
+    // коли користувач відкрив — прибрати бейдж
+    if (!isVisible) {
+      const badge = msgBtn.querySelector(".msg-btn-badge");
+      if (badge) badge.remove();
+    }
+  });
+}
+
 
 
   box.innerHTML = "";
