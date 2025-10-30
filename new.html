@@ -138,9 +138,28 @@
         return;
       }
 
-      // Групуємо унікальні за назвою, щоб не дублювати серії
-      const unique = Array.from(new Map(data.map(f => [f.title, f])).values());
-
+      // 🔹 Об'єднуємо дублі за title і мерджимо жанри
+      const map = new Map();
+      data.forEach(item => {
+        const key = item.title.trim();
+        if (map.has(key)) {
+          const existing = map.get(key);
+          // додаємо жанр, якщо ще не доданий
+          if (item.genre && !existing.genre.includes(item.genre)) {
+            existing.genre = existing.genre ? `${existing.genre}, ${item.genre}` : item.genre;
+          }
+          // беремо найновіший рік/постер, якщо треба
+          if ((item.year || 0) > (existing.year || 0)) {
+            existing.year = item.year;
+            existing.poster = item.poster || existing.poster;
+            existing.id = item.id || existing.id;
+          }
+        } else {
+          map.set(key, { ...item });
+        }
+      });
+      const unique = Array.from(map.values());
+      
       box.innerHTML = "";
       unique.forEach(item => {
         const card = document.createElement("div");
@@ -157,8 +176,6 @@
             <span>${item.year || ''}</span>
           </div>
         `;
-
-        // 🔹 Логіка переходу
         card.addEventListener("click", () => {
           if (item.type === "Серіал") {
             window.location.href = "series.html?title=" + encodeURIComponent(item.title);
@@ -168,9 +185,9 @@
             window.location.href = "film.html?id=" + item.id;
           }
         });
-
         box.appendChild(card);
       });
+
     }
 
     document.addEventListener("DOMContentLoaded", loadNewItems);
