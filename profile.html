@@ -176,6 +176,31 @@ footer {
   margin: 28px 0;
   font-size: 14px;
 }
+/* === 🆕 Індикатор нових повідомлень (бейдж) === */
+.new-badge {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  background: linear-gradient(45deg, #00fff2, #4a00e0);
+  color: #fff;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(0,255,255,0.4);
+  animation: pulseBadge 1.5s infinite;
+}
+
+@keyframes pulseBadge {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 </style>
 
 </head>
@@ -434,15 +459,11 @@ async function loadMessagesForUser(userId) {
 
   const isNew = data.length > lastCount;
   if (isNew) {
-    const badge = document.createElement("div");
-    badge.textContent = "🆕 Нове повідомлення!";
-    badge.style.cssText = `
-      position:absolute;top:-8px;right:10px;
-      color:#00fff2;font-size:13px;font-weight:600;
-      animation:pulse 1.5s infinite;
-    `;
-    document.getElementById("messages-card").appendChild(badge);
-  }
+  const badge = document.createElement("div");
+  badge.className = "new-badge";
+  badge.textContent = data.length - lastCount; // показує кількість нових
+  document.getElementById("messages-card").appendChild(badge);
+}
 
   box.innerHTML = "";
   data.forEach((m) => {
