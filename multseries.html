@@ -297,7 +297,7 @@
     });
   }
 
-  document.addEventListener("DOMContentLoaded", loadSeries);
+
   // === ⭐ ЗАКЛАДКИ (МУЛЬТСЕРІАЛИ) ===
 function getBookmarks() {
   try { return JSON.parse(localStorage.getItem("bookmarks") || "[]"); }
@@ -349,12 +349,12 @@ document.getElementById("bookmarkSeriesBtn")?.addEventListener("click", () => {
   }
 });
 
-// Після завантаження
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadSeries();
+  await loadSeries(); // завантажуємо мультсеріал
   const title = document.getElementById("seriesTitle")?.textContent.trim();
   if (title) updateCartoonBookmarkBtn(title);
 });
+
 
 
 </script>
