@@ -18,6 +18,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
+.pro-actions {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-top:12px;
+}
+.pro-actions .btn {
+  background:transparent;
+  border:1px solid rgba(0,255,255,0.3);
+  color:#00fff2;
+}
+.pro-actions .btn:hover {
+  background:rgba(0,255,255,0.1);
+}
+
 body {
   background: #0b0c10;
   color: #e6e6e6;
@@ -273,10 +288,22 @@ footer {
 
   <!-- 🔹 Додаткові дії користувача -->
   <div class="profile-actions">
-  <button id="get-pro" class="btn btn-primary">💎 Отримати PRO</button>
   <button id="messages" class="btn btn-ghost">📩 Повідомлення</button>
 </div>
 </div>
+<!-- 🧩 Оплата та підтвердження -->
+<div class="pro-actions" style="margin-top:14px;">
+  <div id="pro-status-text" class="muted">Перевіряю статус...</div>
+
+  <!-- Кнопки -->
+  <button id="btn-paid-tg" class="btn btn-ghost" style="display:none;">
+    ✅ Я оплатив(ла) — через Telegram
+  </button>
+  <button id="btn-paid-web" class="btn btn-ghost" style="display:none;">
+    ✅ Я оплатив(ла) — без Telegram
+  </button>
+</div>
+
 <!-- ⭐ Мої закладки у кабінеті -->
 <div class="card" id="favorites-card">
   <div class="fav-head">
@@ -537,5 +564,98 @@ if (msgBtn && msgCard) {
 
 </script>
 <script src="auth.js"></script>
+<script>
+/* === 💎 ПРО-оплата через Monobank / Telegram === */
+
+// 🔗 Твої URL-и
+const BACKEND_URL = "https://relax-time2.onrender.com"; // FastAPI із /notify-payment
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec";
+
+// 🆔 Отримати Telegram або Web ID
+function getTgId() {
+  const u = localStorage.getItem("telegram_user");
+  try { return u ? JSON.parse(u).id : null; } catch { return null; }
+}
+function getWebId() {
+  if (!localStorage.getItem("web_id")) {
+    localStorage.setItem("web_id", "WEB-" + Date.now());
+  }
+  return localStorage.getItem("web_id");
+}
+
+// ⚙️ Показує потрібну кнопку (tg / web)
+function updateProUI() {
+  const hasTg = !!getTgId();
+  document.getElementById("btn-paid-tg").style.display  = hasTg ? "inline-block" : "none";
+  document.getElementById("btn-paid-web").style.display = hasTg ? "none"       : "inline-block";
+}
+
+// 📤 Повідомлення адміну про оплату (через Telegram)
+async function notifyPaymentTG() {
+  const tg_id = getTgId();
+  if (!tg_id) return alert("Спочатку авторизуйтеся через Telegram!");
+  try {
+    const res = await fetch(`${BACKEND_URL}/notify-payment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: tg_id, source: "site" })
+    });
+    if (!res.ok) throw new Error("notify-payment failed");
+    alert("✅ Запит відправлено адміну. Після підтвердження PRO активується.");
+  } catch (e) {
+    console.error(e);
+    alert("❌ Не вдалося надіслати запит. Напишіть адміну.");
+  }
+}
+
+// 📤 Повідомлення адміну (для гостей без Telegram)
+async function notifyPaymentWEB() {
+  const web_id = getWebId();
+  try {
+    const res = await fetch(`${BACKEND_URL}/notify-payment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ web_id, source: "site" })
+    });
+    if (!res.ok) throw new Error("notify-payment failed");
+    alert(
+      "✅ Запит відправлено адміну.\nПісля підтвердження PRO активується.\nВаш WEB-ID: " + web_id
+    );
+  } catch (e) {
+    console.error(e);
+    alert("❌ Не вдалося надіслати запит. Спробуйте пізніше.");
+  }
+}
+
+// 🔍 Перевірка статусу PRO
+async function checkProStatus() {
+  const id = getTgId() || getWebId();
+  if (!id) return;
+  const statusEl = document.getElementById("pro-status-text");
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?user_id=${id}`);
+    const data = await res.json();
+    if (data?.ok && data?.isPro) {
+      const d = data?.expireDate?.split("T")[0]?.split("-").reverse().join(".");
+      statusEl.innerHTML = `💎 PRO активний до <b>${d || "невідомо"}</b>`;
+    } else {
+      statusEl.innerText = "🔒 Без PRO";
+    }
+  } catch (err) {
+    console.error(err);
+    statusEl.innerText = "⚠️ Помилка перевірки";
+  }
+}
+
+// 🔄 Ініціалізація
+window.addEventListener("DOMContentLoaded", () => {
+  updateProUI();
+  document.getElementById("btn-paid-tg").onclick  = notifyPaymentTG;
+  document.getElementById("btn-paid-web").onclick = notifyPaymentWEB;
+  checkProStatus();
+  setInterval(checkProStatus, 15000);
+});
+</script>
+
 </body>
 </html>
