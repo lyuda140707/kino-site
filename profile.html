@@ -138,7 +138,7 @@ window.addEventListener("DOMContentLoaded", () => {
   <!-- 🔹 Додаткові дії користувача -->
   <div class="profile-actions">
     <button id="get-pro" class="btn btn-primary">💎 Отримати PRO</button>
-    <button id="messages" class="btn btn-ghost">📩 Повідомлення</button>
+    
 
   </div>
 </div>
@@ -149,6 +149,11 @@ window.addEventListener("DOMContentLoaded", () => {
     <button id="favClearBtn" class="fav-clear">🗑 Очистити все</button>
   </div>
   <div id="favoritesList" class="bookmark-grid"></div>
+</div>
+<!-- 📩 Повідомлення від адміністрації -->
+<div class="card" id="messages-card">
+  <h3 style="margin:0 0 10px;color:#00fff2;">📩 Повідомлення</h3>
+  <div id="messagesList"></div>
 </div>
 
   <!-- 📨 Авторизація Email -->
@@ -293,6 +298,8 @@ renderBookmarksInProfile();
       console.error(err);
       document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
     }
+      // ✅ Завантажити повідомлення користувача
+      loadMessagesForUser(user.id);
   }
 
   // ===== Telegram callback
@@ -316,6 +323,45 @@ renderBookmarksInProfile();
       }
     }
   });
+// === 📩 Завантаження повідомлень користувача ===
+async function loadMessagesForUser(userId){
+  const box = document.getElementById("messagesList");
+  if (!box) return;
+  box.innerHTML = `<p class="muted">Завантаження...</p>`;
+
+  const { data, error } = await supabase
+    .from("user_messages")
+    .select("*")
+    .eq("user_id", String(userId))
+    .order("created_at", { ascending:false });
+
+  if (error){
+    console.error(error);
+    box.innerHTML = `<p class="muted">Помилка завантаження</p>`;
+    return;
+  }
+
+  if (!data?.length){
+    box.innerHTML = `<p class="muted">Поки що немає повідомлень</p>`;
+    return;
+  }
+
+  box.innerHTML = "";
+  data.forEach(m=>{
+    const card = document.createElement("div");
+    card.style.cssText = "border:1px solid #2a2d33;border-radius:10px;padding:10px;margin:8px 0;background:#0f1014";
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+        <b>${m.title || "Повідомлення"}</b>
+        <small style="color:#9aa0a6">${new Date(m.created_at).toLocaleString()}</small>
+      </div>
+      <p style="margin:6px 0 0;color:#ddd;white-space:pre-wrap">${m.body || ""}</p>
+      ${m.from_name ? `<small style="color:#7bd9ff">— ${m.from_name}</small>` : ""}
+    `;
+    box.appendChild(card);
+  });
+}
+
 </script>
 
 </body>
