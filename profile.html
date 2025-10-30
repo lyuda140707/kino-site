@@ -271,7 +271,10 @@ footer {
   from { transform: scale(0.9); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
-
+.pro-actions #btn-paid-tg,
+.pro-actions #btn-paid-web {
+  display: none !important;
+}
 </style>
 
 </head>
@@ -307,9 +310,6 @@ footer {
     .catch(err => console.error("Помилка завантаження хедера:", err));
 </script>
 
-
-      
-</script>
 
 <main class="profile-wrap">
   <h1>Мій кабінет</h1>
@@ -619,10 +619,11 @@ function getWebId() {
 
 // ⚙️ Показує потрібну кнопку (tg / web)
 function updateProUI() {
-  const hasTg = !!getTgId();
-  document.getElementById("btn-paid-tg").style.display  = hasTg ? "inline-block" : "none";
-  document.getElementById("btn-paid-web").style.display = hasTg ? "none"       : "inline-block";
+  // За замовчуванням обидві кнопки приховані
+  document.getElementById("btn-paid-tg").style.display  = "none";
+  document.getElementById("btn-paid-web").style.display = "none";
 }
+
 
 // 📤 Повідомлення адміну про оплату (через Telegram)
 async function notifyPaymentTG() {
@@ -690,6 +691,18 @@ window.addEventListener("DOMContentLoaded", () => {
   setInterval(checkProStatus, 15000);
 });
 </script>
+<!-- === 💬 МОДАЛЬНЕ ВІКНО ПРО ОПЛАТУ === -->
+<div id="proModal" class="modal">
+  <div class="modal-content">
+    <h3>💎 Отримати PRO доступ</h3>
+    <p>Після оплати через Monobank обовʼязково натисніть кнопку <b>«Я оплатив(ла)»</b>, щоб адміністратор підтвердив ваш PRO.</p>
+    <div class="modal-actions">
+      <button id="confirmPay" class="btn btn-primary">Перейти до оплати 💳</button>
+      <button id="closeModal" class="btn btn-ghost">Скасувати</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // === 💳 Модалка + Перехід до Monobank ===
 const modal = document.getElementById("proModal");
@@ -728,17 +741,7 @@ window.onclick = (e) => {
 };
 </script>
 
-<!-- === 💬 МОДАЛЬНЕ ВІКНО ПРО ОПЛАТУ === -->
-<div id="proModal" class="modal">
-  <div class="modal-content">
-    <h3>💎 Отримати PRO доступ</h3>
-    <p>Після оплати через Monobank обовʼязково натисніть кнопку <b>«Я оплатив(ла)»</b>, щоб адміністратор підтвердив ваш PRO.</p>
-    <div class="modal-actions">
-      <button id="confirmPay" class="btn btn-primary">Перейти до оплати 💳</button>
-      <button id="closeModal" class="btn btn-ghost">Скасувати</button>
-    </div>
-  </div>
-</div>
+
 
 </body>
 </html>
