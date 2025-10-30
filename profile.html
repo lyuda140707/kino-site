@@ -194,30 +194,33 @@ function renderBookmarksInProfile() {
   const listEl = document.getElementById("favoritesList");
   if (!card || !listEl) return;
 
-  const list = getLocalBookmarks();
+  const list = Array.isArray(getLocalBookmarks()) ? getLocalBookmarks() : [];
   listEl.innerHTML = "";
 
   if (!list.length) {
     listEl.innerHTML = "<p style='color:#9aa0a6;text-align:center;width:100%;margin:6px 0 2px;'>Поки що порожньо 🕯️</p>";
   } else {
     list.forEach(item => {
+      const id = item?.id ?? "";
+      const title = item?.title || "Без назви";
+      const poster = item?.poster || "https://via.placeholder.com/150x210?text=No+Image";
+      // 👇 Інтелектуально визначаємо type, якщо його нема
+      const type = item?.type
+        || (id ? "Фільм" : "")                             // якщо є id — майже точно фільм
+        || (title?.toLowerCase().includes("мульт") ? "Мультсеріал" : "Серіал"); // інакше серіал/мульт
+
+      // Куди вести по кліку
+      let href = `film.html?id=${encodeURIComponent(id)}`;
+      if (type === "Серіал") href = `series.html?title=${encodeURIComponent(title)}`;
+      if (type === "Мультсеріал") href = `multseries.html?title=${encodeURIComponent(title)}`;
+
       const div = document.createElement("div");
       div.className = "bookmark-card";
       div.innerHTML = `
-        <img src="${item.poster || 'https://via.placeholder.com/150x210?text=No+Image'}" alt="${item.title || ''}">
-        <p>${item.title || 'Без назви'}</p>
+        <img src="${poster}" alt="${title}">
+        <p>${title}</p>
       `;
-      div.onclick = () => {
-        if (item.type === "Фільм") {
-          window.location.href = \`film.html?id=\${encodeURIComponent(item.id)}\`;
-        } else if (item.type === "Серіал") {
-          window.location.href = \`series.html?title=\${encodeURIComponent(item.title)}\`;
-        } else if (item.type === "Мультсеріал") {
-          window.location.href = \`multseries.html?title=\${encodeURIComponent(item.title)}\`;
-        } else {
-          window.location.href = \`film.html?id=\${encodeURIComponent(item.id || "")}\`;
-        }
-      };
+      div.onclick = () => (window.location.href = href);
       listEl.appendChild(div);
     });
   }
@@ -234,6 +237,7 @@ document.getElementById("favClearBtn")?.addEventListener("click", () => {
 window.addEventListener("DOMContentLoaded", renderBookmarksInProfile);
 renderBookmarksInProfile();
 </script>
+
 
 <!-- ✅ Підключення Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
