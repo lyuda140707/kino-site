@@ -1,57 +1,52 @@
 <!-- === HEADER === -->
 <header>
-  <div class="topbar">
-    
-    <!-- 🔹 Ліва частина -->
-    <div class="left-side">
+  <div class="container topbar">
+    <nav class="main-nav">
       <a href="/index.html">
         <img src="logo.png" alt="Relax Logo" class="nav-logo" />
       </a>
 
-      <nav class="main-nav">
-        <a href="/index.html" class="active">Головна</a>
+      <a href="/index.html" class="active">Головна</a>
 
-        <!-- === МЕНЮ ФІЛЬМИ === -->
-        <div class="dropdown">
-          <a href="#" class="menu-films">Фільми</a>
-          <div class="mega-menu">
-            <div class="genres">
-              <a href="/category.html?type=Фільм&genre=Бойовик">Бойовик</a>
-              <a href="/category.html?type=Фільм&genre=Драма">Драма</a>
-              <a href="/category.html?type=Фільм&genre=Комедія">Комедія</a>
-              <a href="/category.html?type=Фільм&genre=Фантастика">Фантастика</a>
-              <a href="/category.html?type=Фільм&genre=Жахи">Жахи</a>
-              <a href="/category.html?type=Фільм&genre=Фентезі">Фентезі</a>
-            </div>
+      <!-- === МЕНЮ ФІЛЬМИ === -->
+      <div class="dropdown">
+        <a href="#" class="menu-films">Фільми</a>
+        <div class="mega-menu">
+          <div class="genres">
+            <a href="/category.html?type=Фільм&genre=Бойовик">Бойовик</a>
+            <a href="/category.html?type=Фільм&genre=Комедія">Комедія</a>
+            <a href="/category.html?type=Фільм&genre=Драма">Драма</a>
+            <a href="/category.html?type=Фільм&genre=Фантастика">Фантастика</a>
+            <a href="/category.html?type=Фільм&genre=Трилер">Трилер</a>
+            <a href="/category.html?type=Фільм&genre=Жахи">Жахи</a>
+            <a href="/category.html?type=Фільм&genre=Фентезі">Фентезі</a>
           </div>
         </div>
+      </div>
 
-        <!-- === МЕНЮ СЕРІАЛИ === -->
-        <div class="dropdown">
-          <a href="#" class="menu-series">Серіали</a>
-          <div class="mega-menu mega-series">
-            <div class="genres">
-              <a href="/category.html?type=Серіал&genre=Драматичні">Драматичні</a>
-              <a href="/category.html?type=Серіал&genre=Комедійні">Комедійні</a>
-              <a href="/category.html?type=Серіал&genre=Трилери">Трилери</a>
-              <a href="/category.html?type=Серіал&genre=Історичні">Історичні</a>
-              <a href="/category.html?type=Серіал&genre=Фантастичні">Фантастичні</a>
-            </div>
+      <!-- === МЕНЮ СЕРІАЛИ === -->
+      <div class="dropdown">
+        <a href="#" class="menu-series">Серіали</a>
+        <div class="mega-menu mega-series">
+          <div class="genres">
+            <a href="/category.html?type=Серіал&genre=Драматичні">Драматичні</a>
+            <a href="/category.html?type=Серіал&genre=Комедійні">Комедійні</a>
+            <a href="/category.html?type=Серіал&genre=Трилери">Трилери</a>
+            <a href="/category.html?type=Серіал&genre=Історичні">Історичні</a>
+            <a href="/category.html?type=Серіал&genre=Фантастичні">Фантастичні</a>
           </div>
         </div>
+      </div>
 
-        <a href="/category.html?type=Мультфільм">Мультфільми</a>
-        <a href="/category.html?type=Мультсеріал">Мультсеріали</a>
-        <a href="/collections.html">Збірки</a>
-        <a href="/new.html">Новинки</a>
-      </nav>
-    </div>
+      <a href="/category.html?type=Мультфільм">Мультфільми</a>
+      <a href="/category.html?type=Мультсеріал">Мультсеріали</a>
+      <a href="/collections.html">Збірки</a>
+      <a href="/new.html">Новинки</a>
 
-    <!-- 🔹 Права частина -->
-    <div class="top-right">
+      <!-- 🔹 Тепер пошук і кабінет тут, як було -->
       <input type="text" id="search-input" placeholder="Пошук…" class="search" />
       <a href="/profile.html" class="profile-btn">👑 Мій кабінет</a>
-    </div>
+    </nav>
   </div>
 </header>
 
@@ -74,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <style>
-/* === СТИЛЬ ШАПКИ === */
+/* === ВІДНОВЛЕНА ШАПКА === */
 header {
   background: #000;
   border-bottom: 1px solid rgba(0,255,255,0.08);
@@ -85,33 +80,24 @@ header {
 
 .topbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  padding: 10px 20px;
-  max-width: 1150px;
-  margin: 0 auto;
+  padding: 12px 20px;
 }
-
-.left-side {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.nav-logo {
-  height: 44px;
-  transition: transform 0.2s;
-}
-.nav-logo:hover { transform: scale(1.05); }
 
 .main-nav {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
+
+.nav-logo {
+  height: 42px;
+  transition: transform 0.2s ease;
+}
+.nav-logo:hover { transform: scale(1.05); }
 
 .main-nav a {
   color: #e4e4e4;
@@ -120,14 +106,11 @@ header {
   font-size: 15px;
   transition: color 0.2s ease;
 }
-.main-nav a:hover { color: #00fff2; }
-
-.top-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.main-nav a:hover {
+  color: #00fff2;
 }
 
+/* Пошук + Кабінет */
 .search {
   padding: 6px 10px;
   border-radius: 8px;
@@ -158,24 +141,52 @@ header {
   box-shadow: 0 0 12px rgba(0,255,255,0.25);
 }
 
+/* === МЕГА-МЕНЮ === */
+.mega-menu,
+.mega-series {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 100%;
+  background: #0b0b0b;
+  border: 1px solid rgba(0,255,255,0.1);
+  border-radius: 12px;
+  padding: 15px 20px;
+  box-shadow: 0 0 25px rgba(0,255,255,0.1);
+  display: none;
+  z-index: 500;
+  text-align: center;
+}
+.dropdown:hover .mega-menu,
+.dropdown:hover .mega-series {
+  display: block;
+}
+
+.genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.genres a {
+  color: #e4e4e4;
+  background: rgba(255,255,255,0.05);
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+.genres a:hover {
+  background: rgba(0,255,255,0.2);
+  color: #fff;
+}
+
 /* === адаптив === */
 @media (max-width: 700px) {
-  .topbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    text-align: center;
-  }
-  .left-side {
-    justify-content: center;
-  }
   .main-nav {
-    justify-content: center;
+    flex-direction: column;
     gap: 10px;
-  }
-  .top-right {
-    justify-content: center;
-    flex-wrap: wrap;
   }
   .search {
     width: 100%;
