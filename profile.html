@@ -622,7 +622,12 @@ function updateProUI() {
   // За замовчуванням обидві кнопки приховані
   document.getElementById("btn-paid-tg").style.display  = "none";
   document.getElementById("btn-paid-web").style.display = "none";
+
+  // Показуємо кнопку "Отримати PRO"
+  const getProBtn = document.getElementById("get-pro");
+  if (getProBtn) getProBtn.style.display = "inline-block";
 }
+
 
 
 // 📤 Повідомлення адміну про оплату (через Telegram)
