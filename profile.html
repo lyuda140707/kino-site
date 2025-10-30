@@ -617,22 +617,32 @@ function getWebId() {
   return localStorage.getItem("web_id");
 }
 
-// ⚙️ Показує потрібну кнопку (tg / web)
 function updateProUI() {
-  // За замовчуванням приховуємо
-  document.getElementById("btn-paid-tg").style.display  = "none";
-  document.getElementById("btn-paid-web").style.display = "none";
+  const btnTg = document.getElementById("btn-paid-tg");
+  const btnWeb = document.getElementById("btn-paid-web");
+  const getProBtn = document.getElementById("get-pro");
+  const statusEl = document.getElementById("pro-status-text");
 
-  // Якщо користувач уже натиснув оплату — залишаємо видимими
-  if (localStorage.getItem("pro_payment_started") === "true") {
-    document.getElementById("btn-paid-tg").style.display  = "inline-block";
-    document.getElementById("btn-paid-web").style.display = "inline-block";
+  // 1️⃣ Спочатку все ховаємо
+  btnTg.style.display = "none";
+  btnWeb.style.display = "none";
+  if (getProBtn) getProBtn.style.display = "inline-block";
+
+  // 2️⃣ Якщо PRO активний — ховаємо всі кнопки, окрім статусу
+  if (statusEl.innerText.includes("💎 PRO активний")) {
+    getProBtn.style.display = "none";
+    btnTg.style.display = "none";
+    btnWeb.style.display = "none";
+    return;
   }
 
-  // Показуємо кнопку "Отримати PRO"
-  const getProBtn = document.getElementById("get-pro");
-  if (getProBtn) getProBtn.style.display = "inline-block";
+  // 3️⃣ Якщо користувач натискав оплату, але PRO ще не активний
+  if (localStorage.getItem("pro_payment_started") === "true") {
+    btnTg.style.display = "inline-block";
+    btnWeb.style.display = "inline-block";
+  }
 }
+
 
 
 
@@ -677,13 +687,20 @@ async function notifyPaymentWEB() {
 async function checkProStatus() {
   const id = getTgId() || getWebId();
   if (!id) return;
+
   const statusEl = document.getElementById("pro-status-text");
+
   try {
     const res = await fetch(`${APPS_SCRIPT_URL}?user_id=${id}`);
     const data = await res.json();
+
     if (data?.ok && data?.isPro) {
       const d = data?.expireDate?.split("T")[0]?.split("-").reverse().join(".");
       statusEl.innerHTML = `💎 PRO активний до <b>${d || "невідомо"}</b>`;
+
+      // 🧹 Якщо PRO активний — очищаємо мітку "pro_payment_started",
+      // щоб кнопки "Я оплатив" більше не показувались
+      localStorage.removeItem("pro_payment_started");
     } else {
       statusEl.innerText = "🔒 Без PRO";
     }
@@ -691,7 +708,11 @@ async function checkProStatus() {
     console.error(err);
     statusEl.innerText = "⚠️ Помилка перевірки";
   }
+
+  // 🔄 Після оновлення статусу — оновлюємо інтерфейс кнопок
+  updateProUI();
 }
+
 
 // 🔄 Ініціалізація
 window.addEventListener("DOMContentLoaded", () => {
