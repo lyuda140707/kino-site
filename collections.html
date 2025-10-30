@@ -11,11 +11,33 @@
 <!-- Підключення хедера -->
 <div id="header-placeholder"></div>
 <script>
+  // 🟢 Функція для активації пошуку після завантаження хедера
+  function bindHeaderSearch() {
+    const input = document.getElementById("search-input");
+    if (!input) return;
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const query = input.value.trim();
+        if (query.length > 1) {
+          localStorage.setItem("searchQuery", query);
+          window.location.href = "/search.html";
+        }
+      }
+    });
+  }
+
+  // 🟢 Завантажуємо хедер і підключаємо пошук після вставки
   fetch("header.html")
     .then(res => res.text())
-    .then(html => document.getElementById("header-placeholder").innerHTML = html)
+    .then(html => {
+      document.getElementById("header-placeholder").innerHTML = html;
+      bindHeaderSearch(); // активуємо пошук
+    })
     .catch(err => console.error("Помилка хедера:", err));
 </script>
+
 
 <main class="container">
   <h1>🎬 Збірки фільмів</h1>
