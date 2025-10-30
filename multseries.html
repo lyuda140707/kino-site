@@ -334,12 +334,20 @@ document.getElementById("bookmarkSeriesBtn")?.addEventListener("click", () => {
     updateCartoonBookmarkBtn(title);
     alert("❌ Видалено із закладок");
   } else {
-    list.push({ title, poster, year, genre, imdb, type: "Мультсеріал" });
+    list.push({
+      title,
+      poster,
+      year,
+      genre,
+      imdb,
+      type: "Мультсеріал"
+    });
     setBookmarks(list);
     updateCartoonBookmarkBtn(title);
     alert("✅ Додано у закладки");
   }
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const title = document.getElementById("seriesTitle")?.textContent.trim();
