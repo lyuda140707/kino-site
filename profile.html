@@ -234,24 +234,6 @@ footer {
   fetch("header.html").then(r=>r.text()).then(html=>{
     document.getElementById("header-placeholder").innerHTML = html;
   });
-// ===== Кнопки у профілі
-window.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("get-pro")?.addEventListener("click", () => {
-    window.location.href = "/pro.html";
-  });
-
-  document.getElementById("messages")?.addEventListener("click", () => {
-    alert("📩 Розділ 'Повідомлення' у розробці");
-  });
-
-  document.getElementById("bookmarks")?.addEventListener("click", () => {
-    const favSection = document.getElementById("favorites-card");
-    if (favSection) {
-      favSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  });
-});
-
 
       
 </script>
