@@ -237,6 +237,40 @@ footer {
   box-shadow: 0 0 8px rgba(0,255,255,0.4);
   animation: pulseBadge 1.5s infinite;
 }
+/* === 💬 МОДАЛКА === */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  align-items: center;
+  justify-content: center;
+}
+.modal-content {
+  background: #111318;
+  border: 1px solid rgba(0,255,255,0.2);
+  border-radius: 14px;
+  padding: 24px;
+  max-width: 400px;
+  color: #e6e6e6;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0,255,255,0.3);
+  animation: fadeIn 0.3s ease;
+}
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+@keyframes fadeIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
 
 </style>
 
@@ -294,7 +328,7 @@ footer {
 <!-- 🧩 Оплата та підтвердження -->
 <div class="pro-actions" style="margin-top:14px;">
   <div id="pro-status-text" class="muted">Перевіряю статус...</div>
-
+  <button id="get-pro" class="btn btn-primary">💎 Отримати PRO</button>
   <!-- Кнопки -->
   <button id="btn-paid-tg" class="btn btn-ghost" style="display:none;">
     ✅ Я оплатив(ла) — через Telegram
@@ -656,6 +690,55 @@ window.addEventListener("DOMContentLoaded", () => {
   setInterval(checkProStatus, 15000);
 });
 </script>
+<script>
+// === 💳 Модалка + Перехід до Monobank ===
+const modal = document.getElementById("proModal");
+const btnGetPro = document.getElementById("get-pro");
+const btnConfirmPay = document.getElementById("confirmPay");
+const btnClose = document.getElementById("closeModal");
+
+// 1️⃣ Клік "Отримати PRO" — відкриває модалку
+btnGetPro.addEventListener("click", () => {
+  modal.style.display = "flex";
+});
+
+// 2️⃣ Скасувати — закрити модалку
+btnClose.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+// 3️⃣ Підтвердження → відкриваємо Monobank і показуємо кнопку "Я оплатив"
+btnConfirmPay.addEventListener("click", () => {
+  modal.style.display = "none";
+
+  // відкриваємо Monobank банку у новій вкладці
+  const monoUrl = "https://send.monobank.ua/jar/8FbfB4fY6S";
+  window.open(monoUrl, "_blank");
+
+  // після відкриття — показуємо кнопку "Я оплатив"
+  document.getElementById("btn-paid-tg").style.display = "inline-block";
+  document.getElementById("btn-paid-web").style.display = "inline-block";
+
+  alert("💳 Оплата відкрилась у новій вкладці.\nПісля переказу натисніть «Я оплатив(ла)»!");
+});
+
+// Закриття при кліку поза модалкою
+window.onclick = (e) => {
+  if (e.target === modal) modal.style.display = "none";
+};
+</script>
+
+<!-- === 💬 МОДАЛЬНЕ ВІКНО ПРО ОПЛАТУ === -->
+<div id="proModal" class="modal">
+  <div class="modal-content">
+    <h3>💎 Отримати PRO доступ</h3>
+    <p>Після оплати через Monobank обовʼязково натисніть кнопку <b>«Я оплатив(ла)»</b>, щоб адміністратор підтвердив ваш PRO.</p>
+    <div class="modal-actions">
+      <button id="confirmPay" class="btn btn-primary">Перейти до оплати 💳</button>
+      <button id="closeModal" class="btn btn-ghost">Скасувати</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
