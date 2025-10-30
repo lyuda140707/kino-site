@@ -333,12 +333,20 @@ document.getElementById("bookmarkSeriesBtn")?.addEventListener("click", () => {
     updateSeriesBookmarkBtn(title);
     alert("❌ Видалено із закладок");
   } else {
-    list.push({ title, poster, year, genre, imdb, type: "Серіал" });
+    list.push({
+      title,
+      poster,
+      year,
+      genre,
+      imdb,
+      type: "Серіал"
+    });
     setBookmarks(list);
     updateSeriesBookmarkBtn(title);
     alert("✅ Додано у закладки");
   }
 });
+
 
 // При відкритті сторінки
 document.addEventListener("DOMContentLoaded", () => {
