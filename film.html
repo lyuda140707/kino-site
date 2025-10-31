@@ -1088,7 +1088,7 @@ fetch("footer.html")
       const statusEl = document.getElementById("contactStatus");
       statusEl.innerText = "⏳ Відправляю...";
       try {
-        const res = await fetch(`${BACKEND_URL}/notify-payment`, {
+        const res = await fetch(BACKEND_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ source: "contact_form", name, message: msg })
@@ -1110,7 +1110,7 @@ fetch("footer.html")
       const statusEl = document.getElementById("dmcaStatus");
       statusEl.innerText = "⏳ Відправляю...";
       try {
-        const res = await fetch(`${BACKEND_URL}/notify-payment`, {
+        const res = await fetch(BACKEND_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ source: "dmca_form", name, email, message: details })
