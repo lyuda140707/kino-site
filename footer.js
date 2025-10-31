@@ -29,33 +29,34 @@
   });
 
   // === Відправлення через AJAX (без редіректу)
-  const form = document.getElementById("contactForm");
-  const status = document.getElementById("contactStatus");
+  async function sendForm(formId, statusId, extra = {}) {
+    const form = document.getElementById(formId);
+    const status = document.getElementById(statusId);
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      status.textContent = "⏳ Відправляю...";
+      const data = Object.fromEntries(new FormData(form).entries());
+      Object.assign(data, extra);
 
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    status.textContent = "⏳ Відправляю...";
+      try {
+        const res = await fetch(FORM_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
 
-    const formData = {
-      name: document.getElementById("contactName").value,
-      message: document.getElementById("contactMsg").value,
-    };
-
-    try {
-      const res = await fetch(FORM_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        status.textContent = "✅ Повідомлення відправлено!";
-        form.reset();
-      } else {
-        status.textContent = "❌ Помилка. Спробуйте пізніше.";
+        if (res.ok) {
+          status.textContent = "✅ Повідомлення відправлено!";
+          form.reset();
+        } else {
+          status.textContent = "❌ Помилка. Спробуйте пізніше.";
+        }
+      } catch {
+        status.textContent = "❌ Не вдалося відправити.";
       }
-    } catch (err) {
-      status.textContent = "❌ Не вдалося відправити.";
-    }
-  });
+    });
+  }
+
+  sendForm("contactForm", "contactStatus");
+  sendForm("dmcaForm", "dmcaStatus");
 })();
