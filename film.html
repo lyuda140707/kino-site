@@ -727,14 +727,15 @@ function getYouTubeId(url) {
 
   try {
     if (idParam) {
-      // ✅ id числовий, тому приводимо до числа
-      const idNum = Number(idParam);
+      // Якщо id є в URL — беремо конкретний запис
+      const idNum = isNaN(Number(idParam)) ? idParam : Number(idParam);
       ({ data, error } = await supabase
         .from("films_site")
         .select("*")
         .eq("id", idNum)
-        .maybeSingle()); // ⬅ без .single(), щоб не падало якщо не знайде
+        .single());
     } else {
+      // Fallback: якщо id НЕ передали — беремо останній запис (де є title)
       ({ data, error } = await supabase
         .from("films_site")
         .select("*")
@@ -742,7 +743,6 @@ function getYouTubeId(url) {
         .limit(1)
         .maybeSingle());
     }
-
   } catch (e) {
     console.error("❌ Виняток Supabase:", e);
   }
@@ -804,24 +804,9 @@ function getYouTubeId(url) {
   // 🟢 Запускаємо підбірку схожих фільмів
   loadRecommendedFilms(data.title, data.genre);
 
-  
-  // 🔗 Вибір джерела відео
-  movieUrl = "";
-  trailerUrl = data.trailer_url || "";
-  
-  // 1️⃣ Пріоритет — HLS
-  if (data.stream_url && data.stream_url.includes(".m3u8")) {
-    movieUrl = data.stream_url;
-  }
-  // 2️⃣ Якщо HLS нема — пробуємо Google Drive
-  else if (data.drive_url && data.drive_url.includes("drive.google.com")) {
-    movieUrl = data.drive_url;
-  }
-  // 3️⃣ Якщо нічого — fallback на Telegram
-  else if (data.telegram_file_id) {
-    movieUrl = null; // позначка для Telegram
-  }
-
+  // 🔗 Джерела
+  movieUrl   = data.stream_url   || "";
+  trailerUrl = data.trailer_url  || "";
 
   // 🎛️ Кнопки
   const btnMovie   = document.getElementById("btnMovie");
@@ -835,39 +820,7 @@ function getYouTubeId(url) {
   currentSource = "movie";
   document.querySelector(".player-box").innerHTML =
     `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
-  if (movieUrl) {
   setupPlayer(movieUrl);
-} else if (data.telegram_file_id) {
-  // === Fallback: Telegram file_id
-  const box = document.querySelector(".player-box");
-  box.innerHTML = `
-    <video id="filmPlayer" controls playsinline preload="metadata"
-           style="width:100%;border-radius:12px;outline:none;"></video>`;
-  const tag = document.getElementById("filmPlayer");
-
-  try {
-    const resp = await fetch(
-      `https://video-backend-lg1e.onrender.com/get_video/${encodeURIComponent(data.telegram_file_id)}`
-    );
-    const json = await resp.json();
-
-    if (json.url) {
-      const src = document.createElement("source");
-      src.src = json.url;
-      src.type = "video/mp4";
-      tag.appendChild(src);
-      const info = document.createElement("div");
-      info.innerHTML = "🎞️ Відео завантажено з Telegram";
-      info.style = "color:#00fff2;text-align:center;margin-top:8px;font-size:14px;";
-      box.appendChild(info);
-    } else {
-      console.warn("❌ Не знайдено URL у відповіді бекенду:", json);
-    }
-  } catch (err) {
-    console.error("❌ Помилка при отриманні відео:", err);
-  }
-}
-
 
   // 🖱️ Обробники кліків
   btnMovie.addEventListener("click", () => {
@@ -877,39 +830,7 @@ function getYouTubeId(url) {
     btnTrailer.classList.remove("active");
     const box = document.querySelector(".player-box");
     box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
-    if (movieUrl) {
-  setupPlayer(movieUrl);
-} else if (data.telegram_file_id) {
-  // === Fallback: Telegram file_id
-  const box = document.querySelector(".player-box");
-  box.innerHTML = `
-    <video id="filmPlayer" controls playsinline preload="metadata"
-           style="width:100%;border-radius:12px;outline:none;"></video>`;
-  const tag = document.getElementById("filmPlayer");
-
-  try {
-    const resp = await fetch(
-      `https://video-backend-lg1e.onrender.com/get_video/${encodeURIComponent(data.telegram_file_id)}`
-    );
-    const json = await resp.json();
-
-    if (json.url) {
-      const src = document.createElement("source");
-      src.src = json.url;
-      src.type = "video/mp4";
-      tag.appendChild(src);
-      const info = document.createElement("div");
-      info.innerHTML = "🎞️ Відео завантажено з Telegram";
-      info.style = "color:#00fff2;text-align:center;margin-top:8px;font-size:14px;";
-      box.appendChild(info);
-    } else {
-      console.warn("❌ Не знайдено URL у відповіді бекенду:", json);
-    }
-  } catch (err) {
-    console.error("❌ Помилка при отриманні відео:", err);
-  }
-}
-
+    setupPlayer(movieUrl);
   });
 
   btnTrailer.addEventListener("click", () => {
@@ -1147,7 +1068,13 @@ async function loadRecommendedFilms(title, genre) {
 
 
 </div>
-
+<!-- 💬 Коментарі Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+</script>
 
 <!-- Підключення логіки коментарів -->
 <script src="comments.js"></script>
