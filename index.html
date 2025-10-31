@@ -459,15 +459,23 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 <script src="auth.js"></script>
 <div id="footer-placeholder"></div>
 <script>
-fetch("footer.html")
-  .then(res => res.text())
-  .then(html => document.getElementById("footer-placeholder").innerHTML = html);
+  fetch("footer.html")
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("footer-placeholder").innerHTML = html;
+      // після того як футер з’явився у DOM — підключаємо логіку
+      const s = document.createElement("script");
+      s.src = "footer.js";
+      document.body.appendChild(s);
+    });
 </script>
+
 
 
 
 </body>
 </html>
+
 
 
 
