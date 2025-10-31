@@ -1,6 +1,6 @@
 // footer.js
 (function () {
-  const BACKEND_URL = "https://script.google.com/macros/s/AKfycbxW2_rhnZ2Q8a7BQJJA89Ij_65tKSmf6gr8XmOIE9Au0i_BQVv_6PS0xx5sWgKYQ16J/exec";
+  const BACKEND_URL = "https://script.google.com/macros/s/AKfycbxtIOX0f0GwSY7vau9nUPzKKxV4n94u6Seqb9HEAsCjYmDZTqMYd9gPSlqTM16riJ3b/exec";
 
   const contactModal = document.getElementById("contactModal");
   const rightsModal  = document.getElementById("rightsModal");
