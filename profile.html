@@ -703,12 +703,15 @@ function getTgId() {
   try { return u ? JSON.parse(u).id : null; } catch { return null; }
 }
 function getWebId() {
-  if (!localStorage.getItem("web_id")) {
-    localStorage.setItem("web_id", "WEB-" + Date.now());
+  let webId = localStorage.getItem("web_id");
+  if (!webId) {
+    // 🧩 Створюємо постійний ідентифікатор для браузера
+    const base = btoa(navigator.userAgent + navigator.language + "kino-site");
+    webId = "WEB-" + base.slice(0, 12);
+    localStorage.setItem("web_id", webId);
   }
-  return localStorage.getItem("web_id");
+  return webId;
 }
-
 function updateProUI() {
   const btnTg = document.getElementById("btn-paid-tg");
   const btnWeb = document.getElementById("btn-paid-web");
