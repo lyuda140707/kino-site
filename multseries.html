@@ -445,6 +445,16 @@
     player.removeAttribute("src"); player.load();
 
     if (!url) return;
+    // 🎬 Якщо посилання з Google Drive — використовуємо твій Cloudflare-проксі
+    if (url.includes("drive.google.com") || url.includes("uc?export=download")) {
+      const fileIdMatch = url.match(/\/d\/([^/]+)\//);
+      const fileId = fileIdMatch ? fileIdMatch[1] : null;
+      if (fileId) {
+        url = `https://driveproxy.lyuda14070702.workers.dev/?id=${fileId}`;
+        console.log("🎥 Проксі Google Drive:", url);
+      }
+}
+
 
     if (url.endsWith(".m3u8")){
       if (window.Hls && Hls.isSupported()){
