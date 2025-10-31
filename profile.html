@@ -368,17 +368,33 @@ footer {
     <p class="muted">
       Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
     </p>
+<script>
+  // 🔹 Ця функція має бути ДО віджета Telegram
+  function onTelegramAuth(user) {
+    console.log("✅ Telegram авторизував користувача:", user);
+
+    if (!user?.id) {
+      alert("Помилка Telegram авторизації!");
+      return;
+    }
+
+    // Зберігаємо користувача
+    localStorage.setItem("telegram_user", JSON.stringify(user));
+
+    // Показуємо повідомлення
+    alert("Telegram авторизація успішна! Сторінка оновиться.");
+    location.reload();
+  }
+</script>
 
 <div id="telegram-widget">
   <script async src="https://telegram.org/js/telegram-widget.js?22"
-          data-telegram-login="RelaxBox_UA_bot"
-          data-size="large"
-          data-radius="8"
-          data-userpic="true"
-          data-request-access="write"
-          data-auth-url="https://kino-site.top/profile"
-          data-onauth="onTelegramAuth(user)">
-  </script>
+    data-telegram-login="RelaxBox_UA_bot"
+    data-size="large"
+    data-userpic="false"
+    data-request-access="write"
+    data-onauth="onTelegramAuth(user)"
+  ></script>
 </div>
 
 
