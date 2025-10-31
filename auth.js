@@ -17,12 +17,34 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   try {
     const url = (window.APPS_SCRIPT_URL || "").trim();
-const res = await fetch(url + "?user_id=" + encodeURIComponent(user.id));
+if (!url) {
+  console.warn("⚠️ APPS_SCRIPT_URL не задано — перевірку PRO пропущено");
+  return;
+}
 
-    const json = await res.json();
-    localStorage.setItem("isPro", json.isPro ? "true" : "false");
-    localStorage.setItem("pro_last_check", now);
-    console.log("🔗 PRO оновлено:", json.isPro);
+try {
+  const res = await fetch(url + "?user_id=" + encodeURIComponent(user.id), {
+    method: "GET",
+    headers: { "Accept": "application/json" }
+  });
+
+  if (!res.ok) throw new Error("Server returned " + res.status);
+
+  const text = await res.text();
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    throw new Error("Response is not valid JSON: " + text.slice(0, 100));
+  }
+
+  localStorage.setItem("isPro", json.isPro ? "true" : "false");
+  localStorage.setItem("pro_last_check", now);
+  console.log("🔗 PRO оновлено:", json.isPro);
+} catch (err) {
+  console.warn("⚠️ Не вдалося перевірити PRO:", err.message);
+}
+
   } catch (err) {
     console.warn("⚠️ Не вдалося перевірити PRO:", err);
   }
