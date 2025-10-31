@@ -804,8 +804,17 @@ const btnGetPro = document.getElementById("get-pro");
 const btnConfirmPay = document.getElementById("confirmPay");
 const btnClose = document.getElementById("closeModal");
 
-// 1️⃣ Клік "Отримати PRO" — відкриває модалку
+// 1️⃣ Клік "Отримати PRO" — перевіряє авторизацію
 btnGetPro.addEventListener("click", () => {
+  const hasTg = !!localStorage.getItem("telegram_user");
+  const hasEmail = !!localStorage.getItem("email_user");
+
+  if (!hasTg && !hasEmail) {
+    alert("⚠️ Спочатку увійдіть через Telegram або Email, щоб отримати PRO.");
+    return;
+  }
+
+  // якщо користувач увійшов — відкриваємо модалку
   modal.style.display = "flex";
 });
 
