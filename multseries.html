@@ -239,6 +239,86 @@
 @media (max-width:640px){
   .series-top-row{flex-wrap:wrap;justify-content:flex-start;gap:8px}
 }
+/* ===== 💬 СЕКЦІЯ КОМЕНТАРІВ ===== */
+.comments-section {
+  margin-top: 22px;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.comments-section h3 {
+  color: #00fff2;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.comment {
+  background: #121212;
+  border-radius: 8px;
+  padding: 10px;
+  color: #ddd;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.comment strong {
+  color: #00fff2;
+  font-size: 15px;
+}
+
+.comment p {
+  margin: 6px 0;
+  line-height: 1.5;
+}
+
+.comment small {
+  color: #888;
+  font-size: 12px;
+}
+
+.comment-form {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comment-form input,
+.comment-form textarea {
+  background: #181818;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.comment-form textarea {
+  resize: none;
+  height: 80px;
+}
+
+.comment-form button {
+  background: #00fff2;
+  border: none;
+  color: #001c1a;
+  font-weight: 700;
+  font-size: 15px;
+  border-radius: 8px;
+  padding: 8px 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.comment-form button:hover {
+  background: #00e6da;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.35);
+}
 
   </style>
 </head>
@@ -578,8 +658,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 })();
 </script>
 
-<!-- 💬 Коментарі Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
