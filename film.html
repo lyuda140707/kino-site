@@ -821,24 +821,25 @@ function getYouTubeId(url) {
   document.querySelector(".player-box").innerHTML =
     `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
   setupPlayer(movieUrl);
-  // === 🧩 Якщо немає HLS-плеєра, але є Telegram-відео ===
-// === 🧩 Якщо немає HLS-плеєра, але є Telegram-відео ===
-if (!movieUrl && data.telegram_link) {
-  const playerBox = document.querySelector(".player-box");
-  playerBox.innerHTML = `
-    <div id="tgPlayerBox" style="background:#000;border-radius:12px;padding:10px;"></div>
-  `;
-
-  // отримуємо postId: baza_site14gt69t2tgdr2csr62b2b0d/123
-  const postId = data.telegram_link.replace(/^https?:\/\/t\.me\//, "");
-
-  // створюємо Telegram widget script
-  const s = document.createElement("script");
-  s.async = true;
-  s.src = "https://telegram.org/js/telegram-widget.js?22";
-  s.setAttribute("data-telegram-post", postId);
-  s.setAttribute("data-width", "100%");
-  document.getElementById("tgPlayerBox").appendChild(s);
+  // 🧩 Якщо немає HLS, але є message_id — отримуємо відео з Render
+if (!movieUrl && data.message_id) {
+  try {
+    const resp = await fetch(`https://video-backend-lg1e.onrender.com/get_video/${data.message_id}`);
+    const json = await resp.json();
+    if (json.url) {
+      const playerBox = document.querySelector(".player-box");
+      playerBox.innerHTML = `
+        <video controls style="width:100%;border-radius:12px;">
+          <source src="${json.url}" type="video/mp4">
+          Ваш браузер не підтримує відео.
+        </video>
+      `;
+    } else {
+      console.warn("Не отримано URL відео");
+    }
+  } catch (err) {
+    console.error("Помилка отримання відео:", err);
+  }
 }
 
 
@@ -851,24 +852,25 @@ if (!movieUrl && data.telegram_link) {
     const box = document.querySelector(".player-box");
     box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
     setupPlayer(movieUrl);
-    // === 🧩 Якщо немає HLS-плеєра, але є Telegram-відео ===
-// === 🧩 Якщо немає HLS-плеєра, але є Telegram-відео ===
-if (!movieUrl && data.telegram_link) {
-  const playerBox = document.querySelector(".player-box");
-  playerBox.innerHTML = `
-    <div id="tgPlayerBox" style="background:#000;border-radius:12px;padding:10px;"></div>
-  `;
-
-  // отримуємо postId: baza_site14gt69t2tgdr2csr62b2b0d/123
-  const postId = data.telegram_link.replace(/^https?:\/\/t\.me\//, "");
-
-  // створюємо Telegram widget script
-  const s = document.createElement("script");
-  s.async = true;
-  s.src = "https://telegram.org/js/telegram-widget.js?22";
-  s.setAttribute("data-telegram-post", postId);
-  s.setAttribute("data-width", "100%");
-  document.getElementById("tgPlayerBox").appendChild(s);
+    // 🧩 Якщо немає HLS, але є message_id — отримуємо відео з Render
+if (!movieUrl && data.message_id) {
+  try {
+    const resp = await fetch(`https://video-backend-lg1e.onrender.com/get_video/${data.message_id}`);
+    const json = await resp.json();
+    if (json.url) {
+      const playerBox = document.querySelector(".player-box");
+      playerBox.innerHTML = `
+        <video controls style="width:100%;border-radius:12px;">
+          <source src="${json.url}" type="video/mp4">
+          Ваш браузер не підтримує відео.
+        </video>
+      `;
+    } else {
+      console.warn("Не отримано URL відео");
+    }
+  } catch (err) {
+    console.error("Помилка отримання відео:", err);
+  }
 }
 
   });
