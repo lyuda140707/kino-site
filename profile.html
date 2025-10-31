@@ -853,7 +853,7 @@ async function notifyPaymentTG() {
   const tg_id = getTgId();
   if (!tg_id) return alert("Спочатку авторизуйтеся через Telegram!");
   try {
-    const res = await fetch(`${BACKEND_URL}/notify-payment`, {
+    const res = await fetch(BACKEND_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: tg_id, source: "site" })
@@ -870,7 +870,7 @@ async function notifyPaymentTG() {
 async function notifyPaymentWEB() {
   const web_id = getWebId();
   try {
-    const res = await fetch(`${BACKEND_URL}/notify-payment`, {
+    const res = await fetch(BACKEND_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ web_id, source: "site" })
