@@ -669,12 +669,12 @@ function updateProUI() {
   const getProBtn = document.getElementById("get-pro");
   const statusEl = document.getElementById("pro-status-text");
 
-  // 1️⃣ Спочатку все ховаємо
+  // 🔹 Ховаємо все спочатку
   btnTg.style.display = "none";
   btnWeb.style.display = "none";
   if (getProBtn) getProBtn.style.display = "inline-block";
 
-  // 2️⃣ Якщо PRO активний — ховаємо всі кнопки, окрім статусу
+  // 🔹 Якщо PRO уже активний — ховаємо кнопки оплати
   if (statusEl.innerText.includes("💎 PRO активний")) {
     getProBtn.style.display = "none";
     btnTg.style.display = "none";
@@ -682,12 +682,28 @@ function updateProUI() {
     return;
   }
 
-  // 3️⃣ Якщо користувач натискав оплату, але PRO ще не активний
+  // 🔹 Якщо користувач почав оплату
   if (localStorage.getItem("pro_payment_started") === "true") {
-    btnTg.style.display = "inline-block";
-    btnWeb.style.display = "inline-block";
+    const hasTg = !!localStorage.getItem("telegram_user");
+    const hasEmail = !!localStorage.getItem("email_user");
+
+    // показуємо тільки відповідну кнопку
+    if (hasTg) {
+      btnTg.style.display = "inline-block";
+      btnWeb.style.display = "none";
+    } else if (hasEmail) {
+      btnWeb.style.display = "inline-block";
+      btnTg.style.display = "none";
+    } else {
+      // якщо невідомо хто — показуємо кнопку для гостей (web)
+      btnWeb.style.display = "inline-block";
+    }
+
+    // ховаємо кнопку "Отримати PRO"
+    getProBtn.style.display = "none";
   }
 }
+
 
 
 
