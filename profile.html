@@ -544,7 +544,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
     try {
       const res = await fetch(`${window.APPS_SCRIPT_URL}?user_id=${encodeURIComponent(user.id)}`);
-
       const json = await res.json();
       if (json.isPro) {
         const d = json.expireDate?.split("T")[0]?.split("-").reverse().join(".");
@@ -758,37 +757,6 @@ async function notifyPaymentWEB() {
     console.error(e);
     alert("❌ Не вдалося надіслати запит. Спробуйте пізніше.");
   }
-}
-
-// 🔍 Перевірка статусу PRO
-async function checkProStatus() {
-  const id = getTgId() || getWebId();
-  if (!id) return;
-
-  const statusEl = document.getElementById("pro-status-text");
-
-  try {
-    const res = await fetch(`${window.APPS_SCRIPT_URL}?user_id=${encodeURIComponent(user.id)}`);
-
-    const data = await res.json();
-
-    if (data?.ok && data?.isPro) {
-      const d = data?.expireDate?.split("T")[0]?.split("-").reverse().join(".");
-      statusEl.innerHTML = `💎 PRO активний до <b>${d || "невідомо"}</b>`;
-
-      // 🧹 Якщо PRO активний — очищаємо мітку "pro_payment_started",
-      // щоб кнопки "Я оплатив" більше не показувались
-      localStorage.removeItem("pro_payment_started");
-    } else {
-      statusEl.innerText = "🔒 Без PRO";
-    }
-  } catch (err) {
-    console.error(err);
-    statusEl.innerText = "⚠️ Помилка перевірки";
-  }
-
-  // 🔄 Після оновлення статусу — оновлюємо інтерфейс кнопок
-  updateProUI();
 }
 
 
