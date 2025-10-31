@@ -16,50 +16,55 @@
     if (e.target === rightsModal)  rightsModal.style.display  = "none";
   });
 
-  // Форма "Контакти"
-  document.getElementById("contactForm")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name = document.getElementById("contactName").value.trim();
-    const msg  = document.getElementById("contactMsg").value.trim();
-    const statusEl = document.getElementById("contactStatus");
-    statusEl.textContent = "⏳ Відправляю...";
-    try {
-      const res = await fetch(BACKEND_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ source: "contact_form", name, message: msg })
-      });
-      const data = await res.json();
-      if (data?.ok) {
-        statusEl.textContent = "✅ Повідомлення відправлено!";
-        e.target.reset();
-      } else throw new Error();
-    } catch {
+ // Контактна форма
+document.getElementById("contactForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = document.getElementById("contactName").value.trim();
+  const msg  = document.getElementById("contactMsg").value.trim();
+  const statusEl = document.getElementById("contactStatus");
+  statusEl.textContent = "⏳ Відправляю...";
+  try {
+    const res = await fetch(BACKEND_URL, {
+      method: "POST",
+      // ❌ без headers — НЕ ставимо Content-Type
+      body: JSON.stringify({ source: "contact_form", name, message: msg })
+    });
+    const data = await res.json();
+    if (data?.ok) {
+      statusEl.textContent = "✅ Повідомлення відправлено!";
+      e.target.reset();
+    } else {
       statusEl.textContent = "❌ Не вдалося відправити. Спробуйте пізніше.";
     }
-  });
+  } catch {
+    statusEl.textContent = "❌ Не вдалося відправити. Спробуйте пізніше.";
+  }
+});
 
-  // Форма "Правовласникам"
-  document.getElementById("dmcaForm")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name    = document.getElementById("dmcaName").value.trim();
-    const email   = document.getElementById("dmcaEmail").value.trim();
-    const details = document.getElementById("dmcaDetails").value.trim();
-    const statusEl = document.getElementById("dmcaStatus");
-    statusEl.textContent = "⏳ Відправляю...";
-    try {
-      const res = await fetch(BACKEND_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ source: "dmca_form", name, email, message: details })
-      });
-      const data = await res.json();
-      if (data?.ok) {
-        statusEl.textContent = "✅ Запит відправлено! Ми зв’яжемося найближчим часом.";
-        e.target.reset();
-      } else throw new Error();
-    } catch {
+// Правовласникам
+document.getElementById("dmcaForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name    = document.getElementById("dmcaName").value.trim();
+  const email   = document.getElementById("dmcaEmail").value.trim();
+  const details = document.getElementById("dmcaDetails").value.trim();
+  const statusEl = document.getElementById("dmcaStatus");
+  statusEl.textContent = "⏳ Відправляю...";
+  try {
+    const res = await fetch(BACKEND_URL, {
+      method: "POST",
+      // ❌ без headers
+      body: JSON.stringify({ source: "dmca_form", name, email, message: details })
+    });
+    const data = await res.json();
+    if (data?.ok) {
+      statusEl.textContent = "✅ Запит відправлено! Ми зв’яжемося найближчим часом.";
+      e.target.reset();
+    } else {
       statusEl.textContent = "❌ Не вдалося відправити. Спробуйте пізніше.";
     }
-  });
+  } catch {
+    statusEl.textContent = "❌ Не вдалося відправити. Спробуйте пізніше.";
+  }
+});
+
 })();
