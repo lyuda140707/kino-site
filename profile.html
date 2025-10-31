@@ -609,6 +609,25 @@ async function checkProStatus() {
   updateProUI();
 }
 async function tryBindWebToTg(tgUser) {
+  if (!tgUser?.id) return;
+  
+  // Спочатку перевіряємо, чи PRO уже активний для цього Telegram ID
+  try {
+    const checkUrl = `${window.APPS_SCRIPT_URL}?user_id=${encodeURIComponent(tgUser.id)}`;
+    const resCheck = await fetch(checkUrl);
+    const jsonCheck = await resCheck.json();
+    
+    // Якщо PRO уже активний — нічого не прив'язуємо, просто показуємо
+    if (jsonCheck?.ok && jsonCheck?.isPro) {
+      console.log("💎 PRO уже активний для цього Telegram користувача:", tgUser.id);
+      await checkProStatus();
+      return;
+    }
+  } catch (err) {
+    console.warn("Не вдалося перевірити TG PRO:", err);
+  }
+
+  // Якщо PRO ще немає, пробуємо зв'язати WEB → TG
   const webId = localStorage.getItem("web_id");
   if (!webId) return;
 
@@ -617,7 +636,6 @@ async function tryBindWebToTg(tgUser) {
       `&web_id=${encodeURIComponent(webId)}` +
       `&tg_id=${encodeURIComponent(tgUser.id)}` +
       `&tg_name=${encodeURIComponent(tgUser.username || "")}`;
-
     const res  = await fetch(url);
     const json = await res.json();
     console.log("🔗 Bind WEB → TG:", json);
@@ -625,6 +643,7 @@ async function tryBindWebToTg(tgUser) {
     console.warn("Bind failed:", e);
   }
 }
+
 
 
 
