@@ -586,8 +586,8 @@ async function checkProStatus() {
     idParam = JSON.parse(tgUser).id;
     paramType = "user_id";
   } else if (emailUser) {
-    idParam = JSON.parse(emailUser).email;
-    paramType = "email";
+    idParam = getWebId();  // Використовуємо web_id
+    paramType = "user_id"; // шукаємо як звичайний ID
   } else {
     idParam = getWebId();
     paramType = "web_id";
