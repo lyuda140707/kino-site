@@ -16,10 +16,9 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const res = await fetch(
-      "https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" +
-        encodeURIComponent(user.id)
-    );
+    const url = (window.APPS_SCRIPT_URL || "").trim();
+const res = await fetch(url + "?user_id=" + encodeURIComponent(user.id));
+
     const json = await res.json();
     localStorage.setItem("isPro", json.isPro ? "true" : "false");
     localStorage.setItem("pro_last_check", now);
