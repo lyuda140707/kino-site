@@ -527,10 +527,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
 
     try {
-      const res = await fetch(
-        "https://script.google.com/macros/s/AKfycbyrCxL8N7w1XC3JDU-A1QMlZn8NKs5QKaS1vg-TRjijk_zI00i_y5KP-N5_VNjUA17xyA/exec?user_id=" +
-          encodeURIComponent(user.id)
-      );
+      const res = await fetch(`${APPS_SCRIPT_URL}?user_id=${encodeURIComponent(user.id)}`);
+
       const json = await res.json();
       if (json.isPro) {
         const d = json.expireDate?.split("T")[0]?.split("-").reverse().join(".");
