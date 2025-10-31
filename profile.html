@@ -558,7 +558,16 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       // ✅ Завантажити повідомлення користувача
       loadMessagesForUser(user.id);
   }
-// 🔍 Перевірка статусу PRO
+function getWebId() {
+  let webId = localStorage.getItem("web_id");
+  if (!webId) {
+    // 🧩 Створюємо постійний ідентифікатор для браузера
+    const base = btoa(navigator.userAgent + navigator.language + "kino-site");
+    webId = "WEB-" + base.slice(0, 12);
+    localStorage.setItem("web_id", webId);
+  }
+  return webId;
+}
 // 🔍 Перевірка статусу PRO
 async function checkProStatus() {
   const tgUser = localStorage.getItem("telegram_user");
@@ -709,16 +718,7 @@ function getTgId() {
   const u = localStorage.getItem("telegram_user");
   try { return u ? JSON.parse(u).id : null; } catch { return null; }
 }
-function getWebId() {
-  let webId = localStorage.getItem("web_id");
-  if (!webId) {
-    // 🧩 Створюємо постійний ідентифікатор для браузера
-    const base = btoa(navigator.userAgent + navigator.language + "kino-site");
-    webId = "WEB-" + base.slice(0, 12);
-    localStorage.setItem("web_id", webId);
-  }
-  return webId;
-}
+
 function updateProUI() {
   const btnTg = document.getElementById("btn-paid-tg");
   const btnWeb = document.getElementById("btn-paid-web");
