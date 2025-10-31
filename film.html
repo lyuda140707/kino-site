@@ -727,15 +727,14 @@ function getYouTubeId(url) {
 
   try {
     if (idParam) {
-      // Якщо id є в URL — беремо конкретний запис
-      const idNum = isNaN(Number(idParam)) ? idParam : Number(idParam);
+      // ✅ id числовий, тому приводимо до числа
+      const idNum = Number(idParam);
       ({ data, error } = await supabase
         .from("films_site")
         .select("*")
         .eq("id", idNum)
-        .single());
+        .maybeSingle()); // ⬅ без .single(), щоб не падало якщо не знайде
     } else {
-      // Fallback: якщо id НЕ передали — беремо останній запис (де є title)
       ({ data, error } = await supabase
         .from("films_site")
         .select("*")
@@ -743,6 +742,7 @@ function getYouTubeId(url) {
         .limit(1)
         .maybeSingle());
     }
+
   } catch (e) {
     console.error("❌ Виняток Supabase:", e);
   }
