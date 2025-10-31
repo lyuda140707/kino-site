@@ -1237,32 +1237,37 @@ header {
   margin-top: 8px;
 }
 
-/* Модалки */
+
+/* === МОДАЛЬНІ ВІКНА (оновлено) === */
 .modal {
-  display: none;
+  display: none; /* <— головне, приховує всі модалки при старті */
   position: fixed;
   z-index: 9999;
-  left: 0; top: 0;
+  top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.75);
+  background: rgba(0, 0, 0, 0.85);
   justify-content: center;
   align-items: center;
-  animation: fadeIn 0.3s ease;
+  overflow-y: auto;
 }
+
 .modal-content {
-  background: #111318;
-  border: 1px solid rgba(0,255,255,0.2);
+  background: rgba(17, 19, 24, 0.95);
+  border: 1px solid rgba(0,255,255,0.25);
   border-radius: 14px;
   padding: 24px;
   max-width: 420px;
   color: #e6e6e6;
   text-align: center;
-  box-shadow: 0 0 25px rgba(0,255,255,0.3);
+  box-shadow: 0 0 25px rgba(0,255,255,0.4);
+  animation: modalFadeIn 0.3s ease;
 }
+
 .modal-content h3 {
   color: #00fff2;
   margin-bottom: 10px;
 }
+
 .modal-content input,
 .modal-content textarea {
   width: 100%;
@@ -1273,12 +1278,16 @@ header {
   padding: 10px;
   color: #fff;
 }
+
 .status-text {
   color: #00fff2;
   font-size: 13px;
   margin-top: 8px;
 }
-@keyframes fadeIn {
+
+/* 🔹 окрема анімація тільки для модалок */
+@keyframes modalFadeIn {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
 }
+
