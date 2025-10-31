@@ -579,13 +579,22 @@ async function checkProStatus() {
   const tgUser = localStorage.getItem("telegram_user");
   const emailUser = localStorage.getItem("email_user");
 
-  // 🧩 Якщо є Telegram — беремо tg_id, інакше беремо постійний web_id
-  const id = tgUser
-    ? JSON.parse(tgUser).id
-    : getWebId(); // замість emailUser.id
+  let idParam = "";
+  let paramType = "";
 
-  if (!id) {
-    console.warn("❌ Немає user_id для перевірки PRO");
+  if (tgUser) {
+    idParam = JSON.parse(tgUser).id;
+    paramType = "user_id";
+  } else if (emailUser) {
+    idParam = JSON.parse(emailUser).email;
+    paramType = "email";
+  } else {
+    idParam = getWebId();
+    paramType = "web_id";
+  }
+
+  if (!idParam) {
+    console.warn("❌ Немає ID для перевірки PRO");
     document.getElementById("pro-status-text").innerText = "🔒 Без PRO";
     return;
   }
@@ -593,25 +602,59 @@ async function checkProStatus() {
   const statusEl = document.getElementById("pro-status-text");
   statusEl.innerText = "⏳ Перевіряю статус...";
 
+  // 🧠 1️⃣ Перевіряємо кеш (6 годин)
+  const cache = localStorage.getItem("pro_cache");
+  if (cache) {
+    try {
+      const cached = JSON.parse(cache);
+      if (cached.id === idParam && Date.now() - cached.time < 6 * 60 * 60 * 1000) {
+        console.log("⚡ Використано кешований PRO статус");
+        showProStatus(cached.data);
+        return;
+      }
+    } catch (_) {}
+  }
+
+  // 🌐 2️⃣ Якщо кешу немає — робимо реальний запит
   try {
-    const url = `${window.APPS_SCRIPT_URL}?user_id=${encodeURIComponent(id)}`;
+    const url = `${window.APPS_SCRIPT_URL}?${paramType}=${encodeURIComponent(idParam)}`;
     const res = await fetch(url);
     const data = await res.json();
 
-    if (data?.ok && data?.isPro) {
-      const d = data?.expireDate || "невідомо";
-      statusEl.innerHTML = `💎 PRO активний до <b>${d}</b>`;
-      localStorage.removeItem("pro_payment_started");
-    } else {
-      statusEl.innerText = "🔒 Без PRO";
-    }
+    // Зберігаємо в кеш
+    localStorage.setItem("pro_cache", JSON.stringify({
+      id: idParam,
+      data,
+      time: Date.now()
+    }));
+
+    showProStatus(data);
   } catch (err) {
     console.error("❌ Помилка перевірки PRO:", err);
     statusEl.innerText = "⚠️ Помилка перевірки";
   }
+}
+
+// 🧩 Функція оновлення інтерфейсу
+function showProStatus(data) {
+  const statusEl = document.getElementById("pro-status-text");
+  const proLabel = document.getElementById("pro-status");
+
+  if (data?.ok && data?.isPro) {
+    const d = data?.expireDate || "невідомо";
+    statusEl.innerHTML = `💎 PRO активний до <b>${d}</b>`;
+    if (proLabel) proLabel.innerHTML = `✅ PRO активний до <b>${d}</b>`;
+    localStorage.removeItem("pro_payment_started");
+    localStorage.setItem("isPro", "true");
+  } else {
+    statusEl.innerText = "🔒 Без PRO";
+    if (proLabel) proLabel.innerText = "❌ Без PRO";
+    localStorage.setItem("isPro", "false");
+  }
 
   updateProUI();
 }
+
 async function tryBindWebToTg(tgUser) {
   if (!tgUser?.id) return;
   
@@ -850,7 +893,7 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-paid-tg").onclick  = notifyPaymentTG;
   document.getElementById("btn-paid-web").onclick = notifyPaymentWEB;
   checkProStatus();
-  setInterval(checkProStatus, 15000);
+  
 });
 </script>
 <!-- === 💬 МОДАЛЬНЕ ВІКНО ПРО ОПЛАТУ === -->
