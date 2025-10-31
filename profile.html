@@ -555,6 +555,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       console.error(err);
       document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
     }
+       await tryBindWebToTg(user);
+       await checkProStatus();
       // ✅ Завантажити повідомлення користувача
       loadMessagesForUser(user.id);
   }
@@ -605,6 +607,23 @@ async function checkProStatus() {
   }
 
   updateProUI();
+}
+async function tryBindWebToTg(tgUser) {
+  const webId = localStorage.getItem("web_id");
+  if (!webId) return;
+
+  try {
+    const url = `${window.APPS_SCRIPT_URL}?action=bind_web_to_tg` +
+      `&web_id=${encodeURIComponent(webId)}` +
+      `&tg_id=${encodeURIComponent(tgUser.id)}` +
+      `&tg_name=${encodeURIComponent(tgUser.username || "")}`;
+
+    const res  = await fetch(url);
+    const json = await res.json();
+    console.log("🔗 Bind WEB → TG:", json);
+  } catch (e) {
+    console.warn("Bind failed:", e);
+  }
 }
 
 
