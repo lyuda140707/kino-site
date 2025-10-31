@@ -8,7 +8,7 @@
   if (!list || !sendBtn) return; // якщо на сторінці немає блоку — просто виходимо
 
   const params = new URLSearchParams(window.location.search);
-  const filmId = params.get("id");
+  const filmId = params.get("id") || params.get("title") || params.get("name");
 
   async function loadComments() {
     const { data, error } = await supabase
