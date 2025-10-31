@@ -855,47 +855,49 @@ if (!movieUrl && data.telegram_file_id) {
 
 
   // 🖱️ Обробники кліків
-  btnMovie.addEventListener("click", () => {
-    if (currentSource === "movie") return;
-    currentSource = "movie";
-    btnMovie.classList.add("active");
-    btnTrailer.classList.remove("active");
-    const box = document.querySelector(".player-box");
-    box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
-    setupPlayer(movieUrl);
-    // === Fallback: немає HLS, але є Telegram file_id → граємо через бекенд
-if (!movieUrl && data.telegram_file_id) {
+  btnMovie.addEventListener("click", async () => {
+  if (currentSource === "movie") return;
+  currentSource = "movie";
+  btnMovie.classList.add("active");
+  btnTrailer.classList.remove("active");
+
   const box = document.querySelector(".player-box");
-  box.innerHTML = `
-    <video id="filmPlayer" controls playsinline preload="metadata"
-           style="width:100%;border-radius:12px;outline:none;"></video>`;
-  const tag = document.getElementById("filmPlayer");
+  box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
+  setupPlayer(movieUrl);
 
-  try {
-    const resp = await fetch(`https://video-backend-lg1e.onrender.com/get_video/${encodeURIComponent(data.telegram_file_id)}`);
-    const json = await resp.json();
+  // === Fallback: немає HLS, але є Telegram file_id → граємо через бекенд
+  if (!movieUrl && data.telegram_file_id) {
+    const box = document.querySelector(".player-box");
+    box.innerHTML = `
+      <video id="filmPlayer" controls playsinline preload="metadata"
+             style="width:100%;border-radius:12px;outline:none;"></video>`;
+    const tag = document.getElementById("filmPlayer");
 
-    if (json.url) {
-      const src = document.createElement("source");
-      src.src = json.url;
-      src.type = "video/mp4";
-      tag.appendChild(src);
+    try {
+      const resp = await fetch(
+        `https://video-backend-lg1e.onrender.com/get_video/${encodeURIComponent(data.telegram_file_id)}`
+      );
+      const json = await resp.json();
 
-      // Додаємо підпис під плеєром
-      const info = document.createElement("div");
-      info.innerHTML = "🎞️ Відео завантажено з Telegram";
-      info.style = "color:#00fff2;text-align:center;margin-top:8px;font-size:14px;";
-      box.appendChild(info);
-    } else {
-      console.warn("❌ Не знайдено URL у відповіді бекенду:", json);
+      if (json.url) {
+        const src = document.createElement("source");
+        src.src = json.url;
+        src.type = "video/mp4";
+        tag.appendChild(src);
+
+        const info = document.createElement("div");
+        info.innerHTML = "🎞️ Відео завантажено з Telegram";
+        info.style = "color:#00fff2;text-align:center;margin-top:8px;font-size:14px;";
+        box.appendChild(info);
+      } else {
+        console.warn("❌ Не знайдено URL у відповіді бекенду:", json);
+      }
+    } catch (err) {
+      console.error("❌ Помилка при отриманні відео:", err);
     }
-  } catch (err) {
-    console.error("❌ Помилка при отриманні відео:", err);
   }
-}
+});
 
-
-  });
 
   btnTrailer.addEventListener("click", () => {
     if (!trailerUrl) return;
