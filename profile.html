@@ -559,12 +559,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       loadMessagesForUser(user.id);
   }
 
-  // ===== Telegram callback
-  function onTelegramAuth(user) {
-    console.log("✅ Telegram авторизував користувача:", user);
-    localStorage.setItem("telegram_user", JSON.stringify(user)); // зберігаємо
-    handleTelegramUser(user);
-  }
 
   // ===== Перевірка при відкритті сторінки
   window.addEventListener("DOMContentLoaded", () => {
