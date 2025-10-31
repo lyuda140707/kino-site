@@ -1,14 +1,76 @@
-<form action="https://formspree.io/f/mkgpqaav" method="POST" accept-charset="UTF-8" id="contactForm">
-  <input type="text" name="name" id="contactName" placeholder="Ваше імʼя" required>
-  <textarea name="message" id="contactMsg" placeholder="Ваше повідомлення" required></textarea>
+<footer>
+  <div class="footer-container">
+    <div class="footer-column">
+      <h4>Про проєкт</h4>
+      <p>
+        KinoSite — це зручна платформа для перегляду фільмів і серіалів
+        українською мовою. Ми підтримуємо розвиток україномовного контенту.
+      </p>
+    </div>
 
-  <!-- службові поля -->
-  <input type="hidden" name="_subject" value="📩 Повідомлення з KinoSite">
-  <input type="hidden" name="_language" value="uk">
-  <input type="hidden" name="_next" value="https://kino-site.top/?sent=contact#contacts">
-  <input type="text" name="_gotcha" style="display:none">
+    <div class="footer-column">
+      <h4>Контакти</h4>
+      <ul>
+        <li><a href="#" id="openContact">📩 Написати нам</a></li>
+        <li><a href="#" id="openRights">⚖️ Правовласникам</a></li>
+      </ul>
+    </div>
 
-  <button type="submit" class="btn btn-primary">Надіслати</button>
-  <button type="button" class="btn btn-ghost" id="closeContact">Закрити</button>
-</form>
-<p id="contactStatus" class="status-text"></p>
+    <div class="footer-column">
+      <h4>Ми у соцмережах</h4>
+      <div class="social-links">
+        <a href="https://t.me/RelaxBoxMedia2" target="_blank">Telegram</a>
+        <a href="https://www.instagram.com/" target="_blank">Instagram</a>
+      </div>
+    </div>
+  </div>
+
+  <p class="copyright">
+    © 2025 KinoSite. Усі права захищені.
+  </p>
+</footer>
+
+<!-- === 📩 МОДАЛЬНЕ ВІКНО "КОНТАКТИ" === -->
+<div id="contactModal" class="modal">
+  <div class="modal-content">
+    <h3>📩 Контакти</h3>
+    <p>Маєте питання або пропозицію? Напишіть нам нижче:</p>
+
+    <form action="https://formspree.io/f/mkgpqaav" method="POST" accept-charset="UTF-8" id="contactForm">
+      <input type="text" name="name" id="contactName" placeholder="Ваше імʼя" required>
+      <textarea name="message" id="contactMsg" placeholder="Ваше повідомлення" required></textarea>
+
+      <input type="hidden" name="_subject" value="📩 Повідомлення з KinoSite">
+      <input type="hidden" name="_language" value="uk">
+      <input type="hidden" name="_next" value="https://kino-site.top/?sent=contact#contacts">
+      <input type="text" name="_gotcha" style="display:none">
+
+      <button type="submit" class="btn btn-primary">Надіслати</button>
+      <button type="button" class="btn btn-ghost" id="closeContact">Закрити</button>
+    </form>
+    <p id="contactStatus" class="status-text"></p>
+  </div>
+</div>
+
+<!-- === ⚖️ МОДАЛЬНЕ ВІКНО "ПРАВОВЛАСНИКАМ" === -->
+<div id="rightsModal" class="modal">
+  <div class="modal-content">
+    <h3>⚖️ Правовласникам</h3>
+    <p>Якщо ви вважаєте, що якийсь матеріал порушує ваші права, заповніть форму нижче.</p>
+
+    <form action="https://formspree.io/f/mkgpqaav" method="POST" accept-charset="UTF-8" id="dmcaForm">
+      <input type="text" name="name" id="dmcaName" placeholder="Імʼя / Компанія" required>
+      <input type="email" name="_replyto" id="dmcaEmail" placeholder="Email для звʼязку" required>
+      <textarea name="message" id="dmcaDetails" placeholder="Опишіть, що потрібно видалити (посилання або ID)" required></textarea>
+
+      <input type="hidden" name="_subject" value="⚖️ Звернення правовласника — KinoSite">
+      <input type="hidden" name="_language" value="uk">
+      <input type="hidden" name="_next" value="https://kino-site.top/?sent=dmca#rights">
+      <input type="text" name="_gotcha" style="display:none">
+
+      <button type="submit" class="btn btn-primary">Надіслати</button>
+      <button type="button" class="btn btn-ghost" id="closeRights">Закрити</button>
+    </form>
+    <p id="dmcaStatus" class="status-text"></p>
+  </div>
+</div>
