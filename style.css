@@ -1222,3 +1222,48 @@ header {
   animation-duration: 2s;
   filter: brightness(1.15);
 }
+
+.site-footer {
+  background: #0c0d11;
+  border-top: 1px solid rgba(0,255,255,0.1);
+  padding: 40px 16px;
+  color: #ccc;
+  font-size: 14px;
+}
+.footer-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  gap: 32px;
+}
+.footer-section h3 {
+  color: #00fff2;
+  margin-bottom: 10px;
+}
+.footer-section p {
+  line-height: 1.6;
+}
+.footer-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+.footer-section input,
+.footer-section textarea {
+  background: #111318;
+  border: 1px solid rgba(0,255,255,0.15);
+  border-radius: 8px;
+  padding: 10px;
+  color: #fff;
+  resize: none;
+}
+.footer-section textarea {
+  min-height: 80px;
+}
+.status-text {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #00fff2;
+}
+
