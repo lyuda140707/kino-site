@@ -1,15 +1,14 @@
-// === footer.js — фінальна версія для Formspree ===
+// === footer.js — з Ajax-відправкою Formspree ===
 (function () {
   const contactModal = document.getElementById("contactModal");
   const rightsModal  = document.getElementById("rightsModal");
+  const FORM_URL = "https://formspree.io/f/mkgpqaav"; // твій Formspree endpoint
 
-  // Відкрити модалку "Контакти"
+  // Відкрити модалки
   document.getElementById("openContact")?.addEventListener("click", (e) => {
-    e.preventDefault(); // щоб не стрибала сторінка вгору
+    e.preventDefault();
     contactModal.style.display = "flex";
   });
-
-  // Відкрити модалку "Правовласникам"
   document.getElementById("openRights")?.addEventListener("click", (e) => {
     e.preventDefault();
     rightsModal.style.display = "flex";
@@ -19,31 +18,44 @@
   document.getElementById("closeContact")?.addEventListener("click", () => {
     contactModal.style.display = "none";
   });
-
   document.getElementById("closeRights")?.addEventListener("click", () => {
     rightsModal.style.display = "none";
   });
 
-  // Клік поза модалкою — закрити
+  // Клік поза модалкою
   window.addEventListener("click", (e) => {
-    if (e.target === contactModal) {
-      contactModal.style.display = "none";
-    }
-    if (e.target === rightsModal) {
-      rightsModal.style.display = "none";
-    }
+    if (e.target === contactModal) contactModal.style.display = "none";
+    if (e.target === rightsModal) rightsModal.style.display = "none";
   });
 
-  // === Показ статусу після редіректу Formspree ===
-  const params = new URLSearchParams(window.location.search);
+  // === Відправлення через AJAX (без редіректу)
+  const form = document.getElementById("contactForm");
+  const status = document.getElementById("contactStatus");
 
-  if (params.get("sent") === "contact") {
-    const status = document.getElementById("contactStatus");
-    if (status) status.textContent = "✅ Повідомлення відправлено!";
-  }
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    status.textContent = "⏳ Відправляю...";
 
-  if (params.get("sent") === "dmca") {
-    const status = document.getElementById("dmcaStatus");
-    if (status) status.textContent = "✅ Запит відправлено!";
-  }
+    const formData = {
+      name: document.getElementById("contactName").value,
+      message: document.getElementById("contactMsg").value,
+    };
+
+    try {
+      const res = await fetch(FORM_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        status.textContent = "✅ Повідомлення відправлено!";
+        form.reset();
+      } else {
+        status.textContent = "❌ Помилка. Спробуйте пізніше.";
+      }
+    } catch (err) {
+      status.textContent = "❌ Не вдалося відправити.";
+    }
+  });
 })();
