@@ -19,24 +19,31 @@
   document.getElementById("closeContact")?.addEventListener("click", () => {
     contactModal.style.display = "none";
   });
+
   document.getElementById("closeRights")?.addEventListener("click", () => {
     rightsModal.style.display = "none";
   });
 
   // Клік поза модалкою — закрити
   window.addEventListener("click", (e) => {
-    if (e.target === contactModal) contactModal.style.display = "none";
-    if (e.target === rightsModal) rightsModal.style.display = "none";
+    if (e.target === contactModal) {
+      contactModal.style.display = "none";
+    }
+    if (e.target === rightsModal) {
+      rightsModal.style.display = "none";
+    }
   });
 
   // === Показ статусу після редіректу Formspree ===
   const params = new URLSearchParams(window.location.search);
 
   if (params.get("sent") === "contact") {
-    document.getElementById("contactStatus")?.textContent = "✅ Повідомлення відправлено!";
+    const status = document.getElementById("contactStatus");
+    if (status) status.textContent = "✅ Повідомлення відправлено!";
   }
 
   if (params.get("sent") === "dmca") {
-    document.getElementById("dmcaStatus")?.textContent = "✅ Запит відправлено!";
+    const status = document.getElementById("dmcaStatus");
+    if (status) status.textContent = "✅ Запит відправлено!";
   }
 })();
