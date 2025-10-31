@@ -36,18 +36,14 @@
     <h3>📩 Контакти</h3>
     <p>Маєте питання або пропозицію? Напишіть нам нижче:</p>
 
-    <form action="https://formspree.io/f/mkgpqaav" method="POST" accept-charset="UTF-8" id="contactForm">
+    <form id="contactForm">
       <input type="text" name="name" id="contactName" placeholder="Ваше імʼя" required>
       <textarea name="message" id="contactMsg" placeholder="Ваше повідомлення" required></textarea>
-
-      <input type="hidden" name="_subject" value="📩 Повідомлення з KinoSite">
-      <input type="hidden" name="_language" value="uk">
-      <input type="hidden" name="_next" value="https://kino-site.top/?sent=contact#contacts">
-      <input type="text" name="_gotcha" style="display:none">
-
       <button type="submit" class="btn btn-primary">Надіслати</button>
       <button type="button" class="btn btn-ghost" id="closeContact">Закрити</button>
     </form>
+    <p id="contactStatus" class="status-text"></p>
+
     <p id="contactStatus" class="status-text"></p>
   </div>
 </div>
@@ -58,19 +54,16 @@
     <h3>⚖️ Правовласникам</h3>
     <p>Якщо ви вважаєте, що якийсь матеріал порушує ваші права, заповніть форму нижче.</p>
 
-    <form action="https://formspree.io/f/mkgpqaav" method="POST" accept-charset="UTF-8" id="dmcaForm">
+    <form id="dmcaForm">
       <input type="text" name="name" id="dmcaName" placeholder="Імʼя / Компанія" required>
       <input type="email" name="_replyto" id="dmcaEmail" placeholder="Email для звʼязку" required>
       <textarea name="message" id="dmcaDetails" placeholder="Опишіть, що потрібно видалити (посилання або ID)" required></textarea>
-
-      <input type="hidden" name="_subject" value="⚖️ Звернення правовласника — KinoSite">
-      <input type="hidden" name="_language" value="uk">
-      <input type="hidden" name="_next" value="https://kino-site.top/?sent=dmca#rights">
-      <input type="text" name="_gotcha" style="display:none">
-
+    
       <button type="submit" class="btn btn-primary">Надіслати</button>
       <button type="button" class="btn btn-ghost" id="closeRights">Закрити</button>
     </form>
+    <p id="dmcaStatus" class="status-text"></p>
+
     <p id="dmcaStatus" class="status-text"></p>
   </div>
 </div>
