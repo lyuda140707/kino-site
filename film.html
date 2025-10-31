@@ -821,26 +821,18 @@ function getYouTubeId(url) {
   document.querySelector(".player-box").innerHTML =
     `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
   setupPlayer(movieUrl);
-  // 🧩 Якщо немає HLS, але є message_id — отримуємо відео з Render
-if (!movieUrl && data.message_id) {
-  try {
-    const resp = await fetch(`https://video-backend-lg1e.onrender.com/get_video/${data.message_id}`);
-    const json = await resp.json();
-    if (json.url) {
-      const playerBox = document.querySelector(".player-box");
-      playerBox.innerHTML = `
-        <video controls style="width:100%;border-radius:12px;">
-          <source src="${json.url}" type="video/mp4">
-          Ваш браузер не підтримує відео.
-        </video>
-      `;
-    } else {
-      console.warn("Не отримано URL відео");
+  // === Fallback: немає HLS, але є Telegram file_id → граємо через бекенд
+    if (!movieUrl && data.telegram_file_id) {
+      const box = document.querySelector(".player-box");
+      box.innerHTML = `
+        <video id="filmPlayer" controls playsinline preload="metadata"
+               style="width:100%;border-radius:12px;outline:none;"></video>`;
+      const tag = document.getElementById("filmPlayer");
+      const src = document.createElement("source");
+      src.src  = `https://video-backend-lg1e.onrender.com/get_video/${encodeURIComponent(data.telegram_file_id)}`;
+      src.type = "video/mp4";
+      tag.appendChild(src);
     }
-  } catch (err) {
-    console.error("Помилка отримання відео:", err);
-  }
-}
 
 
   // 🖱️ Обробники кліків
@@ -852,26 +844,18 @@ if (!movieUrl && data.message_id) {
     const box = document.querySelector(".player-box");
     box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
     setupPlayer(movieUrl);
-    // 🧩 Якщо немає HLS, але є message_id — отримуємо відео з Render
-if (!movieUrl && data.message_id) {
-  try {
-    const resp = await fetch(`https://video-backend-lg1e.onrender.com/get_video/${data.message_id}`);
-    const json = await resp.json();
-    if (json.url) {
-      const playerBox = document.querySelector(".player-box");
-      playerBox.innerHTML = `
-        <video controls style="width:100%;border-radius:12px;">
-          <source src="${json.url}" type="video/mp4">
-          Ваш браузер не підтримує відео.
-        </video>
-      `;
-    } else {
-      console.warn("Не отримано URL відео");
+    // === Fallback: немає HLS, але є Telegram file_id → граємо через бекенд
+    if (!movieUrl && data.telegram_file_id) {
+      const box2 = document.querySelector(".player-box");
+      box2.innerHTML = `
+        <video id="filmPlayer" controls playsinline preload="metadata"
+               style="width:100%;border-radius:12px;outline:none;"></video>`;
+      const tag2 = document.getElementById("filmPlayer");
+      const src2 = document.createElement("source");
+      src2.src  = `https://video-backend-lg1e.onrender.com/get_video/${encodeURIComponent(data.telegram_file_id)}`;
+      src2.type = "video/mp4";
+      tag2.appendChild(src2);
     }
-  } catch (err) {
-    console.error("Помилка отримання відео:", err);
-  }
-}
 
   });
 
