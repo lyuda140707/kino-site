@@ -559,10 +559,16 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       loadMessagesForUser(user.id);
   }
 // 🔍 Перевірка статусу PRO
+// 🔍 Перевірка статусу PRO
 async function checkProStatus() {
   const tgUser = localStorage.getItem("telegram_user");
   const emailUser = localStorage.getItem("email_user");
-  const id = tgUser ? JSON.parse(tgUser).id : (emailUser ? JSON.parse(emailUser).id : null);
+
+  // 🧩 Якщо є Telegram — беремо tg_id, інакше беремо постійний web_id
+  const id = tgUser
+    ? JSON.parse(tgUser).id
+    : getWebId(); // замість emailUser.id
+
   if (!id) {
     console.warn("❌ Немає user_id для перевірки PRO");
     document.getElementById("pro-status-text").innerText = "🔒 Без PRO";
@@ -591,6 +597,7 @@ async function checkProStatus() {
 
   updateProUI();
 }
+
 
 
   // ===== Перевірка при відкритті сторінки
