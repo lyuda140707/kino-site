@@ -558,6 +558,39 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       // ✅ Завантажити повідомлення користувача
       loadMessagesForUser(user.id);
   }
+// 🔍 Перевірка статусу PRO
+async function checkProStatus() {
+  const tgUser = localStorage.getItem("telegram_user");
+  const emailUser = localStorage.getItem("email_user");
+  const id = tgUser ? JSON.parse(tgUser).id : (emailUser ? JSON.parse(emailUser).id : null);
+  if (!id) {
+    console.warn("❌ Немає user_id для перевірки PRO");
+    document.getElementById("pro-status-text").innerText = "🔒 Без PRO";
+    return;
+  }
+
+  const statusEl = document.getElementById("pro-status-text");
+  statusEl.innerText = "⏳ Перевіряю статус...";
+
+  try {
+    const url = `${window.APPS_SCRIPT_URL}?user_id=${encodeURIComponent(id)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data?.ok && data?.isPro) {
+      const d = data?.expireDate || "невідомо";
+      statusEl.innerHTML = `💎 PRO активний до <b>${d}</b>`;
+      localStorage.removeItem("pro_payment_started");
+    } else {
+      statusEl.innerText = "🔒 Без PRO";
+    }
+  } catch (err) {
+    console.error("❌ Помилка перевірки PRO:", err);
+    statusEl.innerText = "⚠️ Помилка перевірки";
+  }
+
+  updateProUI();
+}
 
 
   // ===== Перевірка при відкритті сторінки
