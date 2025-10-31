@@ -301,6 +301,19 @@
         <h3>Про серіал</h3>
         <p id="seriesDesc">Опис…</p>
       </div>
+      <!-- 💬 Коментарі -->
+<div class="comments-section">
+  <h3>💬 Коментарі</h3>
+
+  <div id="commentsList"></div>
+
+  <div class="comment-form">
+    <input type="text" id="username" placeholder="Ваше ім’я (необов’язково)">
+    <textarea id="commentText" placeholder="Напишіть свій коментар..." rows="3"></textarea>
+    <button id="sendComment">Надіслати</button>
+  </div>
+</div>
+
     </div>
   </div>
 </div>
@@ -549,7 +562,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnSend.onclick = ()=>sendReport("Серіал", "seriesTitle");
 })();
 </script>
+<!-- 💬 Коментарі Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+</script>
 
+<!-- Підключення логіки коментарів -->
+<script src="comments.js"></script>
+<script>
+  window.APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUULSEmTKFORqOa3VwnQijTmNGw7Mt8bFd82G_HR7xwPSNlarMzE3Tmyrn1nju5WVPbA/exec";
+</script>
 <script src="auth.js"></script>
 <div id="footer-placeholder"></div>
 <script>
