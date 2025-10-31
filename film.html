@@ -774,6 +774,41 @@ function getYouTubeId(url) {
     document.getElementById("filmTitle").textContent = "Фільм не знайдено";
     return;
   }
+    // 🧩 Перевірка PRO-доступу
+  const isProFilm = String(data.pro_access || '').toUpperCase() === 'PRO';
+  if (isProFilm) {
+    const user = JSON.parse(localStorage.getItem('telegram_user') || 'null');
+    const userId = user?.id ? String(user.id) : null;
+    let hasPro = false;
+
+    try {
+      const resp = await fetch(`https://script.google.com/macros/s/AKfycbwUULSEmTKFORqOa3VwnQijTmNGw7Mt8bFd82G_HR7xwPSNlarMzE3Tmyrn1nju5WVPbA/exec?user_id=${encodeURIComponent(userId)}`);
+      const json = await resp.json();
+      hasPro = json?.isPro === true;
+    } catch (e) {
+      console.warn('Помилка перевірки PRO:', e);
+    }
+
+    if (!hasPro) {
+      const playerBox = document.querySelector('.player-box');
+      playerBox.innerHTML = `
+        <div style="
+          background:#000;
+          color:#00fff2;
+          text-align:center;
+          padding:40px;
+          border-radius:12px;
+          border:1px solid rgba(0,255,255,0.3);
+          box-shadow:0 0 30px rgba(0,255,255,0.15);
+        ">
+          💎 Цей фільм доступний лише для PRO користувачів.<br><br>
+          <a href="profile.html" style="color:#fff;text-decoration:underline;">Отримати PRO</a>
+        </div>
+      `;
+      return; // ❗ зупиняємо виконання, не показуємо плеєр
+    }
+  }
+
 
   // 🟢 Заповнення даних
   document.getElementById("filmPoster").src = data.poster || "";
