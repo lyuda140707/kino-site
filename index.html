@@ -508,7 +508,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 <script>
 const BACKEND_URL = "https://relax-time2.onrender.com";
 
-// Відкриття / закриття модалок
+// === Відкриття / закриття модалок ===
 const contactModal = document.getElementById("contactModal");
 const rightsModal = document.getElementById("rightsModal");
 
@@ -521,21 +521,20 @@ window.onclick = e => {
   if (e.target === rightsModal) rightsModal.style.display = "none";
 };
 
-// 📩 Контактна форма
+// === Контактна форма ===
 document.getElementById("contactForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = document.getElementById("contactName").value.trim();
   const msg = document.getElementById("contactMsg").value.trim();
   const statusEl = document.getElementById("contactStatus");
   statusEl.innerText = "⏳ Відправляю...";
-
   try {
     const res = await fetch(`${BACKEND_URL}/notify-payment`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ source: "contact_form", name, message: msg })
     });
-    if (!res.ok) throw new Error("Помилка відправки");
+    if (!res.ok) throw new Error("Помилка");
     statusEl.innerText = "✅ Повідомлення відправлено!";
     e.target.reset();
   } catch {
@@ -543,7 +542,7 @@ document.getElementById("contactForm")?.addEventListener("submit", async (e) => 
   }
 });
 
-// ⚖️ Форма для правовласників
+// === Форма правовласників ===
 document.getElementById("dmcaForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = document.getElementById("dmcaName").value.trim();
@@ -551,23 +550,24 @@ document.getElementById("dmcaForm")?.addEventListener("submit", async (e) => {
   const details = document.getElementById("dmcaDetails").value.trim();
   const statusEl = document.getElementById("dmcaStatus");
   statusEl.innerText = "⏳ Відправляю...";
-
   try {
     const res = await fetch(`${BACKEND_URL}/notify-payment`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ source: "dmca_form", name, email, message: details })
     });
-    if (!res.ok) throw new Error("Помилка відправки");
-    statusEl.innerText = "✅ Запит відправлено! Ми звʼяжемось найближчим часом.";
+    if (!res.ok) throw new Error("Помилка");
+    statusEl.innerText = "✅ Запит відправлено!";
     e.target.reset();
   } catch {
-    statusEl.innerText = "❌ Не вдалося відправити. Спробуйте пізніше.";
+    statusEl.innerText = "❌ Не вдалося відправити.";
   }
 });
 </script>
+
 </body>
 </html>
+
 
 
 
