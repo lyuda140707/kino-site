@@ -848,7 +848,9 @@ if (url.includes("drive.google.com")) {
   currentSource = "movie";
   document.querySelector(".player-box").innerHTML =
     `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
-  setupPlayer(movieUrl);
+      if (!isProFilm || hasPro) {
+      setupPlayer(movieUrl);
+    }
 
   // 🖱️ Обробники кліків
   btnMovie.addEventListener("click", () => {
@@ -858,7 +860,9 @@ if (url.includes("drive.google.com")) {
     btnTrailer.classList.remove("active");
     const box = document.querySelector(".player-box");
     box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
-    setupPlayer(movieUrl);
+    if (!isProFilm || hasPro) {
+      setupPlayer(movieUrl);
+    }
   });
 
   btnTrailer.addEventListener("click", () => {
