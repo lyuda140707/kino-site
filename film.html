@@ -778,42 +778,40 @@ if (url.includes("drive.google.com")) {
     document.getElementById("filmTitle").textContent = "Фільм не знайдено";
     return;
   }
-    // 🧩 Перевірка PRO-доступу
-  const isProFilm = String(data.pro_access || '').toUpperCase() === 'PRO';
-  if (isProFilm) {
-    const user = JSON.parse(localStorage.getItem('telegram_user') || 'null');
-    const userId = user?.id ? String(user.id) : null;
-    let hasPro = false;
+// 🧩 Перевірка PRO-доступу
+let hasPro = true; // за замовчуванням вмикаємо (для звичайних фільмів)
 
-    try {
-      const resp = await fetch(`https://script.google.com/macros/s/AKfycbwUULSEmTKFORqOa3VwnQijTmNGw7Mt8bFd82G_HR7xwPSNlarMzE3Tmyrn1nju5WVPbA/exec?user_id=${encodeURIComponent(userId)}`);
-      const json = await resp.json();
-      hasPro = json?.isPro === true;
-    } catch (e) {
-      console.warn('Помилка перевірки PRO:', e);
-    }
+if (String(data.pro_access || '').toUpperCase() === 'PRO') {
+  hasPro = false; // тимчасово вимикаємо, поки не перевіримо користувача
+  const user = JSON.parse(localStorage.getItem('telegram_user') || 'null');
+  const userId = user?.id ? String(user.id) : null;
 
-   if (!hasPro) {
-  const playerBox = document.querySelector('.player-box');
-  playerBox.innerHTML = `
-    <div style="
-      background:#000;
-      color:#00fff2;
-      text-align:center;
-      padding:40px;
-      border-radius:12px;
-      border:1px solid rgba(0,255,255,0.3);
-      box-shadow:0 0 30px rgba(0,255,255,0.15);
-    ">
-      💎 Цей фільм доступний лише для PRO користувачів.<br><br>
-      <a href="profile.html" style="color:#fff;text-decoration:underline;">Отримати PRO</a>
-    </div>
-  `;
-  // ❌ Без return — тоді далі виконається блок заповнення опису, фото, року тощо
-}
-
-
+  try {
+    const resp = await fetch(`https://script.google.com/macros/s/AKfycbwUULSEmTKFORqOa3VwnQijTmNGw7Mt8bFd82G_HR7xwPSNlarMzE3Tmyrn1nju5WVPbA/exec?user_id=${encodeURIComponent(userId)}`);
+    const json = await resp.json();
+    hasPro = json?.isPro === true;
+  } catch (e) {
+    console.warn('Помилка перевірки PRO:', e);
   }
+
+  if (!hasPro) {
+    const playerBox = document.querySelector('.player-box');
+    playerBox.innerHTML = `
+      <div style="
+        background:#000;
+        color:#00fff2;
+        text-align:center;
+        padding:40px;
+        border-radius:12px;
+        border:1px solid rgba(0,255,255,0.3);
+        box-shadow:0 0 30px rgba(0,255,255,0.15);
+      ">
+        💎 Цей фільм доступний лише для PRO користувачів.<br><br>
+        <a href="profile.html" style="color:#fff;text-decoration:underline;">Отримати PRO</a>
+      </div>
+    `;
+  }
+}
 
 
   // 🟢 Заповнення даних
@@ -842,28 +840,32 @@ if (url.includes("drive.google.com")) {
 
   btnMovie.classList.add("active");
   btnTrailer.classList.remove("active");
-  btnTrailer.disabled = !trailerUrl;
+btnTrailer.disabled = !trailerUrl;
 
-  // ▶️ Початково показуємо ФІЛЬМ у звичайному відео-плеєрі (без автозапуску)
+// ▶️ Початково показуємо ФІЛЬМ у звичайному відео-плеєрі (без автозапуску)
+currentSource = "movie";
+document.querySelector(".player-box").innerHTML =
+  `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
+
+// 🔹 показуємо відео лише якщо дозволено
+if (hasPro) {
+  setupPlayer(movieUrl);
+}
+
+// 🖱️ Обробники кліків
+btnMovie.addEventListener("click", () => {
+  if (currentSource === "movie") return;
   currentSource = "movie";
-  document.querySelector(".player-box").innerHTML =
-    `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
-      if (!isProFilm || hasPro) {
-      setupPlayer(movieUrl);
-    }
+  btnMovie.classList.add("active");
+  btnTrailer.classList.remove("active");
 
-  // 🖱️ Обробники кліків
-  btnMovie.addEventListener("click", () => {
-    if (currentSource === "movie") return;
-    currentSource = "movie";
-    btnMovie.classList.add("active");
-    btnTrailer.classList.remove("active");
-    const box = document.querySelector(".player-box");
-    box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
-    if (!isProFilm || hasPro) {
-      setupPlayer(movieUrl);
-    }
-  });
+  const box = document.querySelector(".player-box");
+  box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
+
+  if (hasPro) {
+    setupPlayer(movieUrl);
+  }
+});
 
   btnTrailer.addEventListener("click", () => {
     if (!trailerUrl) return;
