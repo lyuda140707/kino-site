@@ -176,28 +176,33 @@ async function loadLatestFilms() {
     return;
   }
 
-  // 🔹 Групуємо за title і мерджимо жанри
-  const map = new Map();
-  data.forEach(item => {
-    const key = item.title.trim();
-    if (map.has(key)) {
-      const existing = map.get(key);
-      if (item.genre && !existing.genre.includes(item.genre)) {
-        existing.genre = existing.genre ? `${existing.genre}, ${item.genre}` : item.genre;
-      }
-      if ((item.id || 0) > (existing.id || 0)) {
-        // для "останніх" орієнтуємось на найбільший id як на найсвіжіший
-        existing.id = item.id;
-        existing.poster = item.poster || existing.poster;
-        existing.type = item.type || existing.type;
-        existing.year = item.year || existing.year;
-        existing.imdb = item.imdb || existing.imdb;
-        existing.pro_access = item.pro_access || existing.pro_access;
-      }
-    } else {
-      map.set(key, { ...item });
+ // 🔹 Групуємо за title і мерджимо жанри (без дублювання назв)
+const map = new Map();
+data.forEach(item => {
+  const key = item.title.trim();
+  if (map.has(key)) {
+    const existing = map.get(key);
+
+    // ✅ Об’єднуємо жанри унікально
+    const genresOld = existing.genre ? existing.genre.split(",").map(g => g.trim()) : [];
+    const genresNew = item.genre ? item.genre.split(",").map(g => g.trim()) : [];
+    const allGenres = [...new Set([...genresOld, ...genresNew])];
+    existing.genre = allGenres.join(", ");
+
+    // ✅ Оновлюємо інші поля при потребі (беремо свіжіші)
+    if ((item.id || 0) > (existing.id || 0)) {
+      existing.id = item.id;
+      existing.poster = item.poster || existing.poster;
+      existing.type = item.type || existing.type;
+      existing.year = item.year || existing.year;
+      existing.imdb = item.imdb || existing.imdb;
+      existing.pro_access = item.pro_access || existing.pro_access;
     }
-  });
+  } else {
+    map.set(key, { ...item });
+  }
+});
+
   const unique = Array.from(map.values());
   
   // 🔹 Беремо 20 останніх (після злиття)
@@ -482,6 +487,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
