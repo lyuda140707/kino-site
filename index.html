@@ -372,35 +372,42 @@ async function loadDynamicSidebar() {
     console.error("❌ Помилка серіалів:", e);
   }
 
-  // 🎞 Актуальні фільми
-  try {
-    const { data: films, error: filmErr } = await supabase
-      .from("films_site")
-      .select("id, title, poster, type")
-      .eq("type", "Фільм");
-    if (filmErr) console.warn("❌ Помилка фільмів:", filmErr);
+// 🎞 Актуальні фільми (без повторів назв)
+try {
+  const { data: films, error: filmErr } = await supabase
+    .from("films_site")
+    .select("id, title, poster, type")
+    .eq("type", "Фільм");
 
-    const randomFilms = films.sort(() => 0.5 - Math.random()).slice(0, 3);
-    if (randomFilms.length) {
-      document.getElementById("dynamicFilms").innerHTML = `
-        <div class="sub-category">
-          <h3>🎞 Актуальні фільми</h3>
-          <div class="mini-grid">
-            ${randomFilms
-              .map(
-                (f) => `
-                <div class="mini-card" onclick="window.location.href='film.html?id=${f.id}'">
-                  <img src="${f.poster || 'https://via.placeholder.com/150'}">
-                  <p>${f.title}</p>
-                </div>`
-              )
-              .join("")}
-          </div>
-        </div>`;
-    }
-  } catch (e) {
-    console.error("❌ Помилка фільмів:", e);
+  if (filmErr) console.warn("❌ Помилка фільмів:", filmErr);
+
+  // 🔹 Прибираємо дублікати назв
+  const uniqueFilms = Array.from(new Map(films.map(f => [f.title.trim(), f])).values());
+
+  // 🔹 Перемішуємо та беремо лише 3 випадкових
+  const randomFilms = uniqueFilms.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+  if (randomFilms.length) {
+    document.getElementById("dynamicFilms").innerHTML = `
+      <div class="sub-category">
+        <h3>🎞 Актуальні фільми</h3>
+        <div class="mini-grid">
+          ${randomFilms
+            .map(
+              (f) => `
+              <div class="mini-card" onclick="window.location.href='film.html?id=${f.id}'">
+                <img src="${f.poster || 'https://via.placeholder.com/150'}">
+                <p>${f.title}</p>
+              </div>`
+            )
+            .join("")}
+        </div>
+      </div>`;
   }
+} catch (e) {
+  console.error("❌ Помилка фільмів:", e);
+}
+
 
   // 🧸 Мультсеріали
   try {
@@ -475,6 +482,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
