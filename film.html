@@ -832,7 +832,7 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
       console.warn("Помилка декодування назви:", e);
       titleEl.textContent = data.title; // запасний варіант
     }
-
+ } 
 
   document.getElementById("filmDesc").textContent = data.description || "Опис відсутній";
   document.getElementById("filmYear").textContent = data.year || "";
