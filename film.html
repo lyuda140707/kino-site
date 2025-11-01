@@ -642,6 +642,17 @@ function getYouTubeId(url) {
         console.warn("Порожній URL для відтворення");
         return;
       }
+      // ✅ Якщо це Google Drive — будуємо пряме API-посилання
+if (url.includes("drive.google.com")) {
+  const match = url.match(/\/d\/([^/]+)/);
+  const id = match ? match[1] : null;
+  if (id) {
+    const API_KEY = "ТВОЙ_API_KEY_СЮДИ"; // встав свій справжній ключ
+    url = `https://www.googleapis.com/drive/v3/files/${id}?alt=media&key=${API_KEY}`;
+    console.log("🎥 Відтворення через Google Drive API:", url);
+  }
+}
+
       // 🎬 Перевірка — якщо посилання з Google Drive
       if (url.includes("drive.google.com") || url.includes("uc?export=download")) {
         const fileIdMatch = url.match(/\/d\/([^/]+)\//);
