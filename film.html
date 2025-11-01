@@ -793,9 +793,8 @@ if (url.includes("drive.google.com")) {
       console.warn('Помилка перевірки PRO:', e);
     }
 
-    if (!hasPro) {
+   if (!hasPro) {
   const playerBox = document.querySelector('.player-box');
-  // ✅ показуємо опис, але блокуємо лише відео
   playerBox.innerHTML = `
     <div style="
       background:#000;
@@ -810,9 +809,9 @@ if (url.includes("drive.google.com")) {
       <a href="profile.html" style="color:#fff;text-decoration:underline;">Отримати PRO</a>
     </div>
   `;
-  // ❌ НЕ зупиняємо виконання — решта сторінки (опис, рік, жанр) залишиться видимою
-  return; 
+  // ❌ Без return — тоді далі виконається блок заповнення опису, фото, року тощо
 }
+
 
   }
 
