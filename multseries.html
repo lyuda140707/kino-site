@@ -366,7 +366,7 @@
 
 
 <div class="container">
-  <h1 class="series-title" id="seriesTitle">Серіал</h1>
+  <h1 class="series-title" id="seriesTitle" data-enc="">Мультсеріал</h1>
 
   <div class="series-wrap">
     <div class="series-left">
@@ -511,7 +511,24 @@
 
     // заповнення заголовку/постера/мети/опису з першого рядка
     const first = data[0];
-    document.getElementById("seriesTitle").textContent = first.title || seriesTitle;
+    // 🧩 Захист назви мультсеріалу від ботів
+    const titleEl = document.getElementById("seriesTitle");
+    if (titleEl && first.title) {
+      const salt = "relaxbox2025"; // можеш змінити слово
+      const encoded = btoa(encodeURIComponent(first.title + "||" + salt));
+      titleEl.dataset.enc = encoded;
+    
+      try {
+        const decoded = decodeURIComponent(atob(encoded)).split("||")[0];
+        titleEl.textContent = decoded;
+      } catch (e) {
+        console.warn("Помилка декодування назви мультсеріалу:", e);
+        titleEl.textContent = first.title; // запасний варіант
+      }
+    } else {
+      document.getElementById("seriesTitle").textContent = seriesTitle;
+    }
+
     document.getElementById("seriesPoster").src = first.poster || "";
     document.getElementById("seriesGenre").textContent = first.genre || "";
     document.getElementById("seriesYear").textContent  = first.year  || "";
@@ -748,6 +765,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const el = document.querySelector("#seriesTitle[data-enc]");
+  if (el && el.dataset.enc && !el.textContent.trim()) {
+    try {
+      const decoded = decodeURIComponent(atob(el.dataset.enc)).split("||")[0];
+      el.textContent = decoded;
+    } catch (e) {
+      console.warn("Помилка розшифрування назви мультсеріалу:", e);
+    }
+  }
+});
+</script>
 
 </body>
 </html>
