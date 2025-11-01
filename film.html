@@ -819,14 +819,20 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
   // 🧩 Захист від ботів з "сіллю" (salt)
   const titleEl = document.getElementById("filmTitle");
   if (titleEl && data.title) {
-    const salt = "relaxbox2025"; // можеш змінити на будь-яке слово
-    const encoded = btoa(unescape(encodeURIComponent(data.title + "||" + salt)));
+    const salt = "relaxbox2025"; // можеш змінити
+    // Кодуємо текст без втрати українських символів
+    const encoded = btoa(encodeURIComponent(data.title + "||" + salt));
     titleEl.dataset.enc = encoded;
-  
-    // показуємо людям і Google реальну назву
-    const decoded = atob(encoded).split("||")[0];
-    titleEl.textContent = decoded;
-  }
+    
+    // Розшифровуємо правильно
+    try {
+      const decoded = decodeURIComponent(atob(encoded)).split("||")[0];
+      titleEl.textContent = decoded;
+    } catch (e) {
+      console.warn("Помилка декодування назви:", e);
+      titleEl.textContent = data.title; // запасний варіант
+    }
+
 
   document.getElementById("filmDesc").textContent = data.description || "Опис відсутній";
   document.getElementById("filmYear").textContent = data.year || "";
@@ -1168,7 +1174,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const el = document.querySelector("#filmTitle[data-enc]");
   if (el && el.dataset.enc && !el.textContent.trim()) {
     try {
-      const decoded = atob(el.dataset.enc).split("||")[0];
+      const decoded = decodeURIComponent(atob(el.dataset.enc)).split("||")[0];
       el.textContent = decoded;
     } catch (e) {
       console.warn("Помилка декодування:", e);
