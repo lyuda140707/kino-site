@@ -497,7 +497,7 @@
   <main>
     <div class="container film-container">
       <div class="film-left">
-        <h1 class="film-title" id="filmTitle" data-title=""></h1>
+        <h1 class="film-title" id="filmTitle" data-enc=""></h1>
         <img id="filmPoster" src="" alt="Постер">
         <div class="film-meta">
           <span><b>Рік:</b> <span id="filmYear"></span></span>
@@ -816,12 +816,16 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
 
   // 🟢 Заповнення даних
   document.getElementById("filmPoster").src = data.poster || "";
-  // 🧩 Додаємо захист від ботів: назва з'являється лише через JS, а не в HTML одразу
+  // 🧩 Захист від ботів з "сіллю" (salt)
   const titleEl = document.getElementById("filmTitle");
   if (titleEl && data.title) {
-    const encoded = btoa(unescape(encodeURIComponent(data.title))); // шифруємо в base64
-    titleEl.dataset.title = encoded;
-    titleEl.textContent = atob(encoded); // показуємо людям після розшифрування
+    const salt = "relaxbox2025"; // можеш змінити на будь-яке слово
+    const encoded = btoa(unescape(encodeURIComponent(data.title + "||" + salt)));
+    titleEl.dataset.enc = encoded;
+  
+    // показуємо людям і Google реальну назву
+    const decoded = atob(encoded).split("||")[0];
+    titleEl.textContent = decoded;
   }
 
   document.getElementById("filmDesc").textContent = data.description || "Опис відсутній";
@@ -1161,9 +1165,14 @@ async function loadRecommendedFilms(title, genre) {
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const el = document.querySelector("#filmTitle[data-title]");
-  if (el && el.dataset.title && !el.textContent.trim()) {
-    el.textContent = atob(el.dataset.title);
+  const el = document.querySelector("#filmTitle[data-enc]");
+  if (el && el.dataset.enc && !el.textContent.trim()) {
+    try {
+      const decoded = atob(el.dataset.enc).split("||")[0];
+      el.textContent = decoded;
+    } catch (e) {
+      console.warn("Помилка декодування:", e);
+    }
   }
 });
 </script>
