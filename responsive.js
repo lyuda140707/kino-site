@@ -78,3 +78,11 @@
   document.addEventListener('DOMContentLoaded', () => { applyMode(); disableHoverMegaOnMobile(); });
 
 })();
+// 🟢 Якщо хедер підтягується через fetch — активуємо бургер після вставки
+window.ensureToggleHandler = ensureToggleHandler;
+
+// Слухаємо подію з інших сторінок (коли хедер вставився)
+window.addEventListener("headerLoaded", () => {
+  if (typeof ensureToggleHandler === "function") ensureToggleHandler();
+});
+
