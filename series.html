@@ -7,6 +7,20 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+
+/* 🔹 Кнопки сезонів */
+.season-btn.active {
+  background: #00fff2;
+  color: #000;
+  border-color: #00fff2;
+  box-shadow: 0 0 10px rgba(0,255,255,0.4);
+  transform: scale(1.05);
+}
+.season-btn:hover {
+  box-shadow: 0 0 8px rgba(0,255,255,0.3);
+  transform: scale(1.03);
+}
+
     /* --- модальне вікно (як у film.html) --- */
 .modal {
   display: none;
@@ -571,39 +585,79 @@ else {
   `;
 }
 
-    // малюємо список серій, згруповано по сезонах
-    const container = document.getElementById("episodesContainer");
-    container.innerHTML = "";
-    const groups = groupBySeason(data);
+// 🟣 Відображення сезонів кнопками
+const container = document.getElementById("episodesContainer");
+container.innerHTML = "";
 
-    groups.forEach(([season, episodes])=>{
-      const block = document.createElement("div");
-      block.className = "season-block";
-      const h = document.createElement("h4");
-      h.style.color="#bbb"; h.style.margin="6px 0";
-      h.textContent = `Сезон ${season}`;
-      const list = document.createElement("div");
-      list.className = "ep-list";
+const groups = groupBySeason(data);
+let currentSeason = groups[0]?.[0] || 1;
 
-      episodes.forEach(ep=>{
-        const btn = document.createElement("button");
-        btn.className = "ep-btn";
-        btn.textContent = `Серія ${ep.episode || "?"}`;
-        btn.addEventListener("click", ()=>{
-          container.querySelectorAll(".ep-btn.active").forEach(b=>b.classList.remove("active"));
-          btn.classList.add("active");
-          useSource(ep.stream_url || "");
-          // ▶️ Автоплей прибрано — користувач сам натискає Play
-        });
-        // активуємо першу кнопку
-        if (ep === first) btn.classList.add("active");
-        list.appendChild(btn);
-      });
+// створюємо блок кнопок сезонів
+const seasonsRow = document.createElement("div");
+seasonsRow.className = "seasons-row";
+seasonsRow.style.display = "flex";
+seasonsRow.style.flexWrap = "wrap";
+seasonsRow.style.gap = "8px";
+seasonsRow.style.marginBottom = "14px";
 
-      block.appendChild(h);
-      block.appendChild(list);
-      container.appendChild(block);
+// кнопки сезонів
+groups.forEach(([season]) => {
+  const btn = document.createElement("button");
+  btn.className = "season-btn";
+  btn.textContent = `Сезон ${season}`;
+  btn.dataset.season = season;
+  btn.style.padding = "6px 12px";
+  btn.style.borderRadius = "8px";
+  btn.style.border = "1px solid rgba(0,255,255,.4)";
+  btn.style.background = "#0f0f0f";
+  btn.style.color = "#00fff2";
+  btn.style.fontWeight = "600";
+  btn.style.cursor = "pointer";
+  btn.style.transition = "0.2s";
+
+  btn.addEventListener("click", () => {
+    currentSeason = season;
+    renderEpisodes(season);
+    document.querySelectorAll(".season-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  });
+
+  seasonsRow.appendChild(btn);
+});
+container.appendChild(seasonsRow);
+
+const listContainer = document.createElement("div");
+listContainer.id = "episodeList";
+container.appendChild(listContainer);
+
+// функція відображення серій конкретного сезону
+function renderEpisodes(season) {
+  listContainer.innerHTML = "";
+  const episodes = groups.find(([s]) => s == season)?.[1] || [];
+
+  const list = document.createElement("div");
+  list.className = "ep-list";
+
+  episodes.forEach(ep => {
+    const btn = document.createElement("button");
+    btn.className = "ep-btn";
+    btn.textContent = `Серія ${ep.episode || "?"}`;
+    btn.addEventListener("click", () => {
+      list.querySelectorAll(".ep-btn.active").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      useSource(ep.stream_url || "");
     });
+    if (ep === episodes[0]) btn.classList.add("active");
+    list.appendChild(btn);
+  });
+
+  listContainer.appendChild(list);
+}
+
+// показуємо перший сезон
+renderEpisodes(currentSeason);
+seasonsRow.querySelector(".season-btn")?.classList.add("active");
+
   }
 
   document.addEventListener("DOMContentLoaded", loadSeries);
