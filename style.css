@@ -1033,7 +1033,7 @@ header {
 .mega-menu,
 .mega-series,
 .mega-cartoons {
-  position: fixed;
+  position: absolute;
   top: 55px;
   left: 50%;
   transform: translateX(-50%);
@@ -1378,3 +1378,4 @@ header {
 
   header { z-index: 1000; }
 }
+
