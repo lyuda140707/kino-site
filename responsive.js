@@ -79,10 +79,18 @@
 
 })();
 // 🟢 Якщо хедер підтягується через fetch — активуємо бургер після вставки
-window.ensureToggleHandler = ensureToggleHandler;
-
-// Слухаємо подію з інших сторінок (коли хедер вставився)
 window.addEventListener("headerLoaded", () => {
-  if (typeof ensureToggleHandler === "function") ensureToggleHandler();
+  const t = document.getElementById("menuToggle");
+  const nav = document.querySelector(".main-nav");
+  if (!t || !nav) return;
+
+  // додаємо обробник кліку, якщо його ще нема
+  if (!t._bound) {
+    t.addEventListener("click", () => {
+      const opened = nav.classList.toggle("open");
+      t.classList.toggle("active", opened);
+    });
+    t._bound = true;
+  }
 });
 
