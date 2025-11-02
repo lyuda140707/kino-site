@@ -14,6 +14,8 @@
       t._bound = true;
     }
   }
+  window.ensureToggleHandler = ensureToggleHandler; // 👈 ДОДАЙ ЦЕ
+
 
   function onToggle() {
     const nav = getNav();
