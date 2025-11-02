@@ -1444,8 +1444,9 @@ body.mobile .main-nav img.nav-logo {
 }
 
 
-/* === 📱 ФІНАЛЬНА АДАПТАЦІЯ ХЕДЕРА І МЕГА-МЕНЮ ДЛЯ ТЕЛЕФОНІВ === */
+/* === 📱 МОБІЛЬНА ВЕРСІЯ МЕГА-МЕНЮ — ВИДИМЕ І СКРОЛИТЬСЯ === */
 @media (max-width: 980px) {
+  /* === ШАПКА === */
   header,
   .topbar,
   .main-nav {
@@ -1460,6 +1461,7 @@ body.mobile .main-nav img.nav-logo {
     overflow-x: hidden !important;
   }
 
+  /* вертикальне меню */
   .main-nav {
     display: flex !important;
     flex-direction: column !important;
@@ -1477,21 +1479,27 @@ body.mobile .main-nav img.nav-logo {
     border-radius: 8px !important;
     padding: 10px !important;
   }
-} /* ← ось цього закриваючого дужка бракувало */
 
-/* === 📱 МОБІЛЬНА ВЕРСІЯ: ГОРИЗОНТАЛЬНИЙ СКРОЛ МЕГА-МЕНЮ === */
-@media (max-width: 980px) {
+  /* === МОБІЛЬНЕ МЕГА-МЕНЮ === */
   .mega-menu,
   .mega-series,
   .mega-cartoons {
+    position: static !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 10px 0 !important;
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: all !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch !important;
     white-space: nowrap !important;
-    display: block !important;
-    max-width: 100vw !important;
-    width: auto !important;
-    position: relative !important;
+    background: #0b0b0b !important;
   }
 
   .mega-menu .genres,
@@ -1499,25 +1507,23 @@ body.mobile .main-nav img.nav-logo {
   .mega-cartoons .genres {
     display: inline-flex !important;
     flex-wrap: nowrap !important;
-    gap: 12px !important;
-    padding: 10px !important;
+    gap: 10px !important;
   }
 
   .mega-menu .genres a,
   .mega-series .genres a,
   .mega-cartoons .genres a {
     flex: 0 0 auto !important;
-    display: inline-block !important;
     min-width: 120px !important;
+    padding: 10px 14px !important;
     background: rgba(0,255,255,0.08) !important;
     border: 1px solid rgba(0,255,255,0.2) !important;
     border-radius: 10px !important;
-    padding: 10px 14px !important;
-    text-align: center !important;
     color: #fff !important;
-    white-space: nowrap !important;
+    text-align: center !important;
   }
 
+  /* ховаємо горизонтальний скрол у body */
   body.mobile, html {
     overflow-x: hidden !important;
   }
