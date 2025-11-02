@@ -64,6 +64,7 @@
 
     <div class="block">
       <h2>Останні надходження</h2>
+      <button id="scrollTopBtn" title="Повернутись догори">⬆</button>
     </div>
     <div id="films-list" class="film-grid"></div>
     
@@ -195,16 +196,6 @@ async function loadLatestFilms(page = 1) {
     btn.addEventListener("click", () => loadLatestFilms(i));
     pagination.appendChild(btn);
   }
-
-  // 🔹 Кнопка "⬆ догори"
-  let topBtn = document.getElementById("scrollTopBtn");
-  if (!topBtn) {
-    topBtn = document.createElement("button");
-    topBtn.id = "scrollTopBtn";
-    topBtn.textContent = "⬆";
-    document.body.appendChild(topBtn);
-    topBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
-  }
 }
 </script>
 
@@ -305,6 +296,11 @@ async function loadLatestSeries() {
   loadDynamicSidebar();
 });
 
+</script>
+<script>
+document.getElementById("scrollTopBtn")?.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
 </script>
 <script>
 async function loadDynamicSidebar() {
@@ -454,6 +450,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
