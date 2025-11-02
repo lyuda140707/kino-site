@@ -555,7 +555,7 @@
 
 
     // заповнення заголовку/постера/мети/опису з першого рядка
-    const first = data[0];
+    const first = cleanData[0];
     // 🧩 Захист від ботів із “сіллю”
     const titleEl = document.getElementById("seriesTitle");
     if (titleEl && first.title) {
@@ -633,7 +633,7 @@ else {
 const container = document.getElementById("episodesContainer");
 container.innerHTML = "";
 
-const groups = groupBySeason(data);
+const groups = groupBySeason(cleanData);
 let currentSeason = groups[0]?.[0] || 1;
 
 // створюємо блок кнопок сезонів
