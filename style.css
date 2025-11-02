@@ -1513,15 +1513,14 @@ header {
   }
 }
 
-/* === Кнопка повернення догори — велика, неонова, рухається разом із сайтом === */
+/* === 💫 Кнопка повернення догори — плаваюча, неонова, з’являється при скролі === */
 #scrollTopBtn {
-  position: sticky;
-  top: 10px; /* на рівні заголовка */
-  float: right;
-  margin-top: -50px; /* вирівнюємо по центру з “Останні надходження” */
-  margin-right: 10px;
-  width: 64px;
-  height: 64px;
+  position: fixed;
+  bottom: 50%;
+  right: 40px;
+  transform: translateY(50%);
+  width: 68px;
+  height: 68px;
   background: radial-gradient(circle at 30% 30%, #00fff2, #ff00c8);
   border: 2px solid rgba(255,255,255,0.2);
   border-radius: 50%;
@@ -1529,37 +1528,48 @@ header {
   font-size: 28px;
   font-weight: 700;
   cursor: pointer;
-  z-index: 500;
+  z-index: 2000;
   box-shadow:
-    0 0 15px rgba(0,255,255,0.3),
-    0 0 35px rgba(255,0,200,0.3),
-    inset 0 0 10px rgba(0,255,255,0.2);
+    0 0 25px rgba(0,255,255,0.4),
+    0 0 45px rgba(255,0,200,0.3),
+    inset 0 0 15px rgba(0,255,255,0.2);
   transition: all 0.3s ease;
-  display: flex;
+  display: none; /* спочатку прихована */
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
 }
 
-/* Ефект при наведенні */
 #scrollTopBtn:hover {
-  transform: scale(1.15) rotate(10deg);
+  transform: translateY(50%) scale(1.15);
   box-shadow:
-    0 0 25px rgba(0,255,255,0.8),
-    0 0 45px rgba(255,0,200,0.6),
-    inset 0 0 15px rgba(255,255,255,0.3);
+    0 0 35px rgba(0,255,255,0.7),
+    0 0 60px rgba(255,0,200,0.6),
+    inset 0 0 20px rgba(255,255,255,0.4);
   background: radial-gradient(circle at 30% 30%, #ff00c8, #00fff2);
 }
 
-/* Для мобільного трохи менша */
+/* плавна поява */
+#scrollTopBtn.show {
+  display: flex;
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(60%); }
+  to { opacity: 1; transform: translateY(50%); }
+}
+
+/* для мобільного — трохи менша */
 @media (max-width: 980px) {
   #scrollTopBtn {
-    width: 52px;
-    height: 52px;
-    font-size: 24px;
-    top: 6px;
-    margin-top: -40px;
+    width: 56px;
+    height: 56px;
+    right: 20px;
   }
 }
+
+}
+
 
 
