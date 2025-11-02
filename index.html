@@ -64,7 +64,6 @@
 
     <div class="block">
       <h2>Останні надходження</h2>
-      <button id="scrollTopBtn" title="Повернутись догори">⬆</button>
     </div>
     <div id="films-list" class="film-grid"></div>
     
@@ -193,7 +192,10 @@ async function loadLatestFilms(page = 1) {
     const btn = document.createElement("button");
     btn.textContent = i;
     if (i === page) btn.classList.add("active");
-    btn.addEventListener("click", () => loadLatestFilms(i));
+    btn.addEventListener("click", () => {
+      loadLatestFilms(i);
+      scrollToTopSmooth(); // 🆕 плавно піднімає сторінку догори
+    });
     pagination.appendChild(btn);
   }
 }
@@ -446,10 +448,33 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 </script>
 
 
+<button id="scrollTopBtn" title="Повернутись догори">⬆</button>
+<script>
+const scrollBtn = document.getElementById("scrollTopBtn");
 
+// Показуємо кнопку після прокрутки на 400px
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 400) {
+    scrollBtn.classList.add("show");
+  } else {
+    scrollBtn.classList.remove("show");
+  }
+});
+
+// Плавна прокрутка догори
+scrollBtn.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+// Автопрокрутка догори при зміні сторінки (1,2,3)
+function scrollToTopSmooth() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+</script>
 
 </body>
 </html>
+
 
 
 
