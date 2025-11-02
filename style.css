@@ -1459,31 +1459,6 @@ header {
     grid-template-columns: 1fr !important;
   }
 }
-/* === 📱 Фікс обрізання справа на мобільних === */
-@media (max-width: 980px) {
-  html, body {
-    overflow-x: hidden !important; /* прибирає горизонтальний скрол */
-  }
-
-  .container,
-  .content,
-  .main-grid,
-  .film-grid,
-  .banner-slider {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-    margin-right: 0 !important;
-    padding-right: 0 !important;
-  }
-
-  /* додатково — щоб фільми не впирались у край */
-  .film-grid {
-    padding-left: 8px;
-    padding-right: 8px;
-    box-sizing: border-box;
-  }
-}
-
 
 /* === 🎥 Тіньові боки для ефекту "кіноекрану" === */
 @media (max-width: 980px) {
@@ -1505,6 +1480,39 @@ header {
   body::after {
     right: 0;
     background: linear-gradient(to left, rgba(0,0,0,0.6), transparent);
+  }
+}
+
+/* === 📱 Фікс обрізання контенту справа === */
+@media (max-width: 980px) {
+  html, body {
+    overflow-x: hidden !important;
+  }
+
+  /* Повна ширина для всіх основних контейнерів */
+  .container,
+  main,
+  .main-grid,
+  .content,
+  .film-grid,
+  .banner-slider {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Фільми не впритул до країв */
+  .film-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+
+  /* Банер і слайдер теж не вилазять */
+  .banner-slider {
+    overflow: hidden !important;
   }
 }
 
