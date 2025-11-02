@@ -87,6 +87,36 @@
   <a href="/profile.html" class="profile-btn">👑 Мій кабінет</a>
 </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // 🟣 Для мобільних — відкривати мега-меню по кліку
+  if (window.innerWidth <= 980) {
+    document.querySelectorAll(".dropdown > a").forEach(link => {
+      link.addEventListener("click", e => {
+        e.preventDefault();
+        const parent = link.parentElement;
+        const menu = parent.querySelector(".mega-menu, .mega-series, .mega-cartoons");
+        if (!menu) return;
+
+        // Закриваємо всі інші меню перед відкриттям
+        document.querySelectorAll(".mega-menu, .mega-series, .mega-cartoons").forEach(m => {
+          if (m !== menu) m.style.display = "none";
+        });
+
+        // Перемикаємо відображення
+        if (menu.style.display === "block") {
+          menu.style.display = "none";
+        } else {
+          menu.style.display = "block";
+          menu.scrollLeft = 0; // прокрутка вліво при відкритті
+        }
+      });
+    });
+  }
+});
+</script>
+
 </header>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
