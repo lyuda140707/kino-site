@@ -1410,5 +1410,42 @@ body.mobile .left-menu a:hover {
     min-width: 160px;
   }
 }
+/* === Мобільне меню з логотипом усередині === */
+body.mobile .main-nav {
+  display: none;
+}
+
+body.mobile .main-nav.open {
+  display: flex !important;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #0d0d0d;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  z-index: 2000;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+/* Посилання всередині меню — у стовпчик */
+body.mobile .main-nav a {
+  display: block;
+  width: 100%;
+  color: #fff;
+  text-align: left;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Щоб логотип не був величезний */
+body.mobile .main-nav img.nav-logo {
+  max-width: 160px;
+  margin: 0 auto 10px auto;
+  display: block;
+}
+
 
 
