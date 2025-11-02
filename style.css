@@ -1291,6 +1291,14 @@ header {
 
 /* === 📱 Мобільна адаптація === */
 @media (max-width: 980px) {
+
+  /* 🔹 Ховаємо велике мега-меню на мобільному */
+  .mega-menu,
+  .mega-series,
+  .mega-cartoons {
+    display: none !important;
+  }
+
   header .topbar {
     flex-direction: column;
     align-items: flex-start;
@@ -1352,27 +1360,6 @@ header {
     color: #fff;
   }
 
-  /* Мега-меню — робимо вертикальним */
-  .mega-menu {
-    position: static;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    background: none;
-    box-shadow: none;
-    padding: 10px 0;
-  }
-
-  .mega-menu a {
-    flex: 1 1 45%;
-    background: #111;
-    color: #00fff2;
-    padding: 6px 10px;
-    border-radius: 8px;
-    text-align: center;
-    border: 1px solid rgba(0,255,255,0.15);
-  }
-
   .top-right {
     width: 100%;
     display: flex;
@@ -1387,10 +1374,4 @@ header {
   .profile-btn {
     flex-shrink: 0;
   }
-}
-
-.mega-menu,
-.mega-series,
-.mega-cartoons {
-  display: none !important;
 }
