@@ -38,9 +38,7 @@ fetch("header.html")
   .then(html => {
     document.getElementById("header-placeholder").innerHTML = html;
     bindHeaderSearch();
-
-    // 🟢 після вставки хедера повідомляємо responsive.js
-    window.dispatchEvent(new Event("headerLoaded"));
+    if (window.innerWidth <= 980) document.body.classList.add("mobile");
   })
   .catch(err => console.error("Помилка завантаження хедера:", err));
 
@@ -513,6 +511,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
