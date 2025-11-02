@@ -37,12 +37,10 @@ fetch("header.html")
   .then(res => res.text())
   .then(html => {
     document.getElementById("header-placeholder").innerHTML = html;
-    bindHeaderSearch(); // активуємо пошук після вставки
+    bindHeaderSearch();
 
-    // 🟡 Додатково активуємо бургер-меню після вставки
-    if (typeof window.ensureToggleHandler === "function") {
-      window.ensureToggleHandler();
-    }
+    // 🟢 після вставки хедера повідомляємо responsive.js
+    window.dispatchEvent(new Event("headerLoaded"));
   })
   .catch(err => console.error("Помилка завантаження хедера:", err));
 
@@ -515,6 +513,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
