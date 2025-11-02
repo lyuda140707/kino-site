@@ -1528,3 +1528,19 @@ body.mobile .main-nav img.nav-logo {
     overflow-x: hidden !important;
   }
 }
+
+/* === 📱 ВІДОБРАЖЕННЯ МЕГА-МЕНЮ НА МОБІЛЬНОМУ ПРИ НАТИСКАННІ === */
+@media (max-width: 980px) {
+  .dropdown:active .mega-menu,
+  .dropdown:active .mega-series,
+  .dropdown:active .mega-cartoons {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: all !important;
+    position: static !important;
+    transform: none !important;
+    margin: 10px 0 !important;
+    padding: 10px 12px !important;
+    background: #0b0b0b !important;
+  }
+}
