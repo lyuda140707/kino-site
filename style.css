@@ -1381,3 +1381,34 @@ body.mobile .left-menu a:hover {
   transform: scale(1.05);
   box-shadow: 0 0 14px rgba(0,255,255,0.35);
 }
+/* === 📱 Адаптація головної сторінки === */
+@media (max-width: 980px) {
+  .main-grid {
+    display: flex;
+    flex-direction: column-reverse; /* щоб ліве меню йшло під фільмами */
+    gap: 20px;
+  }
+
+  .film-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* горизонтальна прокрутка лівої панелі */
+  .sidebar {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    scroll-snap-type: x mandatory;
+    background: transparent;
+    border: none;
+    padding: 10px 0;
+  }
+
+  .sidebar .pick {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    min-width: 160px;
+  }
+}
+
+
