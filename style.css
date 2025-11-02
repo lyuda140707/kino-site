@@ -1443,24 +1443,20 @@ header {
   }
 }
 
-/* === 📱 Приховати бокове ліве меню на мобільних === */
+/* === 📱 Приховати ліве меню на мобільних === */
 @media (max-width: 980px) {
-  /* Укажи тут клас твого лівого меню */
-  .left-sidebar,
-  .sidebar-left,
-  .side-left,
-  .left-block {
+  .sidebar {
     display: none !important;
   }
 
-  /* І щоб контент розтягнувся на всю ширину */
+  /* Щоб контент розтягнувся на всю ширину */
+  .main-grid,
   .content,
-  .main-content,
-  .films-wrapper,
   .container {
     width: 100% !important;
     max-width: 100% !important;
     margin-left: 0 !important;
+    grid-template-columns: 1fr !important;
   }
 }
 
