@@ -1300,7 +1300,7 @@ header {
   .burger-btn {
     position: fixed;
     top: 14px;
-    right: 16px;
+    left: 16px; /* 🔹 бургер тепер зліва */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1327,18 +1327,25 @@ header {
   }
   .mobile-overlay.show { opacity: 1; pointer-events: auto; }
 
-  .mobile-panel {
-    position: fixed;
-    top: 0; right: 0; height: 100dvh; width: min(92vw, 380px);
-    background: #0b0b0b;
-    color: #e8e8e8;
-    z-index: 2002;
-    transform: translateX(100%);
-    transition: transform .25s ease;
-    display: flex; flex-direction: column;
-    box-shadow: -10px 0 30px rgba(0,0,0,0.6);
-  }
-  .mobile-panel.show { transform: translateX(0); }
+ .mobile-panel {
+  position: fixed;
+  top: 0;
+  left: 0; /* 🔹 тепер зліва */
+  height: 100dvh;
+  width: min(92vw, 380px);
+  background: #0b0b0b;
+  color: #e8e8e8;
+  z-index: 2002;
+  transform: translateX(-100%); /* 🔹 виїжджає зліва */
+  transition: transform .25s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 10px 0 30px rgba(0,0,0,0.6);
+}
+
+.mobile-panel.show {
+  transform: translateX(0); /* 🔹 відкривається вліво → вправо */
+}
 
   .mobile-panel-header {
     display: flex; align-items: center; justify-content: space-between;
@@ -1435,4 +1442,5 @@ header {
     overflow: visible !important;
   }
 }
+
 
