@@ -1293,81 +1293,84 @@ header {
 
 
 
-/* === 📱 Додаткові стилі для мобільної версії === */
+/* === 📱 Адаптивна стилізація сайту === */
 .menu-toggle {
   display: none;
   font-size: 28px;
   color: #fff;
   cursor: pointer;
+  margin-right: 10px;
   user-select: none;
-  margin-right: 12px;
 }
 
 body.mobile .menu-toggle {
   display: block;
 }
 
-body.mobile .main-nav {
+/* приховуємо навігацію, поки не натиснули ☰ */
+body.mobile .main-nav.collapsed {
   display: none;
   flex-direction: column;
-  background: #111;
+  background: #0d0d0d;
   position: absolute;
-  top: 60px;
+  top: 58px;
   left: 0;
   width: 100%;
-  padding: 10px 0;
-  z-index: 999;
+  z-index: 1000;
+  padding: 12px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
-body.mobile .main-nav.show {
+body.mobile .main-nav.open {
   display: flex;
 }
 
 body.mobile .main-nav a {
   color: #fff;
-  padding: 10px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-weight: 500;
+  text-align: center;
 }
 
-body.mobile .top-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* стиль кнопки ☰ при відкритті */
+.menu-toggle.active {
+  color: #00fff2;
 }
 
-body.mobile #search-input {
-  width: 140px;
+/* бокове меню */
+body.mobile .sidebar,
+body.mobile .left-menu {
+  width: 100%;
+  margin-top: 20px;
+  background: #101010;
+  border-radius: 10px;
+  padding: 10px 14px;
 }
 
-/* === Сітка фільмів === */
+/* адаптація сітки фільмів */
 #films-list {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 18px;
 }
 
-@media (max-width:1024px) {
+@media (max-width: 1024px) {
   #films-list {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-@media (max-width:768px) {
+
+@media (max-width: 768px) {
   #films-list {
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 12px;
   }
 }
 
-/* === Ліве меню === */
-.sidebar, .left-menu {
-  transition: all 0.3s ease;
-}
-
-body.mobile .sidebar, body.mobile .left-menu {
-  background: #0b0b0b;
-  border: none;
-  width: 100%;
-  margin-top: 20px;
-  padding: 10px;
-  border-radius: 10px;
+/* покращення вигляду при відкритті меню */
+header {
+  position: relative;
+  z-index: 2000;
 }
