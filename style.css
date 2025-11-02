@@ -1485,5 +1485,28 @@ header {
 }
 
 
+/* === 🎥 Тіньові боки для ефекту "кіноекрану" === */
+@media (max-width: 980px) {
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    width: 12px;              /* ширина затемнення */
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  body::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.6), transparent);
+  }
+  body::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(0,0,0,0.6), transparent);
+  }
+}
+
 
 
