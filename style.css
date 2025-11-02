@@ -1513,6 +1513,38 @@ header {
   }
 }
 
+/* === 📱 Повний фікс обрізання справа === */
+@media (max-width: 980px) {
+  html, body {
+    overflow-x: hidden !important;
+  }
+
+  /* Усі можливі контейнери на всю ширину */
+  .container,
+  .main-grid,
+  main,
+  .content,
+  .films-wrapper,
+  .films-list,
+  .film-grid,
+  .banner-slider {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Забороняємо фіксовану ширину */
+  [style*="width:1150px"],
+  [style*="width: 1150px"] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+
 
 
 
