@@ -1028,12 +1028,10 @@ header {
 }
 
 
-
-/* === ФІКС МЕНЮ (НЕ ХОВАЄТЬСЯ, НЕ ЗМІЩУЄТЬСЯ) === */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
-  position: fixed;
+  position: absolute;
   top: 55px;
   left: 50%;
   transform: translateX(-50%);
@@ -1389,4 +1387,10 @@ header {
   .profile-btn {
     flex-shrink: 0;
   }
+}
+
+.mega-menu,
+.mega-series,
+.mega-cartoons {
+  display: none !important;
 }
