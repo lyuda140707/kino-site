@@ -1,67 +1,49 @@
-// === responsive.js — стабільна адаптація для всіх сторінок ===
-(function () {
+// === responsive.js — стабільна адаптація для KinoSite ===
+(() => {
   const MOBILE_BP = 980;
   const body = document.body;
 
-  const getNav = () => document.querySelector(".main-nav");
-  const getToggle = () => document.getElementById("menuToggle");
+  // функція для ініціалізації бургера
+  function initBurger() {
+    const toggle = document.getElementById("menuToggle");
+    const nav = document.querySelector(".main-nav");
+    if (!toggle || !nav) return;
 
-  // Основна функція — вмикає адаптив і бургер
+    // якщо подія вже прив’язана — не дублюємо
+    if (toggle._bound) return;
+
+    toggle.addEventListener("click", () => {
+      const opened = nav.classList.toggle("open");
+      toggle.classList.toggle("active", opened);
+    });
+    toggle._bound = true;
+  }
+
+  // функція адаптації (додає клас mobile)
   function applyResponsive() {
-    const nav = getNav();
-    const toggle = getToggle();
     const isMobile = window.innerWidth <= MOBILE_BP;
-
     if (isMobile) {
       body.classList.add("mobile");
-      if (toggle && !toggle._bound) {
-        toggle.addEventListener("click", () => {
-          const opened = nav.classList.toggle("open");
-          toggle.classList.toggle("active", opened);
-        });
-        toggle._bound = true;
-      }
     } else {
       body.classList.remove("mobile");
-      nav && nav.classList.remove("open");
-      toggle && toggle.classList.remove("active");
+      document.querySelector(".main-nav")?.classList.remove("open");
+      document.getElementById("menuToggle")?.classList.remove("active");
     }
   }
 
-  // Закриття меню при кліку поза ним
-  document.addEventListener("click", (e) => {
-    if (!body.classList.contains("mobile")) return;
-    const nav = getNav();
-    const toggle = getToggle();
-    if (!nav || !toggle) return;
-
-    const inside = nav.contains(e.target) || toggle.contains(e.target);
-    if (!inside) {
-      nav.classList.remove("open");
-      toggle.classList.remove("active");
-    }
-  });
-
-  // Закривати меню при кліку по пункту
-  document.addEventListener("click", (e) => {
-    if (!body.classList.contains("mobile")) return;
-    const link = e.target.closest(".main-nav a");
-    if (link) {
-      const nav = getNav();
-      const toggle = getToggle();
-      nav && nav.classList.remove("open");
-      toggle && toggle.classList.remove("active");
-    }
-  });
-
-  // Ініціалізація при завантаженні сторінки
-  document.addEventListener("DOMContentLoaded", applyResponsive);
+  // 🟢 основні слухачі
   window.addEventListener("resize", applyResponsive);
+  document.addEventListener("DOMContentLoaded", () => {
+    applyResponsive();
+    initBurger();
+  });
 
-  // 🟢 Коли хедер підтягується через fetch (після вставки у DOM)
+  // 🟡 головне: спрацьовує після fetch("header.html")
   window.addEventListener("headerLoaded", () => {
+    // чекаємо 100мс, щоб хедер встиг вставитись у DOM
     setTimeout(() => {
-      applyResponsive(); // даємо час DOM оновитись
+      applyResponsive();
+      initBurger();
     }, 100);
   });
 })();
