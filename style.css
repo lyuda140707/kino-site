@@ -1290,7 +1290,10 @@ header {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
 }
-/* === 📱 Адаптивна стилізація === */
+
+
+
+/* === 📱 Додаткові стилі для мобільної версії === */
 .menu-toggle {
   display: none;
   font-size: 28px;
@@ -1320,6 +1323,12 @@ body.mobile .main-nav.show {
   display: flex;
 }
 
+body.mobile .main-nav a {
+  color: #fff;
+  padding: 10px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
 body.mobile .top-right {
   display: flex;
   align-items: center;
@@ -1330,9 +1339,35 @@ body.mobile #search-input {
   width: 140px;
 }
 
-body.tablet .main-nav a {
-  font-size: 14px;
-  padding: 4px 8px;
+/* === Сітка фільмів === */
+#films-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
 }
 
+@media (max-width:1024px) {
+  #films-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width:768px) {
+  #films-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
 
+/* === Ліве меню === */
+.sidebar, .left-menu {
+  transition: all 0.3s ease;
+}
+
+body.mobile .sidebar, body.mobile .left-menu {
+  background: #0b0b0b;
+  border: none;
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 10px;
+}
