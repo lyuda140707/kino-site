@@ -1379,3 +1379,26 @@ header {
   header { z-index: 1000; }
 }
 
+
+/* === 🛠 Фікс зсуву мега-меню === */
+header {
+  position: relative;
+  z-index: 100;
+}
+
+.mega-menu {
+  position: absolute !important;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+}
+
+/* щоб бургер не впливав на десктоп */
+@media (min-width: 981px) {
+  .burger-btn,
+  .mobile-overlay,
+  .mobile-panel {
+    display: none !important;
+  }
+}
