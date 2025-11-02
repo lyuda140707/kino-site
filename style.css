@@ -1299,7 +1299,7 @@ header {
   /* бургер */
   .burger-btn {
     position: fixed;
-    top: 14px;
+    top: 58px; /* 🔹 опустили трохи нижче */
     left: 16px; /* 🔹 бургер тепер зліва */
     display: inline-flex;
     align-items: center;
@@ -1442,5 +1442,6 @@ header {
     overflow: visible !important;
   }
 }
+
 
 
