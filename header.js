@@ -45,6 +45,13 @@ function initMobileMenu() {
 
   document.body.append(overlay, panel, burger);
   const mobileNav = panel.querySelector(".mobile-nav");
+  // 🏠 Додаємо кнопку "Головна" для мобільного меню
+  const homeLink = document.createElement("a");
+  homeLink.href = "/index.html";
+  homeLink.textContent = "🏠 Головна";
+  homeLink.addEventListener("click", () => closeMenu());
+  mobileNav.appendChild(homeLink);
+
   const btnClose = panel.querySelector(".mobile-close");
 
   if (desktopNav) {
