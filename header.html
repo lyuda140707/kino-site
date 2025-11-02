@@ -98,4 +98,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
+<script>
+  // ⏳ Коли хедер завантажився — активуємо бургер
+  document.addEventListener("DOMContentLoaded", () => {
+    if (typeof window.ensureToggleHandler === "function") {
+      window.ensureToggleHandler(); // активує кнопку ☰
+    }
+  });
+</script>
+
 <script src="/responsive.js"></script>
