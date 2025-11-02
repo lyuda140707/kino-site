@@ -1446,7 +1446,6 @@ body.mobile .main-nav img.nav-logo {
 
 /* === 📱 ФІНАЛЬНА АДАПТАЦІЯ ХЕДЕРА І МЕГА-МЕНЮ ДЛЯ ТЕЛЕФОНІВ === */
 @media (max-width: 980px) {
-  /* === ШАПКА === */
   header,
   .topbar,
   .main-nav {
@@ -1461,7 +1460,6 @@ body.mobile .main-nav img.nav-logo {
     overflow-x: hidden !important;
   }
 
-  /* вертикальне меню */
   .main-nav {
     display: flex !important;
     flex-direction: column !important;
@@ -1479,12 +1477,10 @@ body.mobile .main-nav img.nav-logo {
     border-radius: 8px !important;
     padding: 10px !important;
   }
-
-
+} /* ← ось цього закриваючого дужка бракувало */
 
 /* === 📱 МОБІЛЬНА ВЕРСІЯ: ГОРИЗОНТАЛЬНИЙ СКРОЛ МЕГА-МЕНЮ === */
 @media (max-width: 980px) {
-  /* дозволяємо гортати все меню вбік */
   .mega-menu,
   .mega-series,
   .mega-cartoons {
@@ -1498,7 +1494,6 @@ body.mobile .main-nav img.nav-logo {
     position: relative !important;
   }
 
-  /* трохи відступів для гарного вигляду */
   .mega-menu .genres,
   .mega-series .genres,
   .mega-cartoons .genres {
@@ -1523,7 +1518,6 @@ body.mobile .main-nav img.nav-logo {
     white-space: nowrap !important;
   }
 
-  /* ховаємо горизонтальний скрол у body */
   body.mobile, html {
     overflow-x: hidden !important;
   }
