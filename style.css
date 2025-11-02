@@ -1340,3 +1340,36 @@ body.mobile .main-nav a {
 body.mobile .menu-toggle {
   display: block;
 }
+
+/* === 🎬 Бокове меню у вигляді горизонтального слайдера на мобільному === */
+body.mobile .sidebar,
+body.mobile .left-menu {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  scroll-snap-type: x mandatory;
+  background: transparent;
+  border: none;
+  padding: 10px 0;
+  margin-bottom: 10px;
+}
+
+body.mobile .sidebar a,
+body.mobile .left-menu a {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  background: #0b0b0b;
+  color: #00fff2;
+  padding: 10px 14px;
+  border-radius: 10px;
+  white-space: nowrap;
+  border: 1px solid rgba(0,255,255,0.2);
+  box-shadow: 0 0 10px rgba(0,255,255,0.2);
+  transition: transform 0.2s ease;
+}
+
+body.mobile .sidebar a:hover,
+body.mobile .left-menu a:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 14px rgba(0,255,255,0.35);
+}
