@@ -89,32 +89,31 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  // === Пошук ===
   const input = document.getElementById("search-input");
-  if (!input) return;
-
-  input.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const query = input.value.trim();
-      if (query.length > 1) {
-        // зберігаємо запит у localStorage
-        localStorage.setItem("searchQuery", query);
-        // переходимо на сторінку пошуку
-        window.location.href = "/search.html";
+  if (input) {
+    input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const query = input.value.trim();
+        if (query.length > 1) {
+          localStorage.setItem("searchQuery", query);
+          window.location.href = "/search.html";
+        }
       }
-    }
-  });
-});
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+    });
+  }
+
+  // === Бургер-меню ===
   const burger = document.getElementById("burger");
   const menu = document.querySelector(".mobile-menu");
-
-  burger.addEventListener("click", () => {
-    menu.classList.toggle("open");
-    burger.classList.toggle("open");
-  });
+  if (burger && menu) {
+    burger.addEventListener("click", () => {
+      menu.classList.toggle("open");
+      burger.classList.toggle("open");
+    });
+  }
 });
 </script>
 
-</script>
+
