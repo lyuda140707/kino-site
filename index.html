@@ -22,10 +22,8 @@
       document.getElementById("header-placeholder").innerHTML = html;
       if (window.innerWidth <= 980) document.body.classList.add("mobile");
 
-      // 🟢 Трохи почекаємо, щоб DOM устиг оновитися
-      setTimeout(() => {
-        initMobileHeader();
-      }, 150);
+      // трохи почекаємо, щоб DOM устиг оновитись
+      setTimeout(initMobileHeader, 200);
     })
     .catch(err => console.error("Помилка завантаження хедера:", err));
 
@@ -45,20 +43,17 @@
     });
   }
 
-  // === Функція активації бургеру та мега-меню ===
+  // === Ініціалізація бургеру + мега-меню ===
   function initMobileHeader() {
     bindHeaderSearch();
 
-    // Активуємо бургер (якщо він є)
     const menuToggle = document.getElementById("menuToggle");
     const nav = document.querySelector(".main-nav");
     if (menuToggle && nav) {
-      menuToggle.addEventListener("click", () => {
-        nav.classList.toggle("open");
-      });
+      menuToggle.addEventListener("click", () => nav.classList.toggle("open"));
     }
 
-    // 🟣 Мега-меню для мобільних
+    // 🟣 Мега-меню на мобільних
     if (window.innerWidth <= 980) {
       document.querySelectorAll(".dropdown > a").forEach(link => {
         link.addEventListener("click", e => {
@@ -67,20 +62,27 @@
           const menu = parent.querySelector(".mega-menu, .mega-series, .mega-cartoons");
           if (!menu) return;
 
-          // Закриваємо інші
+          // Приховуємо всі інші мега-меню
           document.querySelectorAll(".mega-menu, .mega-series, .mega-cartoons").forEach(m => {
             if (m !== menu) m.style.display = "none";
           });
 
-          // Перемикаємо видимість
-          menu.style.display = (menu.style.display === "block") ? "none" : "block";
-          menu.scrollLeft = 0;
+          // 🔥 Показуємо або ховаємо потрібне меню
+          if (menu.style.display === "block") {
+            menu.style.display = "none";
+          } else {
+            menu.style.display = "block";
+            menu.style.opacity = "1";
+            menu.style.visibility = "visible";
+            menu.style.pointerEvents = "auto";
+            menu.style.position = "static";
+            menu.scrollLeft = 0;
+          }
         });
       });
     }
   }
 </script>
-
 
 
   <!-- === MAIN === -->
@@ -547,6 +549,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
