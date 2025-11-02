@@ -1288,7 +1288,10 @@ header {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
 }
-
+/* === Ховаємо мобільне меню на комп'ютерах === */
+.mobile-menu {
+  display: none;
+}
 /* === 📱 Мобільна адаптація === */
 @media (max-width: 980px) {
 
@@ -1375,3 +1378,4 @@ header {
     flex-shrink: 0;
   }
 }
+
