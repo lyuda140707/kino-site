@@ -75,6 +75,18 @@
 </div>
 </div>
 </header>
+<!-- === Мобільне меню === -->
+<div class="mobile-menu">
+  <a href="/index.html">🏠 Головна</a>
+  <a href="/category.html?type=Фільм">🎬 Фільми</a>
+  <a href="/category.html?type=Серіал">📺 Серіали</a>
+  <a href="/category.html?type=Мультсеріал">🧸 Мультсеріали</a>
+  <a href="/collections.html">🎞 Збірки</a>
+  <a href="/profile.html">👑 Кабінет</a>
+</div>
+
+<button id="burger" class="burger-btn">☰</button>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("search-input");
@@ -93,4 +105,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const burger = document.getElementById("burger");
+  const menu = document.querySelector(".mobile-menu");
+
+  burger.addEventListener("click", () => {
+    menu.classList.toggle("open");
+    burger.classList.toggle("open");
+  });
+});
+</script>
+
 </script>
