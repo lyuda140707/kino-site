@@ -205,15 +205,22 @@ if (genre) {
     return;
   }
 
-  // ✅ якщо це серіали — групуємо за назвою
-  let items = [...filtered];
-  if (type.toLowerCase().includes("серіал") || type.toLowerCase().includes("мультсеріал")) {
-    const map = new Map();
-    items.forEach(row => {
-      if (!map.has(row.title)) map.set(row.title, row);
-    });
-    items = [...map.values()];
-  }
+ // ✅ якщо це серіали — групуємо за назвою, навіть якщо дублюються в різних категоріях
+let items = [...filtered];
+if (type.toLowerCase().includes("серіал") || type.toLowerCase().includes("мультсеріал")) {
+  const uniqueMap = new Map();
+
+  items.forEach(row => {
+    const titleKey = row.title?.trim().toLowerCase();
+    // Якщо вже доданий цей серіал — пропускаємо дубль
+    if (!uniqueMap.has(titleKey)) {
+      uniqueMap.set(titleKey, row);
+    }
+  });
+
+  items = Array.from(uniqueMap.values());
+}
+
 
 
   // фільтрація за роком
