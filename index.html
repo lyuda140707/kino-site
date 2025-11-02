@@ -66,10 +66,7 @@
       <h2>Останні надходження</h2>
     </div>
     <div id="films-list" class="film-grid"></div>
-    <div class="block" style="margin-top:24px">
-      <h2>🧩 Нові серіали</h2>
-    </div>
-    <div id="series-list" class="film-grid"></div>
+    
 
     <div class="pagination">
       <button>«</button>
@@ -125,75 +122,50 @@
   const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 </script>
 <script>
-async function loadLatestFilms() {
+async function loadLatestFilms(page = 1) {
   const container = document.getElementById("films-list");
   if (!container) return;
   container.innerHTML = "<p style='color:#aaa;'>Завантаження...</p>";
 
-  // 🔹 Беремо всі фільми, серіали, мультфільми, мультсеріали
   const { data, error } = await supabase
     .from("films_site")
     .select("id, title, poster, type, genre, year, imdb, pro_access")
     .in("type", ["Фільм", "Мультфільм", "Мультсеріал", "Серіал"])
     .order("id", { ascending: false })
-    .limit(100); // беремо більше, потім відфільтруємо
+    .limit(200);
 
   if (error) {
-    console.error("❌ Помилка завантаження останніх:", error);
-    container.innerHTML = `<p style="color:white;">Помилка завантаження.</p>`;
+    console.error("❌ Помилка завантаження:", error);
+    container.innerHTML = "<p style='color:white;'>Помилка завантаження.</p>";
     return;
   }
 
-  if (!data?.length) {
-    container.innerHTML = `<p style="color:white;">Поки що немає надходжень.</p>`;
-    return;
-  }
-
- // 🔹 Групуємо за title і мерджимо жанри (без дублювання назв)
-const map = new Map();
-data.forEach(item => {
-  const key = item.title.trim();
-  if (map.has(key)) {
-    const existing = map.get(key);
-
-    // ✅ Об’єднуємо жанри унікально
-    const genresOld = existing.genre ? existing.genre.split(",").map(g => g.trim()) : [];
-    const genresNew = item.genre ? item.genre.split(",").map(g => g.trim()) : [];
-    const allGenres = [...new Set([...genresOld, ...genresNew])];
-    existing.genre = allGenres.join(", ");
-
-    // ✅ Оновлюємо інші поля при потребі (беремо свіжіші)
-    if ((item.id || 0) > (existing.id || 0)) {
-      existing.id = item.id;
-      existing.poster = item.poster || existing.poster;
-      existing.type = item.type || existing.type;
-      existing.year = item.year || existing.year;
-      existing.imdb = item.imdb || existing.imdb;
-      existing.pro_access = item.pro_access || existing.pro_access;
-    }
-  } else {
-    map.set(key, { ...item });
-  }
-});
+  // 🔹 Унікальні за назвою
+  const map = new Map();
+  data.forEach(item => {
+    const key = item.title.trim();
+    if (!map.has(key)) map.set(key, item);
+  });
 
   const unique = Array.from(map.values());
-  
-  // 🔹 Беремо 20 останніх (після злиття)
-  const latest = unique
-    .sort((a, b) => (b.id || 0) - (a.id || 0))
-    .slice(0, 20);
 
+  // 🔹 Пагінація
+  const perPage = 24; // 6 рядів × 4 картки в ряд
+  const totalPages = Math.ceil(unique.length / perPage);
+  const start = (page - 1) * perPage;
+  const currentFilms = unique.slice(start, start + perPage);
 
+  // 🔹 Вивід карток
   container.innerHTML = "";
-  latest.forEach(item => {
+  currentFilms.forEach(item => {
     const card = document.createElement("div");
     card.className = "film";
     card.innerHTML = `
       <div class="poster">
-        <img src="${item.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${item.title || ''}">
+        <img src="${item.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${item.title}">
         ${String(item.pro_access || '').toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
       </div>
-      <div class="title">${item.title || ''}</div>
+      <div class="title">${item.title}</div>
       <div class="meta">
         <span>${item.type || ''}</span> • 
         <span>${item.genre || ''}</span> • 
@@ -202,7 +174,6 @@ data.forEach(item => {
       </div>
     `;
     card.addEventListener("click", () => {
-      // 🎬 якщо серіал — відкриваємо сторінку серіалу, якщо фільм — сторінку фільму
       if (item.type === "Серіал") {
         window.location.href = "series.html?title=" + encodeURIComponent(item.title);
       } else if (item.type === "Мультсеріал") {
@@ -213,8 +184,30 @@ data.forEach(item => {
     });
     container.appendChild(card);
   });
+
+  // 🔹 Побудова пагінації
+  const pagination = document.querySelector(".pagination");
+  pagination.innerHTML = "";
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    if (i === page) btn.classList.add("active");
+    btn.addEventListener("click", () => loadLatestFilms(i));
+    pagination.appendChild(btn);
+  }
+
+  // 🔹 Кнопка "⬆ догори"
+  let topBtn = document.getElementById("scrollTopBtn");
+  if (!topBtn) {
+    topBtn = document.createElement("button");
+    topBtn.id = "scrollTopBtn";
+    topBtn.textContent = "⬆";
+    document.body.appendChild(topBtn);
+    topBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  }
 }
 </script>
+
 
 <script>
 async function loadLatestSeries() {
@@ -307,10 +300,11 @@ async function loadLatestSeries() {
 
   // 🚀 Автоматичний запуск
   document.addEventListener("DOMContentLoaded", () => {
-    loadLatestFilms();
-    loadLatestSeries();
-    loadTopFilms();
-  });
+  loadLatestFilms();
+  loadTopFilms();
+  loadDynamicSidebar();
+});
+
 </script>
 <script>
 async function loadDynamicSidebar() {
@@ -460,6 +454,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
