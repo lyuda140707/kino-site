@@ -620,8 +620,7 @@ else {
     </div>
   `;
 }
-
-// 🟣 Відображення сезонів кнопками
+// 🟣 Відображення сезонів кнопками (з підсвіткою серій)
 const container = document.getElementById("episodesContainer");
 container.innerHTML = "";
 
@@ -631,36 +630,22 @@ let currentSeason = groups[0]?.[0] || 1;
 // створюємо блок кнопок сезонів
 const seasonsRow = document.createElement("div");
 seasonsRow.className = "seasons-row";
-seasonsRow.style.display = "flex";
-seasonsRow.style.flexWrap = "wrap";
-seasonsRow.style.gap = "8px";
-seasonsRow.style.marginBottom = "14px";
+container.appendChild(seasonsRow);
 
-// кнопки сезонів
+// функція для створення кнопки сезону
 groups.forEach(([season]) => {
   const btn = document.createElement("button");
   btn.className = "season-btn";
   btn.textContent = `Сезон ${season}`;
   btn.dataset.season = season;
-  btn.style.padding = "6px 12px";
-  btn.style.borderRadius = "8px";
-  btn.style.border = "1px solid rgba(0,255,255,.4)";
-  btn.style.background = "#0f0f0f";
-  btn.style.color = "#00fff2";
-  btn.style.fontWeight = "600";
-  btn.style.cursor = "pointer";
-  btn.style.transition = "0.2s";
-
   btn.addEventListener("click", () => {
     currentSeason = season;
     renderEpisodes(season);
     document.querySelectorAll(".season-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
   });
-
   seasonsRow.appendChild(btn);
 });
-container.appendChild(seasonsRow);
 
 const listContainer = document.createElement("div");
 listContainer.id = "episodeList";
@@ -672,7 +657,18 @@ function renderEpisodes(season) {
   const episodes = groups.find(([s]) => s == season)?.[1] || [];
 
   const list = document.createElement("div");
-  list.className = "ep-list";
+  list.className = `ep-list season-${season}`;
+
+  // 🔹 Визначаємо колір підсвітки для кожного сезону
+const seasonColors = {
+  1: "#00fff2",
+  2: "#ff6b2b",
+  3: "#ff00ff",
+  4: "#aaff00",
+  5: "#ffaa00"
+};
+
+  const activeColor = seasonColors[season] || "#00fff2";
 
   episodes.forEach(ep => {
     const btn = document.createElement("button");
@@ -683,12 +679,41 @@ function renderEpisodes(season) {
       btn.classList.add("active");
       useSource(ep.stream_url || "");
     });
-    if (ep === episodes[0]) btn.classList.add("active");
     list.appendChild(btn);
   });
 
+  // 🔹 Міняємо колір рамки і активного стану серій відповідно до сезону
+  const styleTag = document.getElementById("season-style") || document.createElement("style");
+  styleTag.id = "season-style";
+  styleTag.innerHTML = `
+    .ep-list.season-${season} .ep-btn {
+      border-color: ${activeColor};
+      color: ${activeColor};
+    }
+    .ep-list.season-${season} .ep-btn.active {
+      background: ${activeColor};
+      color: #000;
+      box-shadow: 0 0 15px ${activeColor};
+    }
+  `;
+  document.head.appendChild(styleTag);
+
   listContainer.appendChild(list);
 }
+// змінюємо колір активної кнопки сезону відповідно до серій
+function setSeasonButtonColor(btn, color) {
+  btn.style.background = color;
+  btn.style.color = "#000";
+  btn.style.boxShadow = `0 0 18px ${color}`;
+  btn.style.borderColor = color;
+}
+
+// додаємо зміну кольору при натисканні
+groups.forEach(([season]) => {
+  const color = seasonColors[season] || "#00fff2";
+  const btn = seasonsRow.querySelector(`button[data-season="${season}"]`);
+  btn?.addEventListener("click", () => setSeasonButtonColor(btn, color));
+});
 
 // показуємо перший сезон
 renderEpisodes(currentSeason);
