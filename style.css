@@ -1513,5 +1513,27 @@ header {
   }
 }
 
+#scrollTopBtn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, #00fff2, #ff00c8);
+  border: none;
+  border-radius: 50%;
+  color: #000;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 2000;
+  box-shadow: 0 0 20px rgba(0,255,255,0.4);
+  transition: all 0.3s ease;
+}
+#scrollTopBtn:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 35px rgba(255,0,200,0.6);
+}
+
 
 
