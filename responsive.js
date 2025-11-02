@@ -1,77 +1,78 @@
-// === Responsive.js — адаптація для KinoSite ===
-document.addEventListener("DOMContentLoaded", () => {
-  const header = document.querySelector("header");
-  const nav = document.querySelector(".main-nav");
-  const topbar = document.querySelector(".topbar");
-  const search = document.querySelector("#search-input");
-  const profileBtn = document.querySelector(".profile-btn");
+// responsive.js — один скрипт адаптації для всього сайту
+(function () {
+  const MOBILE_BP = 980; // ширина, з якої вмикаємо мобільний режим
+  const body = document.body;
 
-  function applyResponsive() {
-    const w = window.innerWidth;
+  const getNav = () => document.querySelector('.main-nav');
+  const getToggle = () => document.getElementById('menuToggle');
 
-    // === 📱 Мобільна версія ===
-    if (w <= 768) {
-      document.body.classList.add("mobile");
-      document.body.classList.remove("tablet", "desktop");
-
-      if (search) search.placeholder = "🔍 Пошук";
-      if (profileBtn) profileBtn.textContent = "👤";
-
-      // Якщо ще нема кнопки ☰ — додаємо
-      if (!document.querySelector(".menu-toggle")) {
-        const btn = document.createElement("div");
-        btn.className = "menu-toggle";
-        btn.innerHTML = "☰";
-        topbar?.prepend(btn);
-
-        btn.addEventListener("click", () => {
-          nav.classList.toggle("open");
-          btn.classList.toggle("active");
-        });
-      }
-
-      // приховуємо навігацію до натискання
-      if (nav) {
-        nav.classList.add("collapsed");
-        nav.classList.remove("open");
-      }
-    }
-
-    // === 💻 Планшетна версія ===
-    else if (w <= 1024) {
-      document.body.classList.add("tablet");
-      document.body.classList.remove("mobile", "desktop");
-
-      if (search) search.placeholder = "Пошук фільмів...";
-      if (profileBtn) profileBtn.textContent = "👑 Мій кабінет";
-
-      const toggle = document.querySelector(".menu-toggle");
-      if (toggle) toggle.remove();
-
-      if (nav) {
-        nav.classList.remove("collapsed", "open");
-        nav.style.display = "flex";
-      }
-    }
-
-    // === 🖥 Десктоп ===
-    else {
-      document.body.classList.add("desktop");
-      document.body.classList.remove("mobile", "tablet");
-
-      if (search) search.placeholder = "Пошук…";
-      if (profileBtn) profileBtn.textContent = "👑 Мій кабінет";
-
-      const toggle = document.querySelector(".menu-toggle");
-      if (toggle) toggle.remove();
-
-      if (nav) {
-        nav.classList.remove("collapsed", "open");
-        nav.style.display = "flex";
-      }
+  function ensureToggleHandler() {
+    const t = getToggle();
+    if (!t) return;
+    if (!t._bound) {
+      t.addEventListener('click', onToggle);
+      t._bound = true;
     }
   }
 
-  applyResponsive();
-  window.addEventListener("resize", applyResponsive);
-});
+  function onToggle() {
+    const nav = getNav();
+    if (!nav) return;
+    const opened = nav.classList.toggle('open');
+    this.classList.toggle('active', opened);
+  }
+
+  function applyMode() {
+    const nav = getNav();
+    const toggle = getToggle();
+    const isMobile = window.innerWidth <= MOBILE_BP;
+
+    if (isMobile) {
+      body.classList.add('mobile');
+      nav && nav.classList.remove('open');          // стартово закрите
+      toggle && toggle.classList.remove('active');  // скинути стан іконки
+      ensureToggleHandler();
+    } else {
+      body.classList.remove('mobile');
+      nav && nav.classList.remove('open');
+      toggle && toggle.classList.remove('active');
+    }
+  }
+
+  // Закривати меню при кліку поза ним
+  document.addEventListener('click', (e) => {
+    if (!body.classList.contains('mobile')) return;
+    const nav = getNav();
+    const toggle = getToggle();
+    if (!nav) return;
+
+    const clickInsideMenu = nav.contains(e.target) || (toggle && toggle.contains(e.target));
+    if (!clickInsideMenu) {
+      nav.classList.remove('open');
+      toggle && toggle.classList.remove('active');
+    }
+  });
+
+  // Закривати меню при переході по пункту
+  document.addEventListener('click', (e) => {
+    if (!body.classList.contains('mobile')) return;
+    const link = e.target.closest('.main-nav a');
+    if (link) {
+      const nav = getNav();
+      const toggle = getToggle();
+      nav && nav.classList.remove('open');
+      toggle && toggle.classList.remove('active');
+    }
+  });
+
+  // Ховати ховер-мегаменю на мобільному (без JS-наведення)
+  function disableHoverMegaOnMobile() {
+    if (!body.classList.contains('mobile')) return;
+    document.querySelectorAll('.mega-menu, .mega-series, .mega-cartoons')
+      .forEach(m => { m.style.display = 'none'; m.style.opacity = 0; m.style.pointerEvents = 'none'; });
+  }
+
+  window.addEventListener('resize', () => { applyMode(); disableHoverMegaOnMobile(); });
+  document.addEventListener('DOMContentLoaded', () => { applyMode(); disableHoverMegaOnMobile(); });
+
+})();
