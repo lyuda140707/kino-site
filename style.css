@@ -1028,17 +1028,15 @@ header {
 }
 
 
-
-/* === МЕГА-МЕНЮ (АДАПТИВНИЙ ВАРІАНТ) === */
+/* === МЕГА-МЕНЮ (СТИЛЬ ДЛЯ ПК) === */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
-  position: absolute;
+  position: fixed;
   top: 55px;
-  left: 0;
-  right: 0;
-  width: 100%;
-  max-width: 1150px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  width: 1150px;
   margin: 0 auto;
   padding: 20px 25px 30px;
   border-radius: 0 0 12px 12px;
@@ -1048,10 +1046,9 @@ header {
   pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease;
   z-index: 9999;
-  transform: translateY(-10px); /* тільки вертикальний рух, без зміщення вліво */
 }
 
-/* показ при наведенні або фокусі */
+/* показ при наведенні */
 .dropdown:hover .mega-menu,
 .dropdown:hover .mega-series,
 .dropdown:hover .mega-cartoons,
@@ -1061,7 +1058,7 @@ header {
   opacity: 1;
   visibility: visible;
   pointer-events: all;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
 }
 
 /* індивідуальні кольори */
@@ -1081,19 +1078,20 @@ header {
   box-shadow: 0 8px 25px rgba(255, 204, 0, 0.25);
 }
 
-/* === АДАПТАЦІЯ НА ТЕЛЕФОНАХ === */
+/* === 📱 АДАПТАЦІЯ НА ТЕЛЕФОНАХ === */
 @media (max-width: 980px) {
   .mega-menu,
   .mega-series,
   .mega-cartoons {
-    position: static;
-    width: 100%;
+    position: static;               /* не фіксуємо */
+    transform: none;                /* не зсуваємо по центру */
+    width: 100%;                    /* на всю ширину */
+    max-width: 100%;
     box-shadow: none;
     border: none;
     background: transparent;
     padding: 0;
     margin: 0;
-    transform: none; /* ❗ скасовує translateX(-50%) */
   }
 
   .mega-menu .genres {
@@ -1120,6 +1118,7 @@ header {
     overflow-y: auto;
   }
 }
+
 
 /* === ЗОНА БЕЗПЕКИ, ЩОБ МЕНЮ НЕ ХОВАЛОСЬ === */
 .dropdown {
