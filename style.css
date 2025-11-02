@@ -1483,13 +1483,12 @@ header {
   }
 }
 
-/* === 📱 Фікс обрізання контенту справа === */
+/* === 📱 Фікс обрізання контенту справа + 2 картки в ряд === */
 @media (max-width: 980px) {
   html, body {
     overflow-x: hidden !important;
   }
 
-  /* Повна ширина для всіх основних контейнерів */
   .container,
   main,
   .main-grid,
@@ -1503,18 +1502,22 @@ header {
     box-sizing: border-box !important;
   }
 
-  /* Фільми не впритул до країв */
+  /* 🎬 2 картки в ряд */
   .film-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* 2 по 160px */
+    gap: 12px;
   }
 
-  /* Банер і слайдер теж не вилазять */
+  .film-card,
+  .film {
+    width: 100% !important;
+    margin: 0 auto;
+  }
+
   .banner-slider {
     overflow: hidden !important;
   }
 }
-
 
 
