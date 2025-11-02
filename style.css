@@ -1495,5 +1495,9 @@ body.mobile .main-nav img.nav-logo {
   }
 }
 
+/* === Випадаюче мега-меню на комп'ютері === */
+.dropdown:hover .mega-menu {
+  display: block;
+}
 
 
