@@ -66,7 +66,10 @@
       <h2>Останні надходження</h2>
     </div>
     <div id="films-list" class="film-grid"></div>
-    
+    <div class="block" style="margin-top:24px">
+      <h2>🧩 Нові серіали</h2>
+    </div>
+    <div id="series-list" class="film-grid"></div>
 
     <div class="pagination">
       <button>«</button>
@@ -175,71 +178,10 @@ data.forEach(item => {
 
   const unique = Array.from(map.values());
   
-// === Пагінація ===
-const filmsPerPage = 24; // 6 рядів по 4 фільми
-let currentPage = 1;
-
-function renderFilms(page = 1) {
-  container.innerHTML = "";
-  const start = (page - 1) * filmsPerPage;
-  const end = start + filmsPerPage;
-  const pageFilms = unique.slice(start, end);
-
-  pageFilms.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "film";
-    card.innerHTML = `
-      <div class="poster">
-        <img src="${item.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${item.title || ''}">
-        ${String(item.pro_access || '').toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
-      </div>
-      <div class="title">${item.title || ''}</div>
-      <div class="meta">
-        <span>${item.type || ''}</span> • 
-        <span>${item.genre || ''}</span> • 
-        <span>${item.year || ''}</span> • 
-        <span>IMDb: ${item.imdb || '—'}</span>
-      </div>
-    `;
-    card.addEventListener("click", () => {
-      if (item.type === "Серіал") {
-        window.location.href = "series.html?title=" + encodeURIComponent(item.title);
-      } else if (item.type === "Мультсеріал") {
-        window.location.href = "multseries.html?title=" + encodeURIComponent(item.title);
-      } else {
-        window.location.href = "film.html?id=" + item.id;
-      }
-    });
-    container.appendChild(card);
-  });
-
-  renderPagination();
-}
-
-function renderPagination() {
-  const totalPages = Math.ceil(unique.length / filmsPerPage);
-  const pag = document.querySelector(".pagination");
-  pag.innerHTML = "";
-
-  const createBtn = (text, page) => {
-    const btn = document.createElement("button");
-    btn.textContent = text;
-    if (page === currentPage) btn.classList.add("active");
-    btn.addEventListener("click", () => {
-      if (page < 1 || page > totalPages) return;
-      currentPage = page;
-      renderFilms(currentPage);
-    });
-    pag.appendChild(btn);
-  };
-
-  createBtn("«", currentPage - 1);
-  for (let i = 1; i <= totalPages; i++) createBtn(i, i);
-  createBtn("»", currentPage + 1);
-}
-
-// Старт
-renderFilms(currentPage);
+  // 🔹 Беремо 20 останніх (після злиття)
+  const latest = unique
+    .sort((a, b) => (b.id || 0) - (a.id || 0))
+    .slice(0, 20);
 
 
   container.innerHTML = "";
@@ -518,8 +460,6 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
-
-
 
 
 
