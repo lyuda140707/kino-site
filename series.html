@@ -545,6 +545,15 @@
       return;
     }
 
+    // 🧹 Прибираємо дублікати серій (однаковий сезон + номер серії)
+    const uniqueEpisodes = new Map();
+    data.forEach(row => {
+      const key = `${row.season || 1}_${row.episode || 0}`;
+      if (!uniqueEpisodes.has(key)) uniqueEpisodes.set(key, row);
+    });
+    const cleanData = Array.from(uniqueEpisodes.values());
+
+
     // заповнення заголовку/постера/мети/опису з першого рядка
     const first = data[0];
     // 🧩 Захист від ботів із “сіллю”
