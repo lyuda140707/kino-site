@@ -15,11 +15,24 @@
 <div id="header-placeholder"></div>
 
 <script>
-  // 🟢 Функція для активації пошуку після завантаження хедера
+  // 🟢 Завантаження хедера
+  fetch("header.html")
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("header-placeholder").innerHTML = html;
+      if (window.innerWidth <= 980) document.body.classList.add("mobile");
+
+      // 🟢 Трохи почекаємо, щоб DOM устиг оновитися
+      setTimeout(() => {
+        initMobileHeader();
+      }, 150);
+    })
+    .catch(err => console.error("Помилка завантаження хедера:", err));
+
+  // === Функція активації пошуку ===
   function bindHeaderSearch() {
     const input = document.getElementById("search-input");
     if (!input) return;
-
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -32,42 +45,41 @@
     });
   }
 
-  // 🟢 Завантаження хедера + підключення пошуку, бургера та мобільного мега-меню
-  fetch("header.html")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("header-placeholder").innerHTML = html;
-      bindHeaderSearch();
-      if (window.innerWidth <= 980) document.body.classList.add("mobile");
+  // === Функція активації бургеру та мега-меню ===
+  function initMobileHeader() {
+    bindHeaderSearch();
 
-      // 🟣 Активуємо мега-меню для мобільних
-      if (window.innerWidth <= 980) {
-        document.querySelectorAll(".dropdown > a").forEach(link => {
-          link.addEventListener("click", (e) => {
-            e.preventDefault();
-            const parent = link.parentElement;
-            const menu = parent.querySelector(".mega-menu, .mega-series, .mega-cartoons");
-            if (!menu) return;
+    // Активуємо бургер (якщо він є)
+    const menuToggle = document.getElementById("menuToggle");
+    const nav = document.querySelector(".main-nav");
+    if (menuToggle && nav) {
+      menuToggle.addEventListener("click", () => {
+        nav.classList.toggle("open");
+      });
+    }
 
-            // ховаємо інші меню
-            document.querySelectorAll(".mega-menu, .mega-series, .mega-cartoons").forEach(m => {
-              if (m !== menu) m.style.display = "none";
-            });
+    // 🟣 Мега-меню для мобільних
+    if (window.innerWidth <= 980) {
+      document.querySelectorAll(".dropdown > a").forEach(link => {
+        link.addEventListener("click", e => {
+          e.preventDefault();
+          const parent = link.parentElement;
+          const menu = parent.querySelector(".mega-menu, .mega-series, .mega-cartoons");
+          if (!menu) return;
 
-            // показуємо/ховаємо потрібне
-            if (menu.style.display === "block") {
-              menu.style.display = "none";
-            } else {
-              menu.style.display = "block";
-              menu.scrollLeft = 0;
-            }
+          // Закриваємо інші
+          document.querySelectorAll(".mega-menu, .mega-series, .mega-cartoons").forEach(m => {
+            if (m !== menu) m.style.display = "none";
           });
-        });
-      }
-    })
-    .catch(err => console.error("Помилка завантаження хедера:", err));
-</script>
 
+          // Перемикаємо видимість
+          menu.style.display = (menu.style.display === "block") ? "none" : "block";
+          menu.scrollLeft = 0;
+        });
+      });
+    }
+  }
+</script>
 
 
 
@@ -535,6 +547,7 @@ document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
 
 </body>
 </html>
+
 
 
 
