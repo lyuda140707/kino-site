@@ -1290,3 +1290,91 @@ header {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
 }
+
+/* === 📱 Мобільна шапка та меню (не чіпає десктоп) === */
+@media (max-width: 980px) {
+  /* ховаємо стандартну навігацію */
+  .main-nav { display: none !important; }
+
+  /* бургер */
+  .burger-btn {
+    position: fixed;
+    top: 14px;
+    right: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px; height: 42px;
+    background: rgba(0,0,0,0.85);
+    color: #00fff2;
+    font-size: 22px;
+    border: 1px solid rgba(0,255,255,0.35);
+    border-radius: 10px;
+    z-index: 2001;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+  }
+  .burger-btn:active { transform: scale(0.98); }
+
+  body.menu-open { overflow: hidden; }
+
+  .mobile-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s ease;
+  }
+  .mobile-overlay.show { opacity: 1; pointer-events: auto; }
+
+  .mobile-panel {
+    position: fixed;
+    top: 0; right: 0; height: 100dvh; width: min(92vw, 380px);
+    background: #0b0b0b;
+    color: #e8e8e8;
+    z-index: 2002;
+    transform: translateX(100%);
+    transition: transform .25s ease;
+    display: flex; flex-direction: column;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.6);
+  }
+  .mobile-panel.show { transform: translateX(0); }
+
+  .mobile-panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .mobile-title { font-weight: 600; font-size: 16px; }
+  .mobile-close {
+    width: 38px; height: 38px;
+    display: inline-flex; align-items:center; justify-content:center;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px; background: transparent; color: #fff;
+  }
+
+  .mobile-nav-scroll { overflow: auto; padding: 10px 8px 24px; }
+
+  .mobile-nav a {
+    display: block;
+    padding: 12px 14px;
+    color: #e8e8e8;
+    text-decoration: none;
+    border-radius: 10px;
+  }
+  .mobile-nav a:active { background: rgba(255,255,255,0.06); }
+
+  .mobile-accordion { border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; margin: 8px 0; overflow: hidden; }
+  .mobile-acc-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 14px; cursor: pointer; background: rgba(255,255,255,0.03);
+  }
+  .mobile-acc-head .chev { transition: transform .2s ease; }
+  .mobile-acc-head.open .chev { transform: rotate(90deg); }
+  .mobile-acc-body { max-height: 0; overflow: hidden; transition: max-height .25s ease; background: rgba(255,255,255,0.02); }
+  .mobile-acc-inner { padding: 6px 10px 10px; }
+
+  .mobile-acc-inner .mega-col-title { font-weight: 600; font-size: 14px; margin: 10px 6px 6px; color: #00fff2; }
+  .mobile-acc-inner a { padding: 10px 10px; border-radius: 8px; }
+
+  header { z-index: 1000; }
+}
