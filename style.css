@@ -1028,10 +1028,12 @@ header {
 }
 
 
+
+/* === ФІКС МЕНЮ (НЕ ХОВАЄТЬСЯ, НЕ ЗМІЩУЄТЬСЯ) === */
 .mega-menu,
 .mega-series,
 .mega-cartoons {
-  position: absolute;
+  position: fixed;
   top: 55px;
   left: 50%;
   transform: translateX(-50%);
@@ -1288,94 +1290,3 @@ header {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
 }
-/* === Ховаємо мобільне меню на комп'ютерах === */
-.mobile-menu {
-  display: none;
-}
-/* === 📱 Мобільна адаптація === */
-@media (max-width: 980px) {
-
-  /* 🔹 Ховаємо велике мега-меню на мобільному */
-  .mega-menu,
-  .mega-series,
-  .mega-cartoons {
-    display: none !important;
-  }
-
-  header .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .main-nav {
-    display: none; /* приховуємо звичайне меню */
-  }
-
-  .burger-btn {
-    position: fixed;
-    top: 14px;
-    right: 18px;
-    background: rgba(0,0,0,0.8);
-    color: #00fff2;
-    font-size: 26px;
-    border: 1px solid rgba(0,255,255,0.3);
-    border-radius: 8px;
-    padding: 6px 10px;
-    z-index: 2001;
-    cursor: pointer;
-  }
-
-  .burger-btn.open {
-    background: #00fff2;
-    color: #000;
-  }
-
-  .mobile-menu {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100vh;
-    background: #000;
-    padding-top: 80px;
-    gap: 20px;
-    text-align: center;
-    transform: translateY(-100%);
-    transition: transform 0.35s ease;
-    z-index: 2000;
-  }
-
-  .mobile-menu.open {
-    transform: translateY(0);
-  }
-
-  .mobile-menu a {
-    color: #00fff2;
-    text-decoration: none;
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-  }
-
-  .mobile-menu a:hover {
-    color: #fff;
-  }
-
-  .top-right {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
-  .search {
-    flex: 1;
-  }
-
-  .profile-btn {
-    flex-shrink: 0;
-  }
-}
-
