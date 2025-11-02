@@ -1402,3 +1402,37 @@ header {
     display: none !important;
   }
 }
+/* === 🖥️ ВІДНОВЛЕННЯ СТИЛЮ МЕГА-МЕНЮ ДЛЯ ДЕСКТОПУ === */
+@media (min-width: 981px) {
+  /* повертаємо стару позицію */
+  .mega-menu,
+  .mega-series,
+  .mega-cartoons {
+    position: fixed !important;
+    top: 55px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 1150px !important;
+    margin: 0 auto !important;
+    padding: 25px 60px 35px !important;
+    border-radius: 0 0 12px 12px !important;
+    box-sizing: border-box !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 9999 !important;
+  }
+
+  /* прибираємо мобільний вплив */
+  .burger-btn,
+  .mobile-overlay,
+  .mobile-panel {
+    display: none !important;
+  }
+
+  body.menu-open {
+    overflow: visible !important;
+  }
+}
+
