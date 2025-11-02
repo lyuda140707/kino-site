@@ -8,18 +8,53 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
 
-/* 🔹 Кнопки сезонів */
-.season-btn.active {
-  background: #00fff2;
-  color: #000;
-  border-color: #00fff2;
-  box-shadow: 0 0 10px rgba(0,255,255,0.4);
+/* === 🔹 Кнопки вибору сезону === */
+.seasons-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  justify-content: flex-start;
+}
+
+.season-btn {
+  background: linear-gradient(145deg, #0f0f0f, #151515);
+  border: 1px solid rgba(0,255,255,0.35);
+  color: #00fff2;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.25s ease;
+  text-shadow: 0 0 5px rgba(0,255,255,0.6);
+  box-shadow: 0 0 8px rgba(0,255,255,0.15);
+}
+
+.season-btn:hover {
+  background: rgba(0,255,255,0.1);
+  box-shadow: 0 0 10px rgba(0,255,255,0.3);
   transform: scale(1.05);
 }
-.season-btn:hover {
-  box-shadow: 0 0 8px rgba(0,255,255,0.3);
-  transform: scale(1.03);
+
+/* 🟡 Активний сезон — яскраво виділений */
+.season-btn.active {
+  background: linear-gradient(145deg, #00fff2, #00b5b0);
+  color: #000;
+  font-weight: 700;
+  border-color: #00fff2;
+  box-shadow: 0 0 20px rgba(0,255,255,0.5), inset 0 0 6px rgba(0,0,0,0.5);
+  transform: scale(1.08);
 }
+
+/* адаптив для вузьких екранів */
+@media (max-width: 600px) {
+  .season-btn {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+}
+
 
     /* --- модальне вікно (як у film.html) --- */
 .modal {
@@ -398,6 +433,7 @@
 
       <div class="episodes">
         <h3>Серії</h3>
+        <h4 style="color:#00fff2;margin-top:8px;">Сезони:</h4>
         <div id="episodesContainer"></div>
       </div>
 
