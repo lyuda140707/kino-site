@@ -1,35 +1,25 @@
 <!-- === HEADER === -->
 <header>
   <div class="container topbar">
-  <!-- 🟢 Кнопка бургер -->
-  <span id="menuToggle" class="menu-toggle" aria-label="Відкрити меню"
-  onclick="(function(){
-    var nav=document.querySelector('.main-nav');
-    if(!nav) return;
-    var opened=nav.classList.toggle('open');
-    var t=document.getElementById('menuToggle');
-    if(t){t.classList.toggle('active', opened);}
-  })();">☰</span>
 
-  <!-- 🔹 Далі твій логотип -->
-  <a href="/index.html" class="logo-link">
-    <img src="img/logo.png" alt="RelaxKino" class="logo">
-  </a>
-  <nav class="main-nav">
+    <!-- 🟢 Кнопка бургер -->
+    <span id="menuToggle" class="menu-toggle" aria-label="Відкрити меню"
+      onclick="(function(){
+        var nav=document.querySelector('.main-nav');
+        if(!nav) return;
+        var opened=nav.classList.toggle('open');
+        var t=document.getElementById('menuToggle');
+        if(t){t.classList.toggle('active', opened);}
+      })();">☰</span>
 
-  <div class="container topbar">
-    <!-- Кнопка ☰ для мобільного -->
-    <span id="menuToggle" class="menu-toggle" aria-label="Відкрити меню">☰</span>
-  
-    <!-- Навігація -->
-    <nav id="mainNav" class="main-nav">
+    <!-- 🟢 Логотип -->
+    <a href="/index.html" class="logo-link">
+      <img src="img/logo.png" alt="RelaxKino" class="logo">
+    </a>
 
-      <a href="/index.html">
-        <img src="logo.png" alt="Relax Logo" class="nav-logo" />
-      </a>
+    <!-- 🟢 ГОЛОВНЕ МЕНЮ -->
+    <nav class="main-nav">
       <a href="/index.html" class="active">Головна</a>
-
-<!-- === МЕНЮ ФІЛЬМИ === -->
 <div class="dropdown">
   <a href="#" class="menu-films">Фільми</a>
   <div class="mega-menu">
