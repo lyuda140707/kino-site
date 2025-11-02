@@ -384,15 +384,8 @@
 
       <div class="episodes">
         <h3>Серії</h3>
-        <div style="margin-bottom:10px;">
-          <label for="seasonSelect" style="color:#bbb;margin-right:8px;">Сезон:</label>
-          <select id="seasonSelect" style="background:#0b0b0b;color:#00fff2;border:1px solid rgba(0,255,255,0.3);border-radius:6px;padding:5px 8px;">
-            <option value="all">Всі сезони</option>
-          </select>
-        </div>
         <div id="episodesContainer"></div>
       </div>
-
 
       <div class="series-desc">
         <h3>Про серіал</h3>
@@ -578,63 +571,40 @@ else {
   `;
 }
 
-// === Вибір сезонів ===
-const container = document.getElementById("episodesContainer");
-const seasonSelect = document.getElementById("seasonSelect");
-container.innerHTML = "";
-seasonSelect.innerHTML = '<option value="all">Всі сезони</option>';
+    // малюємо список серій, згруповано по сезонах
+    const container = document.getElementById("episodesContainer");
+    container.innerHTML = "";
+    const groups = groupBySeason(data);
 
-const groups = groupBySeason(data);
-groups.forEach(([season, episodes]) => {
-  const opt = document.createElement("option");
-  opt.value = season;
-  opt.textContent = `Сезон ${season}`;
-  seasonSelect.appendChild(opt);
-});
+    groups.forEach(([season, episodes])=>{
+      const block = document.createElement("div");
+      block.className = "season-block";
+      const h = document.createElement("h4");
+      h.style.color="#bbb"; h.style.margin="6px 0";
+      h.textContent = `Сезон ${season}`;
+      const list = document.createElement("div");
+      list.className = "ep-list";
 
-// === Функція відображення серій для вибраного сезону ===
-function renderEpisodes(selectedSeason = "all") {
-  container.innerHTML = "";
-  const filtered = selectedSeason === "all"
-    ? groups
-    : groups.filter(([s]) => s == selectedSeason);
-
-  filtered.forEach(([season, episodes]) => {
-    const block = document.createElement("div");
-    block.className = "season-block";
-    const h = document.createElement("h4");
-    h.style.color = "#bbb";
-    h.style.margin = "6px 0";
-    h.textContent = `Сезон ${season}`;
-    const list = document.createElement("div");
-    list.className = "ep-list";
-
-    episodes.forEach(ep => {
-      const btn = document.createElement("button");
-      btn.className = "ep-btn";
-      btn.textContent = `Серія ${ep.episode || "?"}`;
-      btn.addEventListener("click", () => {
-        container.querySelectorAll(".ep-btn.active").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        useSource(ep.stream_url || "");
+      episodes.forEach(ep=>{
+        const btn = document.createElement("button");
+        btn.className = "ep-btn";
+        btn.textContent = `Серія ${ep.episode || "?"}`;
+        btn.addEventListener("click", ()=>{
+          container.querySelectorAll(".ep-btn.active").forEach(b=>b.classList.remove("active"));
+          btn.classList.add("active");
+          useSource(ep.stream_url || "");
+          // ▶️ Автоплей прибрано — користувач сам натискає Play
+        });
+        // активуємо першу кнопку
+        if (ep === first) btn.classList.add("active");
+        list.appendChild(btn);
       });
-      list.appendChild(btn);
+
+      block.appendChild(h);
+      block.appendChild(list);
+      container.appendChild(block);
     });
-
-    block.appendChild(h);
-    block.appendChild(list);
-    container.appendChild(block);
-  });
-}
-
-// Початково показуємо всі сезони
-renderEpisodes();
-
-// При зміні вибору сезону — перемальовуємо
-seasonSelect.addEventListener("change", () => {
-  renderEpisodes(seasonSelect.value);
-});
-
+  }
 
   document.addEventListener("DOMContentLoaded", loadSeries);
   // === ⭐ ЗАКЛАДКИ (СЕРІАЛИ) ===
