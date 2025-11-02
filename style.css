@@ -1290,4 +1290,49 @@ header {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
 }
+/* === 📱 Адаптивна стилізація === */
+.menu-toggle {
+  display: none;
+  font-size: 28px;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  margin-right: 12px;
+}
+
+body.mobile .menu-toggle {
+  display: block;
+}
+
+body.mobile .main-nav {
+  display: none;
+  flex-direction: column;
+  background: #111;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  padding: 10px 0;
+  z-index: 999;
+}
+
+body.mobile .main-nav.show {
+  display: flex;
+}
+
+body.mobile .top-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+body.mobile #search-input {
+  width: 140px;
+}
+
+body.tablet .main-nav a {
+  font-size: 14px;
+  padding: 4px 8px;
+}
+
 
