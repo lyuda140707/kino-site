@@ -1840,28 +1840,4 @@ header {
 }
 
 
-/* === 🎯 ДОПОВНЕННЯ: ювелірне центрування сторінки === */
-@media (max-width: 980px) {
-  body {
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100vw;
-    max-width: 100vw;
-    overflow-x: hidden !important;
-  }
-
-  /* Щоб відео, банери й контейнери не виходили за новий центр */
-  .film-container,
-  .film-right,
-  .film-left,
-  .player-box,
-  .tg-banner {
-    position: relative;
-    left: 0;
-    transform: none !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-}
 
