@@ -1650,35 +1650,60 @@ video,
     right: 16px !important;
   }
 }
-/* === 🎯 Центрування контенту на мобільних === */
+/* === 🎯 Центрування плеєра і нижнього контенту у фільмах === */
 @media (max-width: 980px) {
-  html, body {
-    width: 100%;
-    margin: 0 auto !important;
-    padding: 0;
-    overflow-x: hidden;
-    background-color: #000 !important; /* або колір фону сторінки */
-  }
-
+  /* Контейнер фільму — виставляємо центр */
   .film-container {
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto !important;
-    padding-left: 8px !important;
-    padding-right: 8px !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
+    padding: 0 10px !important;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
+  /* Блок праворуч — без лівого зсуву, усе по центру */
   .film-right {
-    margin: 0 auto !important;
-    max-width: 100% !important;
-    display: block;
-  }
-
-  .player-box, video {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 auto !important;
+    padding: 0 !important;
+    text-align: center !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  /* Плеєр */
+  .player-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto 10px auto !important;
     display: block !important;
+    text-align: center;
+  }
+
+  video {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+    margin: 0 auto !important;
+    border-radius: 12px;
+  }
+
+  /* Опис і характеристики фільму */
+  .film-description,
+  .film-info {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    text-align: left;
+    box-sizing: border-box;
   }
 }
+
 
