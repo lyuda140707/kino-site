@@ -291,11 +291,11 @@ async function loadLatestSeries() {
     });
   }
 
-  // 🚀 Автоматичний запуск
-  document.addEventListener("DOMContentLoaded", () => {
-  loadLatestFilms();
-  loadTopFilms();
-  loadDynamicSidebar();
+// 🚀 Автоматичний запуск
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadTopFilms();
+  await loadDynamicSidebar();
+  await loadLatestFilms(1); // ✅ побудова фільмів + кнопок пагінації
 });
 
 </script>
@@ -474,6 +474,7 @@ function scrollToTopSmooth() {
 
 </body>
 </html>
+
 
 
 
