@@ -186,54 +186,20 @@ const unique = Array.from(map.values());
     container.appendChild(card);
   });
 
-
-
-// Максимум 5 номерів сторінок
-const maxVisible = 5;
-let startPage = Math.max(1, page - Math.floor(maxVisible / 2));
-let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-
-// Корекція біля країв
-if (endPage - startPage < maxVisible - 1) {
-  startPage = Math.max(1, endPage - maxVisible + 1);
+  // 🔹 Побудова пагінації
+  const pagination = document.querySelector(".pagination");
+  pagination.innerHTML = "";
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    if (i === page) btn.classList.add("active");
+    btn.addEventListener("click", () => {
+      loadLatestFilms(i);
+      scrollToTopSmooth(); // 🆕 плавно піднімає сторінку догори
+    });
+    pagination.appendChild(btn);
+  }
 }
-
-// ◀ Назад
-if (page > 1) {
-  const prev = document.createElement("button");
-  prev.textContent = "◀";
-  prev.classList.add("nav-btn");
-  prev.addEventListener("click", () => {
-    loadLatestFilms(page - 1);
-    scrollToTopSmooth();
-  });
-  pagination.appendChild(prev);
-}
-
-// Цифри
-for (let i = startPage; i <= endPage; i++) {
-  const btn = document.createElement("button");
-  btn.textContent = i;
-  if (i === page) btn.classList.add("active");
-  btn.addEventListener("click", () => {
-    loadLatestFilms(i);
-    scrollToTopSmooth();
-  });
-  pagination.appendChild(btn);
-}
-
-// ▶ Вперед
-if (page < totalPages) {
-  const next = document.createElement("button");
-  next.textContent = "▶";
-  next.classList.add("nav-btn");
-  next.addEventListener("click", () => {
-    loadLatestFilms(page + 1);
-    scrollToTopSmooth();
-  });
-  pagination.appendChild(next);
-}
-
 </script>
 
 
@@ -528,9 +494,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
-
-
-
 
 
 
