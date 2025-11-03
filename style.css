@@ -1573,3 +1573,29 @@ header {
 
 
 
+/* === 🛠 Виправлення "прилипання" сайту до правої сторони на мобільних === */
+@media (max-width: 980px) {
+  html, body {
+    overflow-x: hidden !important;
+    position: relative;
+  }
+
+  .container, .main-grid, .content {
+    margin: 0 auto !important;
+    padding: 0 10px !important;
+    box-sizing: border-box;
+  }
+
+  /* Щоб бургер і панель не зсували весь сайт */
+  .mobile-panel {
+    left: 0 !important;
+    right: auto !important;
+  }
+
+  /* Запобігає мікрозсувам через тіні/градієнти */
+  body::before, body::after {
+    max-width: 12px;
+    overflow: hidden;
+  }
+}
+
