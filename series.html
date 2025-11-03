@@ -7,30 +7,6 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-/* === 🔊 Кнопка Увімкнути звук === */
-.unmute-btn {
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
-  background: rgba(0,0,0,0.6);
-  color: #00fff2;
-  border: 1px solid rgba(0,255,255,0.4);
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  z-index: 20;
-  transition: all 0.3s ease;
-  text-shadow: 0 0 8px #00fff2;
-}
-.unmute-btn:hover {
-  background: rgba(0,255,255,0.2);
-  box-shadow: 0 0 10px rgba(0,255,255,0.4);
-}
-.unmute-btn.hidden {
-  display: none;
-}
 
 /* === 🔹 Кнопки вибору сезону === */
 .seasons-row {
@@ -464,9 +440,6 @@
         <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
         <div id="bigPlayOverlay"><div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
       </div>
-      <!-- 🔊 Кнопка вмикання звуку -->
-      <button id="unmuteBtn" class="unmute-btn">🔊 Увімкнути звук</button>
-
 
       <div class="episodes">
         <h3>Серії</h3>
@@ -518,19 +491,6 @@
   const player = document.getElementById("seriesPlayer");
   const overlay = document.getElementById("bigPlayOverlay");
   let hls = null;
-  // === 🔊 Логіка кнопки "Увімкнути звук" ===
-  const unmuteBtn = document.getElementById("unmuteBtn");
-  if (unmuteBtn && player) {
-    unmuteBtn.addEventListener("click", () => {
-      player.muted = false;
-      unmuteBtn.classList.add("hidden");
-    });
-  
-    // Якщо користувач натиснув Play — сховати кнопку
-    player.addEventListener("play", () => {
-      if (!player.muted) unmuteBtn.classList.add("hidden");
-    });
-  }
 
   function useSource(url){
     // прибираємо попередній HLS
