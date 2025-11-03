@@ -706,8 +706,9 @@ const seasonColors = {
   15: "#ffaa00"
 };
 
+  const activeColor = seasonColors[season] || "#00fff2";
 
-   episodes.forEach(ep => {
+  episodes.forEach(ep => {
     const btn = document.createElement("button");
     btn.className = "ep-btn";
     btn.textContent = `Серія ${ep.episode || "?"}`;
@@ -719,34 +720,32 @@ const seasonColors = {
     list.appendChild(btn);
   });
 
-  // 🔹 Єдиний стиль для всіх сезонів (#c74279)
+  // 🔹 Міняємо колір рамки і активного стану серій відповідно до сезону
   const styleTag = document.getElementById("season-style") || document.createElement("style");
   styleTag.id = "season-style";
   styleTag.innerHTML = `
     .ep-list.season-${season} .ep-btn {
-      border-color: #c74279;
-      color: #c74279;
+      border-color: ${activeColor};
+      color: ${activeColor};
     }
     .ep-list.season-${season} .ep-btn.active {
-      background: linear-gradient(145deg, #ff4b91, #c74279);
-      color: #fff;
-      box-shadow: 0 0 15px #c74279;
+      background: ${activeColor};
+      color: #000;
+      box-shadow: 0 0 15px ${activeColor};
     }
   `;
   document.head.appendChild(styleTag);
 
   listContainer.appendChild(list);
 }
-
 // змінюємо колір активної кнопки сезону відповідно до серій
 function setSeasonButtonColor(btn, color) {
-  btn.style.background = `linear-gradient(145deg, ${color}, #c74279)`;
-  btn.style.color = "#fff";
+  btn.style.background = color;
+  btn.style.color = "#000";
   btn.style.boxShadow = `0 0 18px ${color}`;
   btn.style.borderColor = color;
-  btn.style.fontWeight = "700";
-  btn.style.transform = "scale(1.08)";
 }
+
 // додаємо зміну кольору при натисканні
 groups.forEach(([season]) => {
   const color = seasonColors[season] || "#00fff2";
