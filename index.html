@@ -125,7 +125,7 @@ async function loadLatestFilms(page = 1) {
     .select("id, title, poster, type, genre, year, imdb, pro_access")
     .in("type", ["Фільм", "Мультфільм", "Мультсеріал", "Серіал"])
     .order("id", { ascending: false })
-    .limit(200);
+    .limit(1000);
 
   if (error) {
     console.error("❌ Помилка завантаження:", error);
@@ -493,6 +493,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
 
 
 
