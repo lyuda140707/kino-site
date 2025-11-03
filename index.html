@@ -154,6 +154,7 @@ const unique = Array.from(map.values());
   const totalPages = Math.ceil(unique.length / perPage);
   const start = (page - 1) * perPage;
   const currentFilms = unique.slice(start, start + perPage);
+  console.log("🎞 Завантажено:", data.length, " | Унікальних:", unique.length, " | totalPages:", totalPages);
 
   // 🔹 Вивід карток
   container.innerHTML = "";
@@ -493,6 +494,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
 
 
 
