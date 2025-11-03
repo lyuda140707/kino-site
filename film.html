@@ -514,10 +514,11 @@
 
 
 
-        <div class="player-box">
-  <div class="player-wrapper" style="position:relative;">
+<div class="player-box">
+  <div class="player-wrapper">
     <video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"
-      style="border-radius:12px;width:100%;aspect-ratio:16/9;display:block;"></video>
+      style="border-radius:12px;width:100%;height:auto;display:block;max-width:100vw;"></video>
+
 
     <!-- 🔹 Велика кнопка Play поверх відео -->
     <div id="bigPlayBtn"
@@ -536,8 +537,7 @@
 </div>
 
 
-        <div class="film-description">
-          <div class="film-description">
+       <div class="film-description">
         <h3>Про що фільм:</h3>
         <p id="filmDesc">Опис фільму...</p>
       </div>
