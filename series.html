@@ -366,7 +366,44 @@
   background: #00e6da;
   box-shadow: 0 0 12px rgba(0, 255, 255, 0.35);
 }
- 
+ /* ===== 🎬 Рекомендовані (універсальні стилі) ===== */
+.recommended-section {
+  margin-top: 22px;
+  background: #0d0d0d;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 16px;
+}
+.recommended-section h3 {
+  color: #00fff2;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.recommended-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.recommended-item {
+  width: 100px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.recommended-item:hover { transform: translateY(-4px); }
+.recommended-item img {
+  width: 100%;
+  height: 145px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.recommended-item p {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #ccc;
+  line-height: 1.3;
+}
+
   </style>
 </head>
 <body>
@@ -414,6 +451,13 @@
         <h3>Про серіал</h3>
         <p id="seriesDesc">Опис…</p>
       </div>
+
+      <!-- 🎬 Рекомендовані серіали -->
+      <div class="recommended-section">
+        <h3>🎞️ Рекомендуємо подивитись</h3>
+        <div id="recommendedSeriesList" class="recommended-list"></div>
+      </div>
+
       <!-- 💬 Коментарі -->
 <div class="comments-section">
   <h3>💬 Коментарі</h3>
@@ -553,6 +597,8 @@
     document.getElementById("seriesYear").textContent  = first.year  || "";
     document.getElementById("seriesImdb").textContent  = first.imdb  || "—";
     document.getElementById("seriesDesc").textContent  = first.description || "Опис відсутній";
+    // 🎬 Підбірка рекомендованих серіалів
+    loadRecommendedSeries(first.title, first.genre);
 
 // 🧩 Перевірка PRO-доступу для серіалів
 let hasPro = true; // за замовчуванням усі бачать плеєр
@@ -856,6 +902,52 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+// === 🎬 Рекомендовані серіали ===
+async function loadRecommendedSeries(title, genre) {
+  const list = document.getElementById("recommendedSeriesList");
+  if (!list) return;
+
+  list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
+
+  const keyword = (title || "").split(" ")[0] || "";
+  const { data, error } = await supabase
+    .from("films_site")
+    .select("id, title, poster, genre")
+    .ilike("type", "Серіал")
+    .or(`title.ilike.%${keyword}%,genre.ilike.%${genre}%`)
+    .limit(20);
+
+  if (error || !data || data.length === 0) {
+    list.innerHTML = "<p style='color:#888'>Схожих серіалів не знайдено</p>";
+    return;
+  }
+
+  // 🧹 Прибираємо дублікати назв і сам поточний серіал
+  const seen = new Set();
+  const current = (title || "").trim().toLowerCase();
+  const unique = data.filter(x => {
+    const name = (x.title || "").trim().toLowerCase();
+    if (!name || name === current || seen.has(name)) return false;
+    seen.add(name);
+    return true;
+  }).slice(0, 6);
+
+  list.innerHTML = "";
+  unique.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "recommended-item";
+    div.innerHTML = `
+      <img src="${item.poster}" alt="${item.title}">
+      <p>${item.title}</p>
+    `;
+    div.addEventListener("click", () => {
+      // серіали відкриваєш по title
+      window.location.href = `series.html?title=${encodeURIComponent(item.title)}`;
+    });
+    list.appendChild(div);
+  });
+}
+
 </script>
 
 </body>
