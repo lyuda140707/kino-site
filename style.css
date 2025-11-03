@@ -1682,3 +1682,18 @@ header {
     box-sizing: border-box;
   }
 }
+@media (max-width: 980px) {
+  .film-container, .film-right, .player-box {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    margin: 0 auto !important;
+  }
+  video {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100vw !important;
+    display: block;
+    margin: 0 auto;
+  }
+}
+
