@@ -1735,6 +1735,8 @@ header {
     box-sizing: border-box;
   }
 }
+
+
 /* === 🌐 АДАПТИВНИЙ ФІКС для сторінки фільму (з мін-ширинами і підлаштуванням) === */
 
 /* 📱 Мобільні і планшети до 980px */
@@ -1836,38 +1838,30 @@ header {
     max-width: 720px;
   }
 }
-/* === 🎯 ФІНАЛЬНЕ ВИРІВНЮВАННЯ СТОРІНКИ ФІЛЬМУ ПО ЦЕНТРУ === */
+
+
+/* === 🎯 ДОПОВНЕННЯ: ювелірне центрування сторінки === */
 @media (max-width: 980px) {
-  html, body {
-    width: 100%;
+  body {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    max-width: 100vw;
     overflow-x: hidden !important;
-    margin: 0 !important;
-    padding: 0 !important;
   }
 
-  main,
-  .container,
-  .film-container {
-    width: 100% !important;
-    max-width: 100% !important;
+  /* Щоб відео, банери й контейнери не виходили за новий центр */
+  .film-container,
+  .film-right,
+  .film-left,
+  .player-box,
+  .tg-banner {
+    position: relative;
+    left: 0;
+    transform: none !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    box-sizing: border-box !important;
-  }
-
-  /* іноді header або footer мають внутрішній відступ */
-  header, footer {
-    width: 100% !important;
-    margin: 0 auto !important;
-    padding: 0 !important;
-  }
-
-  /* підстраховка проти випадкових псевдоелементів */
-  body::before,
-  body::after {
-    display: none !important;
   }
 }
 
