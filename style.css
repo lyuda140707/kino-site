@@ -1880,3 +1880,34 @@ header {
     max-width: 720px;
   }
 }
+/* === 🔹 Виправлення видимості пагінації під фільмами === */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 25px 0 40px;
+  position: relative;
+  z-index: 5;
+}
+
+.pagination button {
+  background: #2b2b2b;
+  border: 1px solid #000;
+  color: #ccc;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.pagination button:hover {
+  background: #3aa757;
+  color: #fff;
+}
+
+.pagination .active {
+  background: #3aa757;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(58, 167, 87, 0.6);
+}
+
