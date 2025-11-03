@@ -1683,3 +1683,56 @@ header {
   }
 }
 
+/* === 📱 Фікс центрування сторінки фільму на мобільних === */
+@media (max-width: 980px) {
+  html, body {
+    width: 100%;
+    overflow-x: hidden !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  main, .container, .film-container, .film-right, .player-box, video {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  .film-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .film-right {
+    text-align: center;
+  }
+
+  .player-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+    border-radius: 12px;
+  }
+
+  video, iframe {
+    width: 100% !important;
+    max-width: 100vw !important;
+    height: auto !important;
+    display: block !important;
+    border-radius: 12px;
+  }
+
+  /* щоб не з’їжджало через Telegram банер */
+  .tg-banner {
+    width: 100% !important;
+    max-width: 100%;
+    margin: 0 auto 14px auto;
+    box-sizing: border-box;
+  }
+}
+
