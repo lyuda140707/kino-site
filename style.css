@@ -1735,129 +1735,58 @@ header {
     box-sizing: border-box;
   }
 }
+/* === 🌐 АДАПТИВНИЙ ФІКС для сторінки фільму (з мін-ширинами і підлаштуванням) === */
 
-/* === 🌐 Універсальна адаптація сторінки фільму === */
-
-/* 🟢 1. Загальні фікси — прибираємо будь-які горизонтальні зсуви */
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden !important;
-  box-sizing: border-box;
-}
-
-/* 🟢 2. Гнучке вирівнювання контейнера фільму */
-.film-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 24px;
-  margin: 20px auto;
-  padding: 0 5%;
-  box-sizing: border-box;
-  max-width: 1200px;
-  width: 100%;
-}
-
-/* 🟢 3. Ліва колонка — постер і мета */
-.film-left {
-  flex: 1 1 320px;
-  max-width: 380px;
-  width: 100%;
-  text-align: center;
-}
-
-/* 🟢 4. Права частина — плеєр, опис, коментарі */
-.film-right {
-  flex: 2 1 600px;
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  text-align: center;
-  box-sizing: border-box;
-}
-
-/* 🟢 5. Плеєр */
-.player-box {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto 16px auto;
-  border-radius: 12px;
-  background: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-}
-
-video, iframe {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  border-radius: 12px;
-  display: block;
-  object-fit: contain;
-}
-
-/* 🟢 6. Telegram банер і опис */
-.tg-banner {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  margin: 0 auto 14px auto;
-}
-
-/* 🟢 7. Адаптація для планшетів (768–1024px) */
-@media (max-width: 1024px) {
-  .film-container {
-    gap: 18px;
-    padding: 0 4%;
-  }
-  .film-left {
-    flex: 1 1 300px;
-    max-width: 350px;
-  }
-  .film-right {
-    flex: 1 1 500px;
-  }
-}
-
-/* 🟢 8. Адаптація для мобільних (до 767px) */
-@media (max-width: 767px) {
-  .film-container {
-    flex-direction: column;
-    align-items: center;
-    padding: 0 12px;
-    gap: 20px;
+/* 📱 Мобільні і планшети до 980px */
+@media (max-width: 980px) {
+  html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden !important;
   }
 
   .film-left,
   .film-right {
-    flex: 1 1 100%;
-    max-width: 100%;
-    min-width: 0;
+    min-width: 0 !important;       /* прибирає жорстке 400px */
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .film-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px !important;
+    padding: 0 10px !important;
+    box-sizing: border-box;
   }
 
   .player-box,
+  .player-wrapper,
   video,
   iframe {
     width: 100% !important;
     max-width: 100vw !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 auto !important;
+    border-radius: 12px;
+    box-sizing: border-box !important;
   }
 
   .source-row {
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    gap: 10px !important;
   }
 
   .tg-banner {
-    text-align: center;
-    justify-content: center;
-    font-size: 13px;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto 14px auto !important;
+    box-sizing: border-box !important;
   }
 
   .film-description {
@@ -1867,5 +1796,43 @@ video, iframe {
   }
 }
 
+/* 📱 Дуже малі екрани (до 480px) */
+@media (max-width: 480px) {
+  .film-container {
+    gap: 12px !important;
+    padding: 0 8px !important;
+  }
 
+  .film-title {
+    font-size: 26px !important;
+    line-height: 1.1 !important;
+  }
 
+  .source-row button {
+    flex: 1 1 auto;
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .film-description {
+    font-size: 14px;
+    padding: 16px;
+  }
+}
+
+/* 💻 Середні екрани (планшети горизонтально) */
+@media (min-width: 981px) and (max-width: 1200px) {
+  .film-container {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+  }
+  .film-left {
+    flex: 1 1 300px;
+    max-width: 340px;
+  }
+  .film-right {
+    flex: 1 1 600px;
+    max-width: 720px;
+  }
+}
