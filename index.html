@@ -130,7 +130,8 @@ async function loadLatestFilms(page = 1) {
   const { data, error } = await supabase
     .from("films_site")
     .select("id, title, poster, type, genre, year, imdb, pro_access")
-    .in("type", ["Фільм", "Мультфільм", "Мультсеріал", "Серіал"])
+    // 🔹 Фікс: нечутлива до регістру перевірка типу
+    .or("type.ilike.%фільм%,type.ilike.%мультфільм%,type.ilike.%мультсеріал%,type.ilike.%серіал%")
     .order("id", { ascending: false })
     .limit(200);
 
@@ -474,6 +475,7 @@ function scrollToTopSmooth() {
 
 </body>
 </html>
+
 
 
 
