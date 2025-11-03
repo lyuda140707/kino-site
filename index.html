@@ -471,21 +471,29 @@ function scrollToTopSmooth() {
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("✅ DOM завантажено, запускаємо всі розділи...");
 
-  // 1️⃣ Топ-10
-  await loadTopFilms();
+  await Promise.all([
+    loadTopFilms(),
+    loadDynamicSidebar()
+  ]);
 
-  // 2️⃣ Сайдбар
-  await loadDynamicSidebar();
-
-  // 3️⃣ Основні фільми + пагінація
+  // 🎬 Завантаження фільмів + примусовий показ пагінації
   await loadLatestFilms(1);
 
-  console.log("✅ Усе завантажено, пагінація активна!");
+  // 🧩 Перевірка, що кнопки існують
+  const pagination = document.querySelector(".pagination");
+  if (pagination && pagination.children.length > 0) {
+    console.log("✅ Пагінація згенерована:", pagination.children.length, "кнопок");
+  } else {
+    console.warn("⚠️ Пагінація не зʼявилась — пробуємо повторно");
+    setTimeout(() => loadLatestFilms(1), 1500); // повтор через 1.5 сек
+  }
 });
+
 </script>
 
 </body>
 </html>
+
 
 
 
