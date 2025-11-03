@@ -291,12 +291,7 @@ async function loadLatestSeries() {
     });
   }
 
-// 🚀 Автоматичний запуск
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadTopFilms();
-  await loadDynamicSidebar();
-  await loadLatestFilms(1); // ✅ побудова фільмів + кнопок пагінації
-});
+
 
 </script>
 <script>
@@ -428,7 +423,7 @@ document.querySelector(".sidebar").insertAdjacentHTML("beforeend", telegramBlock
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadDynamicSidebar);
+
 </script>
 
 
@@ -471,9 +466,27 @@ function scrollToTopSmooth() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 </script>
+<!-- 🚀 ЄДИНИЙ правильний запуск усіх функцій -->
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("✅ DOM завантажено, запускаємо всі розділи...");
+
+  // 1️⃣ Топ-10
+  await loadTopFilms();
+
+  // 2️⃣ Сайдбар
+  await loadDynamicSidebar();
+
+  // 3️⃣ Основні фільми + пагінація
+  await loadLatestFilms(1);
+
+  console.log("✅ Усе завантажено, пагінація активна!");
+});
+</script>
 
 </body>
 </html>
+
 
 
 
