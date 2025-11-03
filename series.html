@@ -706,7 +706,6 @@ const seasonColors = {
   15: "#ffaa00"
 };
 
-  const activeColor = seasonColors[season] || "#c74279";
 
   episodes.forEach(ep => {
     const btn = document.createElement("button");
@@ -740,12 +739,13 @@ const seasonColors = {
 }
 // змінюємо колір активної кнопки сезону відповідно до серій
 function setSeasonButtonColor(btn, color) {
-  btn.style.background = color;
-  btn.style.color = "#000";
+  btn.style.background = `linear-gradient(145deg, ${color}, #c74279)`;
+  btn.style.color = "#fff";
   btn.style.boxShadow = `0 0 18px ${color}`;
   btn.style.borderColor = color;
+  btn.style.fontWeight = "700";
+  btn.style.transform = "scale(1.08)";
 }
-
 // додаємо зміну кольору при натисканні
 groups.forEach(([season]) => {
   const color = seasonColors[season] || "#00fff2";
