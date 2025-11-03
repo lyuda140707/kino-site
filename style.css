@@ -1599,3 +1599,43 @@ header {
   }
 }
 
+/* === 🧭 Повне вирівнювання сайту по центру на мобільних === */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+  margin: 0 auto !important;
+  position: relative;
+}
+
+/* Виправлення фіксованих елементів, які зсувають сайт */
+@media (max-width: 980px) {
+  .mobile-panel,
+  .mobile-overlay,
+  .burger-btn {
+    left: 0 !important;
+    right: auto !important;
+    max-width: 100vw !important;
+  }
+
+  body::before,
+  body::after {
+    width: 10px !important;
+    max-width: 10px !important;
+  }
+
+  /* Якщо тінь кнопки прокрутки зсуває сайт */
+  #scrollTopBtn {
+    right: 15px !important;
+  }
+
+  /* Гарантовано вирівнює контейнер */
+  .container,
+  .main-grid,
+  .content {
+    margin: 0 auto !important;
+    padding: 0 12px !important;
+    box-sizing: border-box !important;
+  }
+}
+
