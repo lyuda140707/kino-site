@@ -1736,10 +1736,7 @@ header {
   }
 }
 
-
-/* === 🌐 АДАПТИВНИЙ ФІКС для сторінки фільму (з мін-ширинами і підлаштуванням) === */
-
-/* 📱 Мобільні і планшети до 980px */
+/* === 🌐 ГЛОБАЛЬНА АДАПТАЦІЯ ДЛЯ САЙТУ (всі сторінки) === */
 @media (max-width: 980px) {
   html, body {
     width: 100%;
@@ -1748,21 +1745,46 @@ header {
     overflow-x: hidden !important;
   }
 
-  .film-left,
-  .film-right {
-    min-width: 0 !important;       /* прибирає жорстке 400px */
-    width: 100% !important;
-    max-width: 100% !important;
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
   }
 
-  .film-container {
-    display: flex;
+  /* Основні блоки */
+  .main-grid {
+    flex-direction: column;
+  }
+  .sidebar {
+    order: 2;
+    width: 100%;
+    margin-top: 20px;
+  }
+  .content {
+    order: 1;
+    width: 100%;
+  }
+
+  /* Фільми, серіали, мультсеріали */
+  .film-container,
+  .series-wrap,
+  .multseries-wrap {
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 18px !important;
+    gap: 20px;
     padding: 0 10px !important;
-    box-sizing: border-box;
+  }
+
+  .film-left,
+  .series-left,
+  .film-right,
+  .series-right,
+  .multseries-left,
+  .multseries-right {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   .player-box,
@@ -1772,10 +1794,8 @@ header {
     width: 100% !important;
     max-width: 100vw !important;
     height: auto !important;
-    display: block !important;
-    margin: 0 auto !important;
+    display: block;
     border-radius: 12px;
-    box-sizing: border-box !important;
   }
 
   .source-row {
@@ -1786,28 +1806,41 @@ header {
 
   .tg-banner {
     width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 auto 14px auto !important;
-    box-sizing: border-box !important;
+    margin: 0 auto 14px auto;
+    box-sizing: border-box;
   }
 
   .film-description {
-    text-align: left;
     font-size: 15px;
     line-height: 1.6;
+    text-align: left;
+  }
+
+  .film-title {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .film-meta span {
+    font-size: 13px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
   }
 }
 
 /* 📱 Дуже малі екрани (до 480px) */
 @media (max-width: 480px) {
-  .film-container {
-    gap: 12px !important;
-    padding: 0 8px !important;
+  .film-title {
+    font-size: 24px !important;
   }
 
-  .film-title {
-    font-size: 26px !important;
-    line-height: 1.1 !important;
+  .film-description {
+    font-size: 14px;
+    padding: 14px;
   }
 
   .source-row button {
@@ -1816,28 +1849,34 @@ header {
     padding: 8px 10px;
   }
 
-  .film-description {
-    font-size: 14px;
-    padding: 16px;
+  .film-meta span {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 }
 
-/* 💻 Середні екрани (планшети горизонтально) */
+/* 💻 Планшети горизонтально (981px–1200px) */
 @media (min-width: 981px) and (max-width: 1200px) {
-  .film-container {
+  .film-container,
+  .series-wrap,
+  .multseries-wrap {
     flex-wrap: wrap;
     justify-content: center;
     gap: 24px;
   }
-  .film-left {
+
+  .film-left,
+  .series-left,
+  .multseries-left {
     flex: 1 1 300px;
     max-width: 340px;
   }
-  .film-right {
+
+  .film-right,
+  .series-right,
+  .multseries-right {
     flex: 1 1 600px;
     max-width: 720px;
   }
 }
-
-
-
