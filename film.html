@@ -992,31 +992,37 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
     // ===== 🎬 Рекомендовані фільми =====
-// 🎬 Рекомендовані фільми — шукає схожі за назвою або жанром
+// 🎬 Рекомендовані фільми — без дублікатів назв
 async function loadRecommendedFilms(title, genre) {
   const list = document.getElementById("recommendedList");
   if (!list) return;
 
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
-  // перше слово з назви (наприклад "Аватар")
-  const keyword = title.split(" ")[0];
-
+  const keyword = (title || "").split(" ")[0] || "";
   const { data, error } = await supabase
-    .from("films_site")                // ✅ твоя таблиця
+    .from("films_site")
     .select("id, title, poster, genre")
     .or(`title.ilike.%${keyword}%,genre.ilike.%${genre}%`)
-    .limit(6);
+    .limit(20);
 
   if (error || !data || data.length === 0) {
     list.innerHTML = "<p style='color:#888'>Схожих фільмів не знайдено</p>";
     return;
   }
 
-  // очищаємо і створюємо картки
+  // 🧹 Прибираємо дублікати по назві (і не показуємо поточний фільм)
+  const seen = new Set();
+  const current = (title || "").trim().toLowerCase();
+  const unique = data.filter(f => {
+    const name = (f.title || "").trim().toLowerCase();
+    if (!name || name === current || seen.has(name)) return false;
+    seen.add(name);
+    return true;
+  }).slice(0, 6); // максимум 6 карток
+
   list.innerHTML = "";
-  data.forEach(film => {
-    if (film.title === title) return; // не показує поточний фільм
+  unique.forEach(film => {
     const item = document.createElement("div");
     item.className = "recommended-item";
     item.innerHTML = `
@@ -1029,6 +1035,7 @@ async function loadRecommendedFilms(title, genre) {
     list.appendChild(item);
   });
 }
+
   </script>
 <!-- 🧾 Модальне вікно -->
 <div id="reportModal" class="modal">
