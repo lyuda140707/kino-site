@@ -187,18 +187,54 @@ const unique = Array.from(map.values());
   });
 
   // 🔹 Побудова пагінації
-  const pagination = document.querySelector(".pagination");
-  pagination.innerHTML = "";
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement("button");
-    btn.textContent = i;
-    if (i === page) btn.classList.add("active");
-    btn.addEventListener("click", () => {
-      loadLatestFilms(i);
-      scrollToTopSmooth(); // 🆕 плавно піднімає сторінку догори
-    });
-    pagination.appendChild(btn);
-  }
+ // 🔹 Побудова пагінації з 5 кнопками і стрілками
+const pagination = document.querySelector(".pagination");
+pagination.innerHTML = "";
+
+const visibleCount = 5; // показуємо 5 кнопок максимум
+let startPage = Math.max(1, page - Math.floor(visibleCount / 2));
+let endPage = startPage + visibleCount - 1;
+if (endPage > totalPages) {
+  endPage = totalPages;
+  startPage = Math.max(1, endPage - visibleCount + 1);
+}
+
+// ◀️ Кнопка "Назад"
+if (page > 1) {
+  const prevBtn = document.createElement("button");
+  prevBtn.textContent = "❮";
+  prevBtn.classList.add("nav-btn");
+  prevBtn.addEventListener("click", () => {
+    loadLatestFilms(page - 1);
+    scrollToTopSmooth();
+  });
+  pagination.appendChild(prevBtn);
+}
+
+// 🔢 Кнопки сторінок
+for (let i = startPage; i <= endPage; i++) {
+  const btn = document.createElement("button");
+  btn.textContent = i;
+  if (i === page) btn.classList.add("active");
+  btn.addEventListener("click", () => {
+    loadLatestFilms(i);
+    scrollToTopSmooth();
+  });
+  pagination.appendChild(btn);
+}
+
+// ▶️ Кнопка "Вперед"
+if (page < totalPages) {
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = "❯";
+  nextBtn.classList.add("nav-btn");
+  nextBtn.addEventListener("click", () => {
+    loadLatestFilms(page + 1);
+    scrollToTopSmooth();
+  });
+  pagination.appendChild(nextBtn);
+}
+
 }
 </script>
 
@@ -494,6 +530,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
 
 
 
