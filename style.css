@@ -1736,3 +1736,57 @@ header {
   }
 }
 
+/* === 📱 ГЛИБОКИЙ ФІКС зсуву вправо на сторінці фільму === */
+@media (max-width: 980px) {
+  /* 1) Повністю забороняємо горизонтальний скрол */
+  html, body {
+    width: 100%;
+    overflow-x: hidden !important;
+  }
+
+  /* 2) Ламаємо проблемну мінімальну ширину з film.html */
+  .film-right,
+  .film-left {
+    min-width: 0 !important;   /* ← ось головне */
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* 3) Зменшуємо проміжок між колонками, щоб нічого не «випирало» */
+  .film-container {
+    gap: 16px !important;      /* було 40px у film.html */
+    padding: 0 10px !important;
+    box-sizing: border-box !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 4) Плеєр і обгортки — строго в межах екрана */
+  .player-box,
+  .player-wrapper,
+  video,
+  iframe {
+    width: 100% !important;
+    max-width: 100vw !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 auto !important;
+    border-radius: 12px;
+    box-sizing: border-box !important;
+  }
+
+  /* 5) Рядок з кнопками, щоб не розтягувало вшир */
+  .source-row {
+    flex-wrap: wrap;
+    gap: 10px !important;
+  }
+
+  /* 6) Банер TG інколи «випирає» — фіксуємо */
+  .tg-banner {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto 14px auto !important;
+    box-sizing: border-box !important;
+  }
+}
+
