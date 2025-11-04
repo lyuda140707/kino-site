@@ -372,21 +372,27 @@ footer {
     </p>
 <script>
   // 🔹 Ця функція має бути ДО віджета Telegram
-  function onTelegramAuth(user) {
-    console.log("✅ Telegram авторизував користувача:", user);
+      function onTelegramAuth(user) {
+        console.log("✅ Telegram авторизував користувача:", user);
+      
+        if (!user?.id) {
+          alert("Помилка Telegram авторизації!");
+          return;
+        }
+      
+        try {
+          // Зберігаємо користувача Telegram
+          localStorage.setItem("telegram_user", JSON.stringify(user));
+          localStorage.setItem("auth_time", Date.now());
+      
+          // Миттєво показуємо успіх і оновлюємо сторінку
+          alert("✅ Успішна авторизація через Telegram! Сторінка оновиться.");
+          location.reload();
+        } catch (e) {
+          console.error("Помилка збереження Telegram користувача:", e);
+        }
+      }
 
-    if (!user?.id) {
-      alert("Помилка Telegram авторизації!");
-      return;
-    }
-
-    // Зберігаємо користувача
-    localStorage.setItem("telegram_user", JSON.stringify(user));
-
-    // Показуємо повідомлення
-    alert("Telegram авторизація успішна! Сторінка оновиться.");
-    location.reload();
-  }
 </script>
 
 <div id="telegram-widget">
