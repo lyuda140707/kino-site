@@ -381,17 +381,20 @@ footer {
         }
       
         try {
-          // Зберігаємо користувача Telegram
-          localStorage.setItem("telegram_user", JSON.stringify(user));
-          localStorage.setItem("auth_time", Date.now());
+          // ⏳ трохи затримуємо, щоб Telegram встиг завершити callback
+          setTimeout(() => {
+            localStorage.setItem("telegram_user", JSON.stringify(user));
+            localStorage.setItem("auth_time", Date.now());
       
-          // Миттєво показуємо успіх і оновлюємо сторінку
-          alert("✅ Успішна авторизація через Telegram! Сторінка оновиться.");
-          location.reload();
+            alert("✅ Авторизація успішна! Перезавантажую сторінку...");
+            window.location.reload();
+          }, 800);
         } catch (e) {
           console.error("Помилка збереження Telegram користувача:", e);
         }
       }
+
+
 
 </script>
 
