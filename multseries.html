@@ -563,21 +563,65 @@ function useSource(url) {
     // 🎬 Підбірка рекомендованих серіалів
     loadRecommendedSeries(first.title, first.genre);
 
-// 🧩 Перевірка PRO-доступу для мультсеріалів
-let hasPro = true; // за замовчуванням усі бачать плеєр
-const isProCartoon = String(first.pro_access || '').toUpperCase() === 'PRO';
+// 🧩 Перевірка PRO-доступу (працює і для Telegram, і для Email/Web)
+let hasPro = true;
+const isProSeries = String(first.pro_access || '').toUpperCase() === 'PRO';
 
-if (isProCartoon) {
+if (isProSeries) {
   hasPro = false;
-  const user = JSON.parse(localStorage.getItem('telegram_user') || 'null');
-  const userId = user?.id ? String(user.id) : null;
+
+  const tgUser   = localStorage.getItem('telegram_user');
+  const emailUser = localStorage.getItem('email_user');
+  const webId     = localStorage.getItem('web_id');
+  let url = window.APPS_SCRIPT_URL;
 
   try {
-    const resp = await fetch(`https://script.google.com/macros/s/AKfycbwUULSEmTKFORqOa3VwnQijTmNGw7Mt8bFd82G_HR7xwPSNlarMzE3Tmyrn1nju5WVPbA/exec?user_id=${encodeURIComponent(userId)}`);
-    const json = await resp.json();
+    // 🟢 Telegram-вхід
+    if (tgUser) {
+      const parsed = JSON.parse(tgUser);
+      if (parsed?.id) url += `?user_id=${encodeURIComponent(parsed.id)}`;
+
+    // 🟣 Email / Web-вхід (WEB-ID)
+    } else if (webId) {
+      url += `?user_id=${encodeURIComponent(webId)}`;
+
+    // 🔸 Резерв — якщо ID є всередині emailUser
+    } else if (emailUser) {
+      const parsed = JSON.parse(emailUser);
+      if (parsed?.id) url += `?user_id=${encodeURIComponent(parsed.id)}`;
+    }
+
+    console.log("📡 Перевірка PRO:", url);
+    const res = await fetch(url);
+    const json = await res.json();
     hasPro = json?.isPro === true;
-  } catch (e) {
-    console.warn('Помилка перевірки PRO:', e);
+    console.log("🔎 Результат PRO:", json);
+
+  } catch (err) {
+    console.warn("❌ Помилка перевірки PRO:", err);
+  }
+
+  // 💎 Якщо немає PRO — показуємо банер
+  if (!hasPro) {
+    const playerBox = document.querySelector('.player-box');
+    playerBox.innerHTML = `
+      <div style="
+        background:#000;
+        color:#00fff2;
+        text-align:center;
+        padding:45px 20px;
+        border-radius:12px;
+        border:1px solid rgba(0,255,255,0.3);
+        box-shadow:0 0 30px rgba(0,255,255,0.15);
+        font-size:18px;
+        line-height:1.6;
+      ">
+        💎 Цей контент доступний лише для <b>PRO користувачів</b>.<br><br>
+        <a href="profile.html" style="color:#fff;text-decoration:underline;font-weight:600;">
+          Отримати PRO
+        </a>
+      </div>
+    `;
   }
 }
 
