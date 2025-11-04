@@ -8,9 +8,11 @@
       https://cdn.jsdelivr.net/npm/@supabase/;
     frame-src
       https://oauth.telegram.org
+      https://kino-site.pages.dev
       https://kino-site.top;
     connect-src
       'self'
+      https://kino-site.pages.dev
       https://relax-time2.onrender.com
       https://script.google.com
       https://cdn.jsdelivr.net
