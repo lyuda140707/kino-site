@@ -758,29 +758,19 @@ let hasPro = true; // за замовчуванням вмикаємо (для �
 
 if (String(data.pro_access || '').toUpperCase() === 'PRO') {
   hasPro = false; // тимчасово вимикаємо, поки не перевіримо користувача
-
-  // ✅ беремо користувача або з Telegram, або з Email
-  const tgUser = JSON.parse(localStorage.getItem('telegram_user') || 'null');
-  const emailUser = JSON.parse(localStorage.getItem('email_user') || 'null');
-  
-  // ✅ вибираємо правильний ID
-  const userId =
-    tgUser?.id
-      ? String(tgUser.id)
-      : localStorage.getItem("web_id") || emailUser?.id || emailUser?.email || null;
+  const user = JSON.parse(localStorage.getItem('telegram_user') || 'null');
+  const userId = user?.id ? String(user.id) : null;
 
   try {
-    const resp = await fetch(
-      `https://script.google.com/macros/s/AKfycbwUULSEmTKFORqOa3VwnQijTmNGw7Mt8bFd82G_HR7xwPSNlarMzE3Tmyrn1nju5WVPbA/exec?user_id=${encodeURIComponent(userId)}`
-    );
+    const resp = await fetch(`https://script.google.com/macros/s/AKfycbwUULSEmTKFORqOa3VwnQijTmNGw7Mt8bFd82G_HR7xwPSNlarMzE3Tmyrn1nju5WVPbA/exec?user_id=${encodeURIComponent(userId)}`);
     const json = await resp.json();
     hasPro = json?.isPro === true;
   } catch (e) {
-    console.warn("Помилка перевірки PRO:", e);
+    console.warn('Помилка перевірки PRO:', e);
   }
 
   if (!hasPro) {
-    const playerBox = document.querySelector(".player-box");
+    const playerBox = document.querySelector('.player-box');
     playerBox.innerHTML = `
       <div style="
         background:#000;
@@ -797,7 +787,6 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
     `;
   }
 }
-
 
 
   // 🟢 Заповнення даних
