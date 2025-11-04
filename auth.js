@@ -1,7 +1,16 @@
 // === 🔹 Глобальна перевірка Telegram користувача + кешування PRO ===
 window.addEventListener("DOMContentLoaded", async () => {
   const savedUser = localStorage.getItem("telegram_user");
-  if (!savedUser) return console.log("👤 Користувач не авторизований");
+  const emailUser = localStorage.getItem("email_user");
+  
+  if (!savedUser && !emailUser) {
+    console.log("👤 Користувач не авторизований");
+    return;
+  }
+  
+  const user = savedUser ? JSON.parse(savedUser) : JSON.parse(emailUser);
+  window.currentUser = user;
+
 
   const user = JSON.parse(savedUser);
   window.currentUser = user;
