@@ -703,6 +703,25 @@ else {
     </div>
   `;
 }
+// 🔹 Глобальні кольори для сезонів (щоб уникнути ReferenceError)
+const seasonColors = {
+  1: "#00fff2",
+  2: "#ff6b2b",
+  3: "#ff00ff",
+  4: "#aaff00",
+  5: "#ffaa00",
+  6: "#00fff2",
+  7: "#ff6b2b",
+  8: "#ff00ff",
+  9: "#aaff00",
+  10: "#ffaa00",
+  11: "#00fff2",
+  12: "#ff6b2b",
+  13: "#ff00ff",
+  14: "#aaff00",
+  15: "#ffaa00"
+};
+
 // 🟣 Відображення сезонів кнопками (з підсвіткою серій)
 const container = document.getElementById("episodesContainer");
 container.innerHTML = "";
@@ -742,24 +761,6 @@ function renderEpisodes(season) {
   const list = document.createElement("div");
   list.className = `ep-list season-${season}`;
 
-  // 🔹 Визначаємо колір підсвітки для кожного сезону
-const seasonColors = {
-  1: "#00fff2",
-  2: "#ff6b2b",
-  3: "#ff00ff",
-  4: "#aaff00",
-  5: "#ffaa00",
-  6: "#00fff2",
-  7: "#ff6b2b",
-  8: "#ff00ff",
-  9: "#aaff00",
-  10: "#ffaa00",
-  11: "#00fff2",
-  12: "#ff6b2b",
-  13: "#ff00ff",
-  14: "#aaff00",
-  15: "#ffaa00"
-};
 
   const activeColor = seasonColors[season] || "#00fff2";
 
