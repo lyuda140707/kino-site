@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Мій кабінет — KinoSite</title>
 
-
+<!-- ✅ Безпечні політики -->
 <meta http-equiv="Content-Security-Policy"
       content="default-src * 'self' data: blob: https: http:;
                script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org https://oauth.telegram.org https://cdn.jsdelivr.net;
@@ -276,12 +276,40 @@ footer {
   display: none; /* без !important */
 }
 </style>
-<meta name="referrer" content="no-referrer-when-downgrade">
+
 </head>
 <body>
 <div id="header-placeholder"></div>
 <script src="header.js"></script>
 
+<!-- Хедер -->
+<div id="header-placeholder"></div>
+<script>
+  // 🟢 Функція для активації пошуку після вставки хедера
+  function bindHeaderSearch() {
+    const input = document.getElementById("search-input");
+    if (!input) return;
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const query = input.value.trim();
+        if (query.length > 1) {
+          localStorage.setItem("searchQuery", query);
+          window.location.href = "/search.html";
+        }
+      }
+    });
+  }
+
+  // 🟢 Завантажуємо header.html і активуємо пошук після вставки
+  fetch("header.html")
+    .then(r => r.text())
+    .then(html => {
+      document.getElementById("header-placeholder").innerHTML = html;
+      bindHeaderSearch(); // активуємо пошук
+    })
+    .catch(err => console.error("Помилка завантаження хедера:", err));
 </script>
 
 
@@ -342,75 +370,34 @@ footer {
     <p class="muted">
       Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
     </p>
-<!-- 🔹 Нова кнопка входу через Telegram -->
-<button id="tg-login" class="btn btn-primary">Увійти через Telegram</button>
-
 <script>
-  const BOT_ID = 8320301500;  // 🔹 заміни ці цифри на свій бот ID (до двокрапки в токені)
-  const ORIGIN = "https://kino-site.top";
-  const VERIFY_URL = "https://script.google.com/macros/s/AKfycbxkfUNvzZBuJEsb6nqBVs1oNrqmB5GwfcjXMq7jmgEWMvaMTTL4HJ90qE42Yqoiz6ea-g/exec";
+  // 🔹 Ця функція має бути ДО віджета Telegram
+  function onTelegramAuth(user) {
+    console.log("✅ Telegram авторизував користувача:", user);
 
-  document.getElementById("tg-login").onclick = () => {
-    const url = `https://oauth.telegram.org/auth?bot_id=${BOT_ID}&origin=${encodeURIComponent(ORIGIN)}&request_access=write`;
-    window.location.href = url;
-  };
+    if (!user?.id) {
+      alert("Помилка Telegram авторизації!");
+      return;
+    }
 
-  // 🟢 коли Telegram повертає користувача після входу
-  if (location.hash.startsWith("#tgAuthResult=")) {
-    const dataStr = decodeURIComponent(location.hash.replace("#tgAuthResult=", ""));
-    const payload = Object.fromEntries(new URLSearchParams(dataStr));
+    // Зберігаємо користувача
+    localStorage.setItem("telegram_user", JSON.stringify(user));
 
-    fetch(VERIFY_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tg_data: payload })
-    })
-    .then(r => r.json())
-    .then(res => {
-      if (res.ok) {
-        localStorage.setItem("telegram_user", JSON.stringify(res.user));
-        alert("✅ Вхід успішний!");
-        location.href = "/profile";
-      } else {
-        alert("❌ " + res.error);
-      }
-    })
-    .catch(err => alert("⚠️ Помилка: " + err.message));
+    // Показуємо повідомлення
+    alert("Telegram авторизація успішна! Сторінка оновиться.");
+    location.reload();
   }
 </script>
 
-
-<script>
-
-
-  // === 🟢 Автовідновлення Telegram сесії ===
-  window.addEventListener("DOMContentLoaded", () => {
-    const saved = localStorage.getItem("telegram_user");
-    if (!saved) return;
-
-    try {
-      const user = JSON.parse(saved);
-      // ховаємо картку Telegram
-      const tgCard = document.getElementById("telegram-card");
-      if (tgCard) tgCard.style.display = "none";
-
-      // показуємо профільну картку
-      const userCard = document.getElementById("user-card");
-      if (userCard) userCard.style.display = "block";
-
-      // привітання
-      document.getElementById("hello-line").innerText = `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
-      document.getElementById("auth-type").innerText = "🤖 Вхід через Telegram";
-
-      // оновлення логіки
-      if (typeof handleTelegramUser === "function") handleTelegramUser(user);
-      if (typeof checkProStatus === "function") checkProStatus();
-      if (typeof updateProUI === "function") updateProUI();
-    } catch (e) {
-      console.warn("Не вдалося відновити TG-користувача:", e);
-    }
-  });
-</script>
+<div id="telegram-widget">
+  <script async src="https://telegram.org/js/telegram-widget.js?22"
+    data-telegram-login="RelaxBox_UA_bot"
+    data-size="large"
+    data-userpic="false"
+    data-request-access="write"
+    data-onauth="onTelegramAuth(user)"
+  ></script>
+</div>
 
 
   </div>
