@@ -372,28 +372,33 @@ footer {
     </p>
 <script>
   // 🔹 Ця функція має бути ДО віджета Telegram
-      function onTelegramAuth(user) {
-        console.log("✅ Telegram авторизував користувача:", user);
-      
-        if (!user?.id) {
-          alert("Помилка Telegram авторизації!");
-          return;
-        }
-      
-        try {
-          // ⏳ трохи затримуємо, щоб Telegram встиг завершити callback
-          setTimeout(() => {
-            localStorage.setItem("telegram_user", JSON.stringify(user));
-            localStorage.setItem("auth_time", Date.now());
-      
-            alert("✅ Авторизація успішна! Перезавантажую сторінку...");
-            window.location.reload();
-          }, 800);
-        } catch (e) {
-          console.error("Помилка збереження Telegram користувача:", e);
-        }
-      }
+function onTelegramAuth(user) {
+  console.log("✅ Telegram авторизував користувача:", user);
 
+  if (!user?.id) return console.warn("Помилка Telegram авторизації!");
+
+  try {
+    // Зберігаємо користувача
+    localStorage.setItem("telegram_user", JSON.stringify(user));
+    localStorage.setItem("auth_time", Date.now());
+
+    // Показуємо гарне повідомлення
+    const msg = document.getElementById("login-message");
+    msg.style.display = "block";
+    msg.style.opacity = "1";
+
+    // Зникає через 1.5 секунди та перезавантажує сторінку
+    setTimeout(() => {
+      msg.style.opacity = "0";
+    }, 1500);
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+  } catch (e) {
+    console.error("Помилка збереження Telegram користувача:", e);
+  }
+}
 
 
 </script>
@@ -985,6 +990,24 @@ window.onclick = (e) => {
       document.body.appendChild(s);
     });
 </script>
+<!-- 🔹 Повідомлення про авторизацію -->
+<div id="login-message" style="
+  display:none;
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:linear-gradient(145deg,#00fff2,#00b5b0);
+  color:#000;
+  font-weight:600;
+  padding:12px 24px;
+  border-radius:12px;
+  box-shadow:0 0 20px rgba(0,255,255,0.5);
+  z-index:9999;
+  transition:opacity 0.4s ease;
+">
+✅ Успішна авторизація через Telegram!
+</div>
 
 
 </body>
