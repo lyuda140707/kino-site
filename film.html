@@ -566,52 +566,13 @@
 </main>
 
   <footer>© 2025 KinoSite • Усі права захищені</footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-  // === 💎 Автоматична перевірка PRO перед показом фільму ===
-  async function ensureProStatus() {
-    let isPro = localStorage.getItem("isPro") === "true";
-
-    if (!isPro) {
-      const emailUser = localStorage.getItem("email_user");
-      const tgUser = localStorage.getItem("telegram_user");
-      let idParam = null;
-
-      if (tgUser) idParam = JSON.parse(tgUser).id;
-      else if (emailUser) {
-        const parsed = JSON.parse(emailUser);
-        idParam = parsed.id || localStorage.getItem("web_id");
-      }
-
-      if (idParam && window.APPS_SCRIPT_URL) {
-        try {
-          const res = await fetch(`${window.APPS_SCRIPT_URL}?user_id=${encodeURIComponent(idParam)}`);
-          const data = await res.json();
-          if (data.isPro) {
-            localStorage.setItem("isPro", "true");
-            isPro = true;
-          }
-        } catch (err) {
-          console.warn("⚠️ Перевірка PRO не вдалася:", err);
-        }
-      }
-    }
-
-    if (isPro) {
-      const proBox = document.querySelector(".player-box");
-      if (proBox && proBox.innerText.includes("PRO користувачів")) {
-        proBox.style.display = "none";
-      }
-    }
-  }
-
-  ensureProStatus();
-</script>
-
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     let hls = null;                   // поточний Hls-інстанс (щоб коректно руйнувати)
     let currentSource = "movie";      // 'movie' або 'trailer'
@@ -1164,7 +1125,12 @@ async function loadRecommendedFilms(title, genre) {
 
 </div>
 <!-- 💬 Коментарі Supabase -->
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+</script>
 
 <!-- Підключення логіки коментарів -->
 <script src="comments.js"></script>
