@@ -1,16 +1,9 @@
-// === 🔹 Глобальна перевірка користувача (Telegram або Email) + кешування PRO ===
+// === 🔹 Глобальна перевірка Telegram користувача + кешування PRO ===
 window.addEventListener("DOMContentLoaded", async () => {
   const savedUser = localStorage.getItem("telegram_user");
-  const emailUser = localStorage.getItem("email_user");
+  if (!savedUser) return console.log("👤 Користувач не авторизований");
 
-  // Якщо нікого немає — вихід
-  if (!savedUser && !emailUser) {
-    console.log("👤 Користувач не авторизований");
-    return;
-  }
-
-  // Беремо користувача або з Telegram, або з Email
-  const user = savedUser ? JSON.parse(savedUser) : JSON.parse(emailUser);
+  const user = JSON.parse(savedUser);
   window.currentUser = user;
 
   const lastCheck = Number(localStorage.getItem("pro_last_check") || 0);
@@ -24,35 +17,35 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   try {
     const url = (window.APPS_SCRIPT_URL || "").trim();
-    if (!url) {
-      console.warn("⚠️ APPS_SCRIPT_URL не задано — перевірку PRO пропущено");
-      return;
-    }
+if (!url) {
+  console.warn("⚠️ APPS_SCRIPT_URL не задано — перевірку PRO пропущено");
+  return;
+}
 
-    // 🔹 Формуємо параметр (email або user_id)
-    const param = emailUser 
-      ? `?user_id=${encodeURIComponent(localStorage.getItem("web_id") || user.id || user.email)}`
-      : `?user_id=${encodeURIComponent(user.id)}`;
+try {
+  const res = await fetch(url + "?user_id=" + encodeURIComponent(user.id), {
+    method: "GET",
+    headers: { "Accept": "application/json" }
+  });
 
-    const res = await fetch(url + param, {
-      method: "GET",
-      headers: { "Accept": "application/json" }
-    });
+  if (!res.ok) throw new Error("Server returned " + res.status);
 
-    if (!res.ok) throw new Error("Server returned " + res.status);
+  const text = await res.text();
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    throw new Error("Response is not valid JSON: " + text.slice(0, 100));
+  }
 
-    const text = await res.text();
-    let json;
-    try {
-      json = JSON.parse(text);
-    } catch {
-      throw new Error("Response is not valid JSON: " + text.slice(0, 100));
-    }
+  localStorage.setItem("isPro", json.isPro ? "true" : "false");
+  localStorage.setItem("pro_last_check", now);
+  console.log("🔗 PRO оновлено:", json.isPro);
+} catch (err) {
+  console.warn("⚠️ Не вдалося перевірити PRO:", err.message);
+}
 
-    localStorage.setItem("isPro", json.isPro ? "true" : "false");
-    localStorage.setItem("pro_last_check", now);
-    console.log("🔗 PRO оновлено:", json.isPro);
   } catch (err) {
-    console.warn("⚠️ Не вдалося перевірити PRO:", err.message);
+    console.warn("⚠️ Не вдалося перевірити PRO:", err);
   }
 });
