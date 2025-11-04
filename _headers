@@ -1,13 +1,24 @@
 /*
   Content-Security-Policy:
-    default-src 'self' data: blob: https: http:;
+    default-src * 'self' data: blob: https: http:;
     script-src 'self' 'unsafe-inline' 'unsafe-eval'
       https://telegram.org
       https://core.telegram.org
       https://oauth.telegram.org
       https://t.me
       https://cdn.jsdelivr.net
-      https://cdn.jsdelivr.net/npm/@supabase/;
+      https://cdn.jsdelivr.net/npm/@supabase/
+      https://cdn.jsdelivr.net/npm/@supabase-js@2;
+    frame-src
+      https://oauth.telegram.org
+      https://core.telegram.org
+      https://t.me
+      https://kino-site.top
+      https://telegram.org;
+    connect-src *;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src https://fonts.gstatic.com;
+
     frame-src
       https://oauth.telegram.org
       https://core.telegram.org
