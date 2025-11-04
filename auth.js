@@ -30,8 +30,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
 
     // 🔹 Формуємо параметр (email або user_id)
-    const param = emailUser ? `?email=${encodeURIComponent(user.email)}` 
-                            : `?user_id=${encodeURIComponent(user.id)}`;
+    const param = emailUser 
+      ? `?user_id=${encodeURIComponent(localStorage.getItem("web_id") || user.id || user.email)}`
+      : `?user_id=${encodeURIComponent(user.id)}`;
 
     const res = await fetch(url + param, {
       method: "GET",
