@@ -491,37 +491,48 @@
   const player = document.getElementById("seriesPlayer");
   const overlay = document.getElementById("bigPlayOverlay");
   let hls = null;
+function useSource(url) {
+  if (hls) { try { hls.destroy(); } catch (e) {} hls = null; }
+  try { player.pause(); } catch (e) {}
+  player.removeAttribute("src"); player.load();
 
-  function useSource(url){
-    // прибираємо попередній HLS
-    if (hls){ try{hls.destroy()}catch(e){} hls=null; }
-    try{ player.pause(); }catch(e){}
-    player.removeAttribute("src"); player.load();
+  if (!url) return;
 
-    if (!url) return;
-    // 🎬 Якщо посилання з Google Drive — використовуємо твій Cloudflare-проксі
-    if (url.includes("drive.google.com") || url.includes("uc?export=download")) {
-      const fileIdMatch = url.match(/\/d\/([^/]+)\//);
-      const fileId = fileIdMatch ? fileIdMatch[1] : null;
-      if (fileId) {
-        url = `https://driveproxy.lyuda14070702.workers.dev/?id=${fileId}`;
-        console.log("🎥 Проксі Google Drive:", url);
-      }
-    }
-
-
-    if (url.endsWith(".m3u8")){
-      if (window.Hls && Hls.isSupported()){
-        hls = new Hls({maxBufferLength:30,lowLatencyMode:true,enableWorker:true});
-        hls.loadSource(url);
-        hls.attachMedia(player);
-      }else if (player.canPlayType("application/vnd.apple.mpegurl")){
-        player.src = url; // Safari/iOS
-      }
-    }else{
-      player.src = url; // mp4 тощо
+  // 🎬 Якщо посилання з Google Drive — використовуємо твій Cloudflare-проксі
+  if (url.includes("drive.google.com") || url.includes("uc?export=download")) {
+    const fileIdMatch = url.match(/\/d\/([^/]+)\//);
+    const fileId = fileIdMatch ? fileIdMatch[1] : null;
+    if (fileId) {
+      url = `https://driveproxy.lyuda14070702.workers.dev/?id=${fileId}`;
+      console.log("🎥 Проксі Google Drive:", url);
     }
   }
+
+  // 🎞️ HLS (.m3u8)
+  if (url.includes(".m3u8")) {
+    if (window.Hls && Hls.isSupported()) {
+      hls = new Hls({
+        maxBufferLength: 30,
+        enableWorker: true,
+        lowLatencyMode: true,
+        xhrSetup: function (xhr, url) {
+          xhr.withCredentials = false;
+          xhr.setRequestHeader("Origin", "https://relax-time2.onrender.com");
+          xhr.setRequestHeader("Referer", "https://relax-time2.onrender.com");
+        }
+      });
+      hls.loadSource(url);
+      hls.attachMedia(player);
+    } else if (player.canPlayType("application/vnd.apple.mpegurl")) {
+      player.src = url; // Safari / iOS
+    } else {
+      console.error("Браузер не підтримує HLS без hls.js");
+    }
+  } else {
+    player.src = url; // mp4 або інше
+  }
+}
+
 
   overlay.addEventListener("click", async ()=>{
     try{ await player.play(); overlay.style.opacity="0"; overlay.style.pointerEvents="none"; }catch(e){}
