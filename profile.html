@@ -342,35 +342,44 @@ footer {
     <p class="muted">
       Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
     </p>
+<!-- 🔹 Нова кнопка входу через Telegram -->
+<button id="tg-login" class="btn btn-primary">Увійти через Telegram</button>
+
 <script>
-  function onTelegramAuth(user) {
-    console.log("✅ Telegram авторизував:", user);
-    if (!user || !user.id) {
-      alert("Помилка Telegram авторизації!");
-      return;
-    }
-    localStorage.setItem("telegram_user", JSON.stringify(user));
-    alert("✅ Авторизація успішна! Сторінка оновиться.");
-    location.reload();
+  const BOT_ID = 8320301500;  // 🔹 заміни ці цифри на свій бот ID (до двокрапки в токені)
+  const ORIGIN = "https://kino-site.top";
+  const VERIFY_URL = "https://script.google.com/macros/s/AKfycbxkfUNvzZBuJEsb6nqBVs1oNrqmB5GwfcjXMq7jmgEWMvaMTTL4HJ90qE42Yqoiz6ea-g/exec";
+
+  document.getElementById("tg-login").onclick = () => {
+    const url = `https://oauth.telegram.org/auth?bot_id=${BOT_ID}&origin=${encodeURIComponent(ORIGIN)}&request_access=write`;
+    window.location.href = url;
+  };
+
+  // 🟢 коли Telegram повертає користувача після входу
+  if (location.hash.startsWith("#tgAuthResult=")) {
+    const dataStr = decodeURIComponent(location.hash.replace("#tgAuthResult=", ""));
+    const payload = Object.fromEntries(new URLSearchParams(dataStr));
+
+    fetch(VERIFY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tg_data: payload })
+    })
+    .then(r => r.json())
+    .then(res => {
+      if (res.ok) {
+        localStorage.setItem("telegram_user", JSON.stringify(res.user));
+        alert("✅ Вхід успішний!");
+        location.href = "/profile";
+      } else {
+        alert("❌ " + res.error);
+      }
+    })
+    .catch(err => alert("⚠️ Помилка: " + err.message));
   }
 </script>
-<div id="telegram-widget">
-  <script async src="https://telegram.org/js/telegram-widget.js?22"
-    data-telegram-login="RelaxBox_UA_bot"
-    data-size="large"
-    data-userpic="false"
-    data-request-access="write"
-    data-onauth="onTelegramAuth(user)"
-  ></script>
-</div>
-  <script>
-  // 🧩 Перевірка, чи приходить відповідь від Telegram OAuth
-  window.TelegramLoginWidget = {
-    dataOnauth: function (user) {
-      console.log("➡️ TG OAuth OK:", user);
-    }
-  };
-</script>
+
+
 <script>
 
 
