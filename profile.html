@@ -409,27 +409,52 @@ function onTelegramAuth(user) {
     data-size="large"
     data-userpic="false"
     data-request-access="write"
-    data-onauth="onTelegramAuth(user)"
-  ></script>
+    data-onauth="onTelegramAuth(user)">
+  </script>
 </div>
 
 <script>
 document.addEventListener("click", (e) => {
-  // Знаходимо iframe Telegram Login
   const tgFrame = document.querySelector("#telegram-widget iframe");
   if (!tgFrame) return;
 
-  // Перевіряємо, чи клік був саме по віджету Telegram
   const isClickedInsideTG = e.target === tgFrame || tgFrame.contains(e.target);
   if (isClickedInsideTG) {
     console.log("👆 Натиснули на Telegram Login — відкриваю Telegram...");
-    // Через коротку затримку відкриваємо Telegram-додаток або web.telegram.org
+
+    // Перевіряємо, чи це мобільний пристрій
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    // Показуємо коротке повідомлення перед відкриттям Telegram
+    const msg = document.createElement("div");
+    msg.textContent = "📲 Відкривається Telegram для підтвердження...";
+    msg.style.position = "fixed";
+    msg.style.top = "20px";
+    msg.style.left = "50%";
+    msg.style.transform = "translateX(-50%)";
+    msg.style.background = "linear-gradient(145deg, #00fff2, #00b5b0)";
+    msg.style.color = "#000";
+    msg.style.fontWeight = "600";
+    msg.style.padding = "10px 20px";
+    msg.style.borderRadius = "12px";
+    msg.style.boxShadow = "0 0 20px rgba(0,255,255,0.5)";
+    msg.style.zIndex = "9999";
+    document.body.appendChild(msg);
+
     setTimeout(() => {
-      window.open("https://t.me/RelaxBox_UA_bot", "_blank");
-    }, 700);
+      msg.remove();
+      if (isMobile) {
+        // 📱 відкриває безпосередньо Telegram-додаток
+        window.location.href = "tg://resolve?domain=RelaxBox_UA_bot";
+      } else {
+        // 💻 відкриває web.telegram.org
+        window.open("https://t.me/RelaxBox_UA_bot", "_blank");
+      }
+    }, 800);
   }
 });
 </script>
+
 
   </div>
 </main>
