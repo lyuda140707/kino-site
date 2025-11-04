@@ -357,6 +357,15 @@ footer {
   ></script>
 </div>
 <script>
+  <script>
+  // 🧩 Перевірка, чи приходить відповідь від Telegram OAuth
+  window.TelegramLoginWidget = {
+    dataOnauth: function (user) {
+      console.log("➡️ TG OAuth OK:", user);
+    }
+  };
+</script>
+
   // === 🟢 Автовідновлення Telegram сесії ===
   window.addEventListener("DOMContentLoaded", () => {
     const saved = localStorage.getItem("telegram_user");
