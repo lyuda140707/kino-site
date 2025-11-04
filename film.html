@@ -456,65 +456,7 @@
   display: flex;
   gap: 10px;
 }
- /* === 🎬 Плеєр для ФІЛЬМІВ — неоново-бірюзовий стиль === */
-.player-box {
-  position: relative;
-  background: radial-gradient(circle at 20% 20%, #000 60%, #0a0a0a 100%);
-  border: 1px solid rgba(0,255,255,0.4);
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 0 35px rgba(0,255,255,0.15),
-              inset 0 0 25px rgba(0,255,255,0.05);
-  transition: all 0.4s ease;
-}
-.player-box:hover {
-  box-shadow: 0 0 45px rgba(0,255,255,0.35),
-              inset 0 0 30px rgba(0,255,255,0.1);
-  transform: scale(1.01);
-}
 
-video {
-  width: 100%;
-  display: block;
-  aspect-ratio: 16/9;
-  border-radius: 14px;
-  background: #000;
-}
-
-/* Велика кнопка Play */
-#bigPlayOverlay, #bigPlayBtn {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.45);
-  cursor: pointer;
-  border-radius: 14px;
-  transition: opacity .3s ease, transform .3s ease;
-}
-#bigPlayOverlay > div, #bigPlayBtn > div {
-  width: 100px; height: 100px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.65);
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 25px rgba(0,255,255,0.45),
-              inset 0 0 20px rgba(0,255,255,0.2);
-  animation: pulseCyan 2.2s infinite ease-in-out;
-}
-#bigPlayOverlay svg, #bigPlayBtn svg {
-  width: 60px; height: 60px; fill: #00fff2;
-  filter: drop-shadow(0 0 12px #00fff2);
-  transition: transform 0.25s ease;
-}
-#bigPlayOverlay:hover svg, #bigPlayBtn:hover svg {
-  transform: scale(1.12);
-  filter: drop-shadow(0 0 18px #00fff2);
-}
-@keyframes pulseCyan {
-  0%,100% { box-shadow: 0 0 20px rgba(0,255,255,0.4); }
-  50% { box-shadow: 0 0 35px rgba(0,255,255,0.7); }
-}
 
   </style>
 </head>
