@@ -765,32 +765,38 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
   let url = window.APPS_SCRIPT_URL;
 
   try {
-    // 🟣 1️⃣ Telegram-вхід
+    // 🟢 1️⃣ Telegram-вхід (id завжди числовий)
     if (tgUser) {
       const parsed = JSON.parse(tgUser);
-      url += `?user_id=${encodeURIComponent(parsed.id)}`;
+      if (parsed?.id) {
+        url += `?user_id=${encodeURIComponent(parsed.id)}`;
+      }
 
-    // 🟢 2️⃣ Вхід через Email (у тебе це WEB-ID)
+    // 🟣 2️⃣ Email-вхід (WEB-ID)
     } else if (webId) {
       url += `?user_id=${encodeURIComponent(webId)}`;
 
-    // 🔸 3️⃣ Резерв: якщо зберігся в email_user об'єкт із id
+    // 🔸 3️⃣ fallback — якщо id зберігся в emailUser
     } else if (emailUser) {
       const parsed = JSON.parse(emailUser);
-      if (parsed.id) url += `?user_id=${encodeURIComponent(parsed.id)}`;
+      if (parsed?.id) {
+        url += `?user_id=${encodeURIComponent(parsed.id)}`;
+      }
     }
 
+    console.log("📡 URL перевірки PRO:", url);
     const res = await fetch(url);
     const json = await res.json();
     hasPro = json?.isPro === true;
-    console.log("🔎 Перевірка PRO:", url, "→", hasPro);
+    console.log("🔎 Результат перевірки PRO:", json);
+
   } catch (err) {
     console.warn("❌ Помилка перевірки PRO:", err);
   }
 
-  // 💎 Якщо немає PRO — показуємо банер
+  // 💎 Якщо PRO неактивний — блокуємо відео
   if (!hasPro) {
-    const playerBox = document.querySelector('.player-box');
+    const playerBox = document.querySelector(".player-box");
     playerBox.innerHTML = `
       <div style="
         background:#000;
