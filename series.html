@@ -977,8 +977,11 @@ function renderEpisodes(season) {
   
     // 🟢 Якщо є діапазон серій — показуємо 1–2 серія
     let label = "";
-    if (ep.episode_to && ep.episode_to > ep.episode) {
-      label = `${ep.episode}–${ep.episode_to} серія`;
+    const epNum = parseInt(ep.episode);
+    const epToNum = parseInt(ep.episode_to);
+    
+    if (!isNaN(epNum) && !isNaN(epToNum) && epToNum > epNum) {
+      label = `${epNum}–${epToNum} серія`;
     } else if (ep.title && /(\d+)\s*[-–]\s*(\d+)/.test(ep.title)) {
       // якщо у назві є "1–2 серії"
       const match = ep.title.match(/(\d+)\s*[-–]\s*(\d+)/);
