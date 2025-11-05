@@ -419,21 +419,11 @@
     <div class="series-left">
       <img id="seriesPoster" src="" alt="Постер серіалу">
       <div class="series-meta">
-      <div><span>Жанр</span><span id="seriesGenre"></span></div>
-      <div><span>Рік</span><span id="seriesYear"></span></div>
-      <div><span>IMDb</span><span id="seriesImdb"></span></div>
-      <div><span>Країна</span><span id="seriesCountry"></span></div>
-      <div><span>Режисер</span><span id="seriesDirector"></span></div>
-      <div><span>Актори</span><span id="seriesActors"></span></div>
-      <div><span>Озвучення</span><span id="seriesVoice"></span></div>
-      <div><span>Вікове обмеження</span><span id="seriesAge"></span></div>
-      <div><span>Трейлер</span>
-        <span id="seriesTrailer">
-          <a href="#" target="_blank" id="seriesTrailerLink" style="color:#00fff2;text-decoration:underline;">Відкрити</a>
-        </span>
+        <div><span>Жанр</span><span id="seriesGenre"></span></div>
+        <div><span>Рік</span><span id="seriesYear"></span></div>
+        <div><span>IMDb</span><span id="seriesImdb"></span></div>
       </div>
-    </div>
-
+     
 
     </div>
 
@@ -613,67 +603,11 @@ function useSource(url) {
       document.getElementById("seriesTitle").textContent = seriesTitle;
     }
 
-    document.getElementById("seriesCountry").textContent = first.country || "";
-    document.getElementById("seriesDirector").textContent = first.director || "";
-    document.getElementById("seriesActors").textContent = first.actors || "";
-    document.getElementById("seriesVoice").textContent = first.voice || "";
-    document.getElementById("seriesAge").textContent = first.age || "";
-    if (first.trailer) {
-      document.getElementById("seriesTrailerLink").href = first.trailer;
-    } else {
-      document.getElementById("seriesTrailer").textContent = "—";
-    }
-
-    // === 🧩 Дані для кожного сезону (повні) ===
-    const seasonInfo = {}; // { season: {poster, year, genre, imdb, description} }
-    
-    cleanData.forEach(r => {
-      const s = r.season || 1;
-      if (!seasonInfo[s]) {
-        seasonInfo[s] = {
-          poster: r.poster || "",
-          year: r.year || "",
-          genre: r.genre || "",
-          imdb: r.imdb || "",
-          description: r.description || ""
-        };
-      } else {
-        // якщо в попередньому записі опис порожній — заповнюємо
-        if (!seasonInfo[s].description && r.description)
-          seasonInfo[s].description = r.description;
-      }
-    });
-    
- // === 🧠 Функція оновлення даних при перемиканні сезону (оновлена) ===
-  function updateSeasonMeta(season) {
-    const info = seasonInfo[season];
-    if (!info) return;
-  
-    const posterEl = document.getElementById("seriesPoster");
-    const yearEl   = document.getElementById("seriesYear");
-    const genreEl  = document.getElementById("seriesGenre");
-    const imdbEl   = document.getElementById("seriesImdb");
-    const descEl   = document.getElementById("seriesDesc");
-  
-    // 🖼️ Якщо у поточному сезоні є постер — міняємо, інакше лишаємо попередній
-    posterEl.src = info.poster && info.poster.trim() !== "" ? info.poster : posterEl.src;
-  
-    // 📅 Інші поля оновлюємо завжди, навіть якщо вони однакові
-    yearEl.textContent  = info.year || yearEl.textContent;
-    genreEl.textContent = info.genre || genreEl.textContent;
-    imdbEl.textContent  = info.imdb || imdbEl.textContent;
-  
-    // 📝 Опис оновлюємо навіть якщо він виглядає як порожній (очищаємо зайві пробіли)
-    const desc = (info.description || "").trim();
-    if (desc.length > 0) {
-      descEl.textContent = desc;
-    } else if (descEl.textContent.trim().length === 0) {
-      descEl.textContent = "Опис відсутній";
-    }
-  }
-
-
-
+    document.getElementById("seriesPoster").src = first.poster || "";
+    document.getElementById("seriesGenre").textContent = first.genre || "";
+    document.getElementById("seriesYear").textContent  = first.year  || "";
+    document.getElementById("seriesImdb").textContent  = first.imdb  || "—";
+    document.getElementById("seriesDesc").textContent  = first.description || "Опис відсутній";
     // 🎬 Підбірка рекомендованих серіалів
     loadRecommendedSeries(first.title, first.genre);
 
@@ -809,11 +743,9 @@ groups.forEach(([season]) => {
   btn.addEventListener("click", () => {
     currentSeason = season;
     renderEpisodes(season);
-    updateSeasonMeta(season); // 🆕 оновлює всі дані сезону: постер, рік, жанр, IMDb, опис
     document.querySelectorAll(".season-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
   });
-
   seasonsRow.appendChild(btn);
 });
 
@@ -880,7 +812,6 @@ groups.forEach(([season]) => {
 // показуємо перший сезон
 renderEpisodes(currentSeason);
 seasonsRow.querySelector(".season-btn")?.classList.add("active");
-updateSeasonMeta(currentSeason); // 🆕 одразу показує фото і рік першого сезону
 
   }
 
