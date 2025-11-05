@@ -141,9 +141,48 @@
       box-shadow:0 0 12px rgba(255,140,0,.35);
       transform:scale(1.03);
     }
+    /* === 🎬 Кнопки над плеєром (Серія / Трейлер) === */
+    .source-switch button {
+      background: linear-gradient(145deg, #111, #181818);
+      border: 1px solid rgba(0,255,255,0.4);
+      color: #00fff2;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-shadow: 0 0 6px rgba(0,255,255,0.5);
+      box-shadow: 0 0 10px rgba(0,255,255,0.1);
+    }
+    
+    .source-switch button:hover {
+      background: rgba(0,255,255,0.1);
+      box-shadow: 0 0 12px rgba(0,255,255,0.3);
+      transform: translateY(-1px);
+    }
+    
+    .source-switch button.active {
+      background: linear-gradient(145deg, #00fff2, #00b5b0);
+      color: #000;
+      font-weight: 700;
+      border-color: #00fff2;
+      box-shadow: 0 0 15px rgba(0,255,255,0.5);
+      transform: scale(1.05);
+    }
 
     .series-wrap{display:flex;gap:32px;flex-wrap:wrap;margin-top:28px}
-    .series-left{flex:1;min-width:280px;max-width:360px;background:#0b0b0b;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px}
+    .series-left {
+      flex: 1;
+      min-width: 280px;
+      max-width: 360px;
+      background: #0b0b0b;
+      border: 1px solid rgba(0,255,255,0.2);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 0 25px rgba(0,255,255,0.08);
+    }
+
     .series-left img {
       width: 95%;
       max-width: 275px;
@@ -169,8 +208,43 @@
     }
 
 
-    .series-meta{margin-top:12px;background:#101010;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px}
-    .series-meta div{display:flex;justify-content:space-between;background:#151515;color:#ddd;padding:7px 10px;border-radius:6px;margin-bottom:6px}
+        /* === 🧾 Ліва колонка з інформацією === */
+    .series-meta {
+      margin-top: 14px;
+      background: #0e0e0e;
+      border: 1px solid rgba(0,255,255,0.25);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 0 20px rgba(0,255,255,0.1);
+    }
+    
+    .series-meta div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 6px 10px;
+      color: #ccc;
+      font-size: 15px;
+      transition: all 0.25s ease;
+    }
+    
+    .series-meta div:hover {
+      background: rgba(0,255,255,0.05);
+      border-color: rgba(0,255,255,0.3);
+      color: #00fff2;
+    }
+    
+    .series-meta span:first-child {
+      color: #00fff2;
+      font-weight: 600;
+    }
+
     .series-right{flex:2;min-width:420px}
     .player-box{position:relative;background:#000;border-radius:12px;border:1px solid rgba(0,255,242,.3);overflow:hidden;box-shadow:0 0 30px rgba(0,255,242,.15)}
     video{width:100%;display:block;aspect-ratio:16/9;border-radius:12px}
