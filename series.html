@@ -974,7 +974,7 @@ function renderEpisodes(season) {
   episodes.forEach((ep, idx) => {
     const btn = document.createElement("button");
     btn.className = "ep-btn";
-    btn.textContent = `Серія ${ep.episode || idx + 1}`;
+    btn.textContent = `Серія ${ep.episode}`;
     btn.addEventListener("click", () => {
       list.querySelectorAll(".ep-btn.active").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
