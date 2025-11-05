@@ -739,13 +739,12 @@ function useSource(url) {
     }
 
     const { data, error } = await supabase
-      .from("films_site")
-      .select("*")
-      .eq("type", "Серіал")
-      // 🔸 шукаємо як за точною назвою, так і за головною назвою (main_title)
-      .or(`title.eq.${seriesTitle},main_title.eq.${seriesTitle}`)
-      .order("season", { ascending: true })
-      .order("episode", { ascending: true });
+    .from("films_site")
+    .select("*, episode_label")
+    .eq("type", "Серіал")
+    .or(`title.eq.${seriesTitle},main_title.eq.${seriesTitle}`)
+    .order("season", { ascending: true })
+    .order("episode", { ascending: true });
 
     if (error || !data || !data.length){
       document.body.innerHTML = "<h2 style='color:#fff;text-align:center'>Серіал не знайдено</h2>";
