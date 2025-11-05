@@ -742,7 +742,8 @@ function useSource(url) {
       .from("films_site")
       .select("*")
       .eq("type", "Серіал")
-      .eq("title", seriesTitle)
+      // 🔸 шукаємо як за точною назвою, так і за головною назвою (main_title)
+      .or(`title.eq.${seriesTitle},main_title.eq.${seriesTitle}`)
       .order("season", { ascending: true })
       .order("episode", { ascending: true });
 
