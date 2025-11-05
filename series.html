@@ -933,25 +933,26 @@ function renderEpisodes(season) {
 
   listContainer.appendChild(list);
 
-  // === Початкове джерело після перемикання сезону
-  const btnTrailer = document.getElementById("btnSeasonTrailer");
-  btnTrailer.disabled = !currentTrailerUrl;
+ // === Початкове джерело після перемикання сезону
+const btnTrailer = document.getElementById("btnSeasonTrailer");
+btnTrailer.disabled = !currentTrailerUrl;
 
-  if (currentTrailerUrl) {
-    currentSource = "trailer";
-    showTrailer(currentTrailerUrl);
-    document.getElementById("btnSeasonTrailer")?.classList.add("active");
-    document.getElementById("btnEpisode")?.classList.remove("active");
-  } else if (currentEpisodeUrl) {
-    currentSource = "episode";
-    ensureVideoPlayer();
-    useSource(currentEpisodeUrl);
-    document.getElementById("btnEpisode")?.classList.add("active");
-    document.getElementById("btnSeasonTrailer")?.classList.remove("active");
-  } else {
-    ensureVideoPlayer();
-    useSource("");
-  }
+if (currentTrailerUrl) {
+  currentSource = "trailer";
+  showTrailer(currentTrailerUrl);
+  document.getElementById("btnSeasonTrailer")?.classList.add("active");
+  document.getElementById("btnEpisode")?.classList.remove("active");
+} else if (currentEpisodeUrl) {
+  currentSource = "episode";
+  ensureVideoPlayer();
+  useSource(currentEpisodeUrl);
+  document.getElementById("btnEpisode")?.classList.add("active");
+  document.getElementById("btnSeasonTrailer")?.classList.remove("active");
+} else {
+  ensureVideoPlayer();
+  useSource("");
+}
+
 }
 
 // змінюємо колір активної кнопки сезону відповідно до серій
