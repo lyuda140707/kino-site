@@ -415,27 +415,34 @@
 <div class="container">
   <h1 class="series-title" id="seriesTitle" data-enc=""></h1>
 
-  <div class="series-wrap">
-    <div class="series-left">
-      <img id="seriesPoster" src="" alt="Постер серіалу">
-      <div class="series-meta">
-        <div><span>Жанр</span><span id="seriesGenre"></span></div>
-        <div><span>Рік</span><span id="seriesYear"></span></div>
-        <div><span>IMDb</span><span id="seriesImdb"></span></div>
-      </div>
+  <div class="series-meta">
+  <div><span>Жанр</span><span id="seriesGenre"></span></div>
+  <div><span>Рік</span><span id="seriesYear"></span></div>
+  <div><span>IMDb</span><span id="seriesImdb"></span></div>
+  <div><span>Країна</span><span id="seriesCountry"></span></div>
+  <div><span>Режисер</span><span id="seriesDirector"></span></div>
+  <div><span>В ролях</span><span id="seriesCast"></span></div>
+  <div><span>Звук</span><span id="seriesSound"></span></div>
+  <div><span>Тривалість</span><span id="seriesDuration"></span></div>
+  <div><span>Вік</span><span id="seriesAge"></span></div>
+</div>
      
 
     </div>
 
-    <div class="series-right">
-      <div class="series-top-row">
-        <h3 class="series-top-title">🎬 Перегляд</h3>
-      
-        <div class="series-actions">
-          <button id="bookmarkSeriesBtn" class="bookmark-btn">⭐ Додати в закладки</button>
-          <div id="reportIssueBtn" class="report-link">⚠ Повідомити про проблему</div>
-        </div>
+    <!-- 🔹 Перемикач джерела (Серія / Трейлер) -->
+    <div class="source-row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 14px 0;">
+      <div class="source-switch" style="display:flex;gap:10px;">
+        <button id="btnEpisode" class="active">🎬 Серія</button>
+        <button id="btnSeasonTrailer">🎞️ Трейлер</button>
       </div>
+    
+      <div class="series-actions">
+        <button id="bookmarkSeriesBtn" class="bookmark-btn">⭐ Додати в закладки</button>
+        <div id="reportIssueBtn" class="report-link">⚠ Повідомити про проблему</div>
+      </div>
+    </div>
+
       <div class="player-box">
         <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
         <div id="bigPlayOverlay"><div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
@@ -491,14 +498,46 @@
   const player = document.getElementById("seriesPlayer");
   const overlay = document.getElementById("bigPlayOverlay");
   let hls = null;
+  // === Стейт для перемикача джерела
+  let currentSource = "episode";        // 'episode' | 'trailer'
+  let currentEpisodeUrl = "";           // поточна серія
+  let currentTrailerUrl = "";           // трейлер сезону (з таблиці)
+  
+  // YouTube helpers (як у film.html)
+  function isYouTube(url){
+    return /youtube\.com|youtu\.be|googlevideo\.com/.test(url || "");
+  }
+  function getYouTubeId(url){
+    if (!url) return "";
+    const m1 = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})(?:[?&]|$)/);
+    if (m1) return m1[1];
+    const m2 = url.match(/^[0-9A-Za-z_-]{11}$/);
+    return m2 ? m2[0] : "";
+  }
+  
+  // Відновити відео-плеєр усередині .player-box (коли до цього був iframe трейлера)
+  function ensureVideoPlayer(){
+    const box = document.querySelector(".player-box");
+    if (!box.querySelector("video#seriesPlayer")) {
+      box.innerHTML = `
+        <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous" style="width:100%;display:block;aspect-ratio:16/9;border-radius:12px"></video>
+        <div id="bigPlayOverlay"><div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+      `;
+    }
+  }
+
+  
 function useSource(url) {
+  ensureVideoPlayer(); // відновлюємо відео-плеєр, якщо до цього був iframe
+  const player = document.getElementById("seriesPlayer");
+
   if (hls) { try { hls.destroy(); } catch (e) {} hls = null; }
   try { player.pause(); } catch (e) {}
   player.removeAttribute("src"); player.load();
 
   if (!url) return;
 
-  // 🎬 Якщо посилання з Google Drive — використовуємо твій Cloudflare-проксі
+  // 🎬 Google Drive через твій Cloudflare-проксі
   if (url.includes("drive.google.com") || url.includes("uc?export=download")) {
     const fileIdMatch = url.match(/\/d\/([^/]+)\//);
     const fileId = fileIdMatch ? fileIdMatch[1] : null;
@@ -508,7 +547,6 @@ function useSource(url) {
     }
   }
 
-  // 🎞️ HLS (.m3u8)
   if (url.includes(".m3u8")) {
     if (window.Hls && Hls.isSupported()) {
       hls = new Hls({
@@ -524,14 +562,15 @@ function useSource(url) {
       hls.loadSource(url);
       hls.attachMedia(player);
     } else if (player.canPlayType("application/vnd.apple.mpegurl")) {
-      player.src = url; // Safari / iOS
+      player.src = url;
     } else {
       console.error("Браузер не підтримує HLS без hls.js");
     }
   } else {
-    player.src = url; // mp4 або інше
+    player.src = url; // mp4 тощо
   }
 }
+
 
 
   overlay.addEventListener("click", async ()=>{
@@ -758,43 +797,107 @@ function renderEpisodes(season) {
   listContainer.innerHTML = "";
   const episodes = groups.find(([s]) => s == season)?.[1] || [];
 
+  // === Інфо про сезон (1-й рядок сезону з таблиці)
+  const seasonInfo = episodes[0] || {};
+  document.getElementById("seriesDesc").textContent   = seasonInfo.description || "Опис відсутній";
+  document.getElementById("seriesPoster").src         = seasonInfo.poster || "";
+  document.getElementById("seriesYear").textContent   = seasonInfo.year || "";
+  document.getElementById("seriesGenre").textContent  = seasonInfo.genre || "";
+  document.getElementById("seriesImdb").textContent   = seasonInfo.imdb || "—";
+  document.getElementById("seriesCountry").textContent  = seasonInfo.country || "";
+  document.getElementById("seriesDirector").textContent = seasonInfo.director || "";
+  document.getElementById("seriesCast").textContent     = seasonInfo.cast || "";
+  document.getElementById("seriesSound").textContent    = seasonInfo.sound || "";
+  document.getElementById("seriesDuration").textContent = seasonInfo.duration || "";
+  document.getElementById("seriesAge").textContent      = seasonInfo.age || "";
+
+  currentTrailerUrl = seasonInfo.trailer_url || "";
+  currentEpisodeUrl = "";
+
   const list = document.createElement("div");
   list.className = `ep-list season-${season}`;
-
-
   const activeColor = seasonColors[season] || "#00fff2";
 
-  episodes.forEach(ep => {
+  episodes.forEach((ep, idx) => {
     const btn = document.createElement("button");
     btn.className = "ep-btn";
-    btn.textContent = `Серія ${ep.episode || "?"}`;
+    btn.textContent = `Серія ${ep.episode || idx + 1}`;
     btn.addEventListener("click", () => {
       list.querySelectorAll(".ep-btn.active").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      useSource(ep.stream_url || "");
+
+      currentSource = "episode";
+      currentEpisodeUrl = ep.stream_url || "";
+
+      document.getElementById("btnEpisode")?.classList.add("active");
+      document.getElementById("btnSeasonTrailer")?.classList.remove("active");
+
+      ensureVideoPlayer();
+      useSource(currentEpisodeUrl);
     });
     list.appendChild(btn);
+
+    if (idx === 0 && !currentTrailerUrl) {
+      currentEpisodeUrl = ep.stream_url || "";
+    }
   });
 
-  // 🔹 Міняємо колір рамки і активного стану серій відповідно до сезону
   const styleTag = document.getElementById("season-style") || document.createElement("style");
   styleTag.id = "season-style";
   styleTag.innerHTML = `
-    .ep-list.season-${season} .ep-btn {
-      border-color: ${activeColor};
-      color: ${activeColor};
-    }
-    .ep-list.season-${season} .ep-btn.active {
-      background: ${activeColor};
-      color: #000;
-      box-shadow: 0 0 15px ${activeColor};
-    }
+    .ep-list.season-${season} .ep-btn { border-color:${activeColor}; color:${activeColor}; }
+    .ep-list.season-${season} .ep-btn.active { background:${activeColor}; color:#000; box-shadow:0 0 15px ${activeColor}; }
   `;
   document.head.appendChild(styleTag);
 
   listContainer.appendChild(list);
+
+  // === Початкове джерело після перемикання сезону
+  const btnTrailer = document.getElementById("btnSeasonTrailer");
+  btnTrailer.disabled = !currentTrailerUrl;
+
+  if (currentTrailerUrl) {
+    currentSource = "trailer";
+    showTrailer(currentTrailerUrl);
+    document.getElementById("btnSeasonTrailer")?.classList.add("active");
+    document.getElementById("btnEpisode")?.classList.remove("active");
+  } else if (currentEpisodeUrl) {
+    currentSource = "episode";
+    ensureVideoPlayer();
+    useSource(currentEpisodeUrl);
+    document.getElementById("btnEpisode")?.classList.add("active");
+    document.getElementById("btnSeasonTrailer")?.classList.remove("active");
+  } else {
+    ensureVideoPlayer();
+    useSource("");
+  }
 }
+
 // змінюємо колір активної кнопки сезону відповідно до серій
+
+
+function showTrailer(url){
+  const box = document.querySelector(".player-box");
+  if (!url) { ensureVideoPlayer(); useSource(""); return; }
+
+  if (isYouTube(url)) {
+    const id = getYouTubeId(url);
+    const src = id ? `https://www.youtube.com/embed/${id}` : url;
+    box.innerHTML = `
+      <iframe
+        width="100%" height="480"
+        src="${src}"
+        frameborder="0"
+        allow="autoplay; encrypted-media"
+        allowfullscreen
+        style="border-radius:12px;width:100%;aspect-ratio:16/9;">
+      </iframe>`;
+  } else {
+    ensureVideoPlayer();
+    useSource(url);
+  }
+}
+
 function setSeasonButtonColor(btn, color) {
   btn.style.background = color;
   btn.style.color = "#000";
@@ -812,6 +915,30 @@ groups.forEach(([season]) => {
 // показуємо перший сезон
 renderEpisodes(currentSeason);
 seasonsRow.querySelector(".season-btn")?.classList.add("active");
+// === Перемикач над плеєром
+const btnEpisode = document.getElementById("btnEpisode");
+const btnSeasonTrailer = document.getElementById("btnSeasonTrailer");
+
+btnEpisode?.addEventListener("click", () => {
+  if (currentSource === "episode") return;
+  currentSource = "episode";
+  btnEpisode.classList.add("active");
+  btnSeasonTrailer.classList.remove("active");
+
+  ensureVideoPlayer();
+  if (currentEpisodeUrl) useSource(currentEpisodeUrl);
+  else useSource("");
+});
+
+btnSeasonTrailer?.addEventListener("click", () => {
+  if (!currentTrailerUrl) return;
+  if (currentSource === "trailer") return;
+  currentSource = "trailer";
+  btnSeasonTrailer.classList.add("active");
+  btnEpisode.classList.remove("active");
+  showTrailer(currentTrailerUrl);
+});
+
 
   }
 
