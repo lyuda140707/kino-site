@@ -142,8 +142,11 @@
         return;
       }
 
-      // 🔹 Унікальні за title
-      const unique = Array.from(new Map(data.map(f => [f.title, f])).values());
+      // 🔹 Унікальні за комбінацією title + main_title (щоб показувало різні сезони)
+      const unique = Array.from(
+        new Map(data.map(f => [`${f.title}_${f.main_title || ''}`, f])).values()
+      );
+
 
       box.innerHTML = "";
       unique.forEach(f => {
