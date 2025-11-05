@@ -608,6 +608,24 @@ function useSource(url) {
     document.getElementById("seriesYear").textContent  = first.year  || "";
     document.getElementById("seriesImdb").textContent  = first.imdb  || "—";
     document.getElementById("seriesDesc").textContent  = first.description || "Опис відсутній";
+    // === 🖼️ Різні фото і роки для кожного сезону ===
+    const seasonInfo = {}; // { season: {poster, year} }
+    cleanData.forEach(r => {
+      const s = r.season || 1;
+      if (!seasonInfo[s]) {
+        seasonInfo[s] = { poster: r.poster, year: r.year };
+      }
+    });
+    
+    // коли користувач натискає сезон — оновлюємо фото і рік
+    function updateSeasonMeta(season) {
+      const info = seasonInfo[season];
+      if (info) {
+        document.getElementById("seriesPoster").src = info.poster || first.poster;
+        document.getElementById("seriesYear").textContent = info.year || first.year;
+      }
+    }
+
     // 🎬 Підбірка рекомендованих серіалів
     loadRecommendedSeries(first.title, first.genre);
 
@@ -743,9 +761,11 @@ groups.forEach(([season]) => {
   btn.addEventListener("click", () => {
     currentSeason = season;
     renderEpisodes(season);
+    updateSeasonMeta(season); // 🆕 оновлення фото та року при перемиканні сезону
     document.querySelectorAll(".season-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
   });
+
   seasonsRow.appendChild(btn);
 });
 
@@ -812,6 +832,7 @@ groups.forEach(([season]) => {
 // показуємо перший сезон
 renderEpisodes(currentSeason);
 seasonsRow.querySelector(".season-btn")?.classList.add("active");
+updateSeasonMeta(currentSeason); // 🆕 одразу показує фото і рік першого сезону
 
   }
 
