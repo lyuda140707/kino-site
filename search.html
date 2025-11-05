@@ -126,7 +126,7 @@
       
       const { data, error } = await supabase
         .from("films_site")
-        .select("id, title, poster, genre, year, type, imdb, pro_access")
+        .select("id, title, main_title, poster, genre, year, type, imdb, pro_access")
         .or(orParts.join(','))
         .order("id", { ascending: false });
 
