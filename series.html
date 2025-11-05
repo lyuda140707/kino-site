@@ -939,6 +939,16 @@ function renderEpisodes(season) {
 
   // === Інфо про сезон (1-й рядок сезону з таблиці)
   const seasonInfo = episodes[0] || {};
+  // === 🟢 Оновлення заголовку при перемиканні сезону ===
+  const mainTitle = seasonInfo.main_title || first.main_title || first.title || seriesTitle;
+  const currentSeasonTitle = seasonInfo.title || "";
+  const fullTitle = 
+    currentSeasonTitle && currentSeasonTitle !== mainTitle
+      ? `${mainTitle} — ${currentSeasonTitle} (Сезон ${season})`
+      : `${mainTitle} (Сезон ${season})`;
+  
+  document.getElementById("seriesTitle").textContent = fullTitle;
+
   document.getElementById("seriesDesc").textContent   = seasonInfo.description || "Опис відсутній";
   document.getElementById("seriesPoster").src         = seasonInfo.poster || "";
   document.getElementById("seriesYear").textContent   = seasonInfo.year || "";
