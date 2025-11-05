@@ -613,11 +613,17 @@ function useSource(url) {
       document.getElementById("seriesTitle").textContent = seriesTitle;
     }
 
-    document.getElementById("seriesPoster").src = first.poster || "";
-    document.getElementById("seriesGenre").textContent = first.genre || "";
-    document.getElementById("seriesYear").textContent  = first.year  || "";
-    document.getElementById("seriesImdb").textContent  = first.imdb  || "—";
-    document.getElementById("seriesDesc").textContent  = first.description || "Опис відсутній";
+    document.getElementById("seriesCountry").textContent = first.country || "";
+    document.getElementById("seriesDirector").textContent = first.director || "";
+    document.getElementById("seriesActors").textContent = first.actors || "";
+    document.getElementById("seriesVoice").textContent = first.voice || "";
+    document.getElementById("seriesAge").textContent = first.age || "";
+    if (first.trailer) {
+      document.getElementById("seriesTrailerLink").href = first.trailer;
+    } else {
+      document.getElementById("seriesTrailer").textContent = "—";
+    }
+
     // === 🧩 Дані для кожного сезону (повні) ===
     const seasonInfo = {}; // { season: {poster, year, genre, imdb, description} }
     
