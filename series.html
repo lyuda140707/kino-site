@@ -937,35 +937,29 @@ function renderEpisodes(season) {
   listContainer.innerHTML = "";
   const episodes = groups.find(([s]) => s == season)?.[1] || [];
 
-  // 🧩 Виправлення — гарантуємо, що поле episode_to доступне
-  episodes.forEach(ep => {
-    if (ep.episode_to === undefined && ep["episode_to"] !== undefined) {
-      ep.episode_to = ep["episode_to"];
-    }
-  });
-  console.log("🎞️ Episodes data:", episodes);
-
-  // === Інфо про сезон
+  // === Інфо про сезон (1-й рядок сезону з таблиці)
   const seasonInfo = episodes[0] || {};
+  // === 🟢 Оновлення заголовку при перемиканні сезону ===
   const mainTitle = seasonInfo.main_title || first.main_title || first.title || seriesTitle;
   const currentSeasonTitle = seasonInfo.title || "";
-  const fullTitle =
+  const fullTitle = 
     currentSeasonTitle && currentSeasonTitle !== mainTitle
       ? `${mainTitle} — ${currentSeasonTitle} (Сезон ${season})`
       : `${mainTitle} (Сезон ${season})`;
-
+  
   document.getElementById("seriesTitle").textContent = fullTitle;
-  document.getElementById("seriesDesc").textContent = seasonInfo.description || "Опис відсутній";
-  document.getElementById("seriesPoster").src = seasonInfo.poster || "";
-  document.getElementById("seriesYear").textContent = seasonInfo.year || "";
-  document.getElementById("seriesGenre").textContent = seasonInfo.genre || "";
-  document.getElementById("seriesImdb").textContent = seasonInfo.imdb || "—";
-  document.getElementById("seriesCountry").textContent = seasonInfo.country || "";
+
+  document.getElementById("seriesDesc").textContent   = seasonInfo.description || "Опис відсутній";
+  document.getElementById("seriesPoster").src         = seasonInfo.poster || "";
+  document.getElementById("seriesYear").textContent   = seasonInfo.year || "";
+  document.getElementById("seriesGenre").textContent  = seasonInfo.genre || "";
+  document.getElementById("seriesImdb").textContent   = seasonInfo.imdb || "—";
+  document.getElementById("seriesCountry").textContent  = seasonInfo.country || "";
   document.getElementById("seriesDirector").textContent = seasonInfo.director || "";
-  document.getElementById("seriesCast").textContent = seasonInfo.cast || "";
-  document.getElementById("seriesSound").textContent = seasonInfo.sound || "";
+  document.getElementById("seriesCast").textContent     = seasonInfo.cast || "";
+  document.getElementById("seriesSound").textContent    = seasonInfo.sound || "";
   document.getElementById("seriesDuration").textContent = seasonInfo.duration || "";
-  document.getElementById("seriesAge").textContent = seasonInfo.age || "";
+  document.getElementById("seriesAge").textContent      = seasonInfo.age || "";
 
   currentTrailerUrl = seasonInfo.trailer_url || "";
   currentEpisodeUrl = "";
@@ -974,28 +968,13 @@ function renderEpisodes(season) {
   list.className = `ep-list season-${season}`;
   const activeColor = seasonColors[season] || "#00fff2";
 
+  // 🔹 Перестворюємо плеєр перед новим сезоном
   ensureVideoPlayer();
 
   episodes.forEach((ep, idx) => {
     const btn = document.createElement("button");
     btn.className = "ep-btn";
-
-    // 🟢 Формування тексту кнопки
-    const epNum = parseInt(ep.episode);
-    const epToNum = parseInt(ep.episode_to);
-    let label = "";
-
-    if (!isNaN(epNum) && !isNaN(epToNum) && epToNum > epNum) {
-      label = `${epNum}–${epToNum} серія`;
-    } else if (ep.title && /(\d+)\s*[-–]\s*(\d+)/.test(ep.title)) {
-      const match = ep.title.match(/(\d+)\s*[-–]\s*(\d+)/);
-      label = `${match[1]}–${match[2]} серія`;
-    } else {
-      label = `Серія ${ep.episode || idx + 1}`;
-    }
-
-    btn.textContent = label;
-
+    btn.textContent = `Серія ${ep.episode || idx + 1}`;
     btn.addEventListener("click", () => {
       list.querySelectorAll(".ep-btn.active").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
@@ -1009,12 +988,11 @@ function renderEpisodes(season) {
       ensureVideoPlayer();
       useSource(currentEpisodeUrl);
     });
-
     list.appendChild(btn);
+
     if (idx === 0) currentEpisodeUrl = ep.stream_url || "";
   });
 
-  // 🎨 Кольори сезону
   const styleTag = document.getElementById("season-style") || document.createElement("style");
   styleTag.id = "season-style";
   styleTag.innerHTML = `
@@ -1032,12 +1010,16 @@ function renderEpisodes(season) {
 
   listContainer.appendChild(list);
 
-  // 🔸 Автоматичне відтворення першої серії
+  // === 🟢 Після перемикання сезону автоматично вмикаємо першу серію ===
   if (episodes.length > 0 && currentEpisodeUrl) {
     ensureVideoPlayer();
     useSource(currentEpisodeUrl);
+
     const firstBtn = list.querySelector(".ep-btn");
     if (firstBtn) firstBtn.classList.add("active");
+
+    document.getElementById("btnEpisode")?.classList.add("active");
+    document.getElementById("btnSeasonTrailer")?.classList.remove("active");
   } else {
     ensureVideoPlayer();
     useSource("");
