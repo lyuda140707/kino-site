@@ -628,23 +628,34 @@ function useSource(url) {
       }
     });
     
-    // === 🧠 Функція оновлення даних при перемиканні сезону ===
-    function updateSeasonMeta(season) {
-      const info = seasonInfo[season];
-      if (!info) return;
-    
-      const posterEl = document.getElementById("seriesPoster");
-      const yearEl = document.getElementById("seriesYear");
-      const genreEl = document.getElementById("seriesGenre");
-      const imdbEl = document.getElementById("seriesImdb");
-      const descEl = document.getElementById("seriesDesc");
-    
-      if (info.poster) posterEl.src = info.poster;
-      if (info.year) yearEl.textContent = info.year;
-      if (info.genre) genreEl.textContent = info.genre;
-      if (info.imdb) imdbEl.textContent = info.imdb;
-      if (info.description) descEl.textContent = info.description;
+ // === 🧠 Функція оновлення даних при перемиканні сезону (оновлена) ===
+  function updateSeasonMeta(season) {
+    const info = seasonInfo[season];
+    if (!info) return;
+  
+    const posterEl = document.getElementById("seriesPoster");
+    const yearEl   = document.getElementById("seriesYear");
+    const genreEl  = document.getElementById("seriesGenre");
+    const imdbEl   = document.getElementById("seriesImdb");
+    const descEl   = document.getElementById("seriesDesc");
+  
+    // 🖼️ Якщо у поточному сезоні є постер — міняємо, інакше лишаємо попередній
+    posterEl.src = info.poster && info.poster.trim() !== "" ? info.poster : posterEl.src;
+  
+    // 📅 Інші поля оновлюємо завжди, навіть якщо вони однакові
+    yearEl.textContent  = info.year || yearEl.textContent;
+    genreEl.textContent = info.genre || genreEl.textContent;
+    imdbEl.textContent  = info.imdb || imdbEl.textContent;
+  
+    // 📝 Опис оновлюємо навіть якщо він виглядає як порожній (очищаємо зайві пробіли)
+    const desc = (info.description || "").trim();
+    if (desc.length > 0) {
+      descEl.textContent = desc;
+    } else if (descEl.textContent.trim().length === 0) {
+      descEl.textContent = "Опис відсутній";
     }
+  }
+
 
 
     // 🎬 Підбірка рекомендованих серіалів
