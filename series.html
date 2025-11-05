@@ -597,15 +597,54 @@
   }
   
   // Відновити відео-плеєр усередині .player-box (коли до цього був iframe трейлера)
-  function ensureVideoPlayer(){
-    const box = document.querySelector(".player-box");
-    if (!box.querySelector("video#seriesPlayer")) {
-      box.innerHTML = `
-        <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous" style="width:100%;display:block;aspect-ratio:16/9;border-radius:12px"></video>
-        <div id="bigPlayOverlay"><div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-      `;
-    }
+ function ensureVideoPlayer() {
+  const box = document.querySelector(".player-box");
+  let video = box.querySelector("video#seriesPlayer");
+  let overlay = box.querySelector("#bigPlayOverlay");
+
+  // Якщо відео відсутнє — створюємо новий плеєр
+  if (!video) {
+    box.innerHTML = `
+      <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"
+        style="width:100%;display:block;aspect-ratio:16/9;border-radius:12px"></video>
+      <div id="bigPlayOverlay">
+        <div>
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
+    `;
+    video = box.querySelector("#seriesPlayer");
+    overlay = box.querySelector("#bigPlayOverlay");
   }
+
+  // 🩵 Якщо кнопка зникла — додаємо її знову
+  if (!overlay) {
+    const div = document.createElement("div");
+    div.id = "bigPlayOverlay";
+    div.innerHTML = `<div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`;
+    box.appendChild(div);
+    overlay = div;
+  }
+
+  // підʼєднуємо поведінку кнопки ▶️
+  overlay.onclick = async () => {
+    try {
+      await video.play();
+      overlay.style.opacity = "0";
+      overlay.style.pointerEvents = "none";
+    } catch (e) {}
+  };
+
+  video.addEventListener("play", () => {
+    overlay.style.opacity = "0";
+    overlay.style.pointerEvents = "none";
+  });
+
+  video.addEventListener("pause", () => {
+    overlay.style.opacity = "1";
+    overlay.style.pointerEvents = "auto";
+  });
+}
 
   
 function useSource(url) {
@@ -653,12 +692,6 @@ function useSource(url) {
 }
 
 
-
-  overlay.addEventListener("click", async ()=>{
-    try{ await player.play(); overlay.style.opacity="0"; overlay.style.pointerEvents="none"; }catch(e){}
-  });
-  player.addEventListener("play", ()=>{ overlay.style.opacity="0"; overlay.style.pointerEvents="none"; });
-  player.addEventListener("pause", ()=>{ overlay.style.opacity="1"; overlay.style.pointerEvents="auto"; });
 
   function groupBySeason(rows){
     const map = new Map();
