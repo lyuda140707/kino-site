@@ -136,7 +136,7 @@ async function loadLatestFilms(page = 1) {
 // 🔹 Унікальні за назвою, але якщо є Фільм і Серіал з однаковою назвою — залишаємо Фільм
 const map = new Map();
 data.forEach(item => {
-  const key = item.title.trim();
+  const key = (item.main_title || item.title).trim();
   if (!map.has(key)) {
     map.set(key, item);
   } else {
@@ -530,6 +530,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
 
 
 
