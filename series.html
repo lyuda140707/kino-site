@@ -959,25 +959,41 @@ function renderEpisodes(season) {
   document.getElementById("seriesCast").textContent     = seasonInfo.cast || "";
   document.getElementById("seriesSound").textContent    = seasonInfo.sound || "";
   document.getElementById("seriesDuration").textContent = seasonInfo.duration || "";
-  document.getElementById("seriesAge").textContent      = seasonInfo.age || "";
-
+  document.getElementById("seriesAge").textContent = seasonInfo.age || "";
+  
   currentTrailerUrl = seasonInfo.trailer_url || "";
   currentEpisodeUrl = "";
-
+  
   const list = document.createElement("div");
   list.className = `ep-list season-${season}`;
   const activeColor = seasonColors[season] || "#00fff2";
-
+  
   // 🔹 Перестворюємо плеєр перед новим сезоном
   ensureVideoPlayer();
-
+  
   episodes.forEach((ep, idx) => {
     const btn = document.createElement("button");
     btn.className = "ep-btn";
-    btn.textContent = `Серія ${ep.episode || idx + 1}`;
+  
+    // 🟢 Якщо є діапазон серій — показуємо 1–2 серія
+    let label = "";
+    if (ep.episode_to && ep.episode_to > ep.episode) {
+      label = `${ep.episode}–${ep.episode_to} серія`;
+    } else if (ep.title && /(\d+)\s*[-–]\s*(\d+)/.test(ep.title)) {
+      // якщо у назві є "1–2 серії"
+      const match = ep.title.match(/(\d+)\s*[-–]\s*(\d+)/);
+      label = `${match[1]}–${match[2]} серія`;
+    } else {
+      label = `Серія ${ep.episode || idx + 1}`;
+    }
+  
+    btn.textContent = label;
+  
+ 
+
     btn.addEventListener("click", () => {
       list.querySelectorAll(".ep-btn.active").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+      btn.classList.add("active");ф
 
       currentSource = "episode";
       currentEpisodeUrl = ep.stream_url || "";
