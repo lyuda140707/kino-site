@@ -361,7 +361,7 @@ async function loadDynamicSidebar() {
             ${randomSeries
               .map(
                 (s) => `
-                <div class="mini-card" onclick="window.location.href='film.html?id=${s.id}'">
+                <div class="mini-card" onclick="window.location.href='series.html?title=${encodeURIComponent(s.title)}'">
                   <img src="${s.poster || 'https://via.placeholder.com/150'}">
                   <p>${s.title}</p>
                 </div>`
@@ -530,6 +530,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
 
 
 
