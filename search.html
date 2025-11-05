@@ -117,7 +117,7 @@
       const { data, error } = await supabase
         .from("films_site")
         .select("id, title, poster, genre, year, type, imdb, pro_access")
-        .or(`title.ilike.%${query}%,genre.ilike.%${query}%`)
+        .or(`title.ilike.%${query}%,main_title.ilike.%${query}%,genre.ilike.%${query}%`)
         .order("id", { ascending: false });
 
       if (error) {
