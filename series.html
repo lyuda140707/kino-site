@@ -437,30 +437,24 @@
   <!-- 🎬 Праворуч відео, сезони, опис -->
   <div class="series-right">
 
-<!-- 🎞️ Трейлер сезону (зверху як у film.html) -->
-<div id="trailerBox" class="player-box" style="margin-bottom:20px;">
-  <video id="seriesTrailer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
-</div>
+    <!-- 🔹 Перемикач джерела -->
+    <div class="source-row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 14px 0;">
+      <div class="source-switch" style="display:flex;gap:10px;">
+        <button id="btnEpisode" class="active">🎬 Серія</button>
+        <button id="btnSeasonTrailer">🎞️ Трейлер</button>
+      </div>
 
-<!-- 🔹 Перемикач джерела -->
-<div class="source-row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 14px 0;">
-  <div class="source-switch" style="display:flex;gap:10px;">
-    <button id="btnEpisode" class="active">🎬 Серія</button>
-    <button id="btnSeasonTrailer">🎞️ Трейлер сезону</button>
-  </div>
+      <div class="series-actions">
+        <button id="bookmarkSeriesBtn" class="bookmark-btn">⭐ Додати в закладки</button>
+        <div id="reportIssueBtn" class="report-link">⚠ Повідомити про проблему</div>
+      </div>
+    </div>
 
-  <div class="series-actions">
-    <button id="bookmarkSeriesBtn" class="bookmark-btn">⭐ Додати в закладки</button>
-    <div id="reportIssueBtn" class="report-link">⚠ Повідомити про проблему</div>
-  </div>
-</div>
-
-<!-- 🎬 Основний плеєр -->
-<div class="player-box">
-  <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
-  <div id="bigPlayOverlay"><div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-</div>
-
+    <!-- 🧩 Плеєр -->
+    <div class="player-box">
+      <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
+      <div id="bigPlayOverlay"><div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+    </div>
 
     <!-- 📺 Сезони й серії -->
     <div class="episodes">
