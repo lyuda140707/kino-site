@@ -936,6 +936,13 @@ container.appendChild(listContainer);
 function renderEpisodes(season) {
   listContainer.innerHTML = "";
   const episodes = groups.find(([s]) => s == season)?.[1] || [];
+  // 🧩 Виправлення — гарантуємо доступ до episode_to навіть якщо Supabase повертає snake_case
+  episodes.forEach(ep => {
+    if (ep.episode_to === undefined && ep["episode_to"] !== undefined) {
+      ep.episode_to = ep["episode_to"];
+    }
+  });
+  console.log("🎞️ Episodes data:", episodes);
 
   // === Інфо про сезон (1-й рядок сезону з таблиці)
   const seasonInfo = episodes[0] || {};
@@ -972,25 +979,25 @@ function renderEpisodes(season) {
   ensureVideoPlayer();
   
   episodes.forEach((ep, idx) => {
-    const btn = document.createElement("button");
-    btn.className = "ep-btn";
-  
-    // 🟢 Якщо є діапазон серій — показуємо 1–2 серія
-    let label = "";
-    const epNum = parseInt(ep.episode);
-    const epToNum = parseInt(ep.episode_to);
-    
-    if (!isNaN(epNum) && !isNaN(epToNum) && epToNum > epNum) {
-      label = `${epNum}–${epToNum} серія`;
-    } else if (ep.title && /(\d+)\s*[-–]\s*(\d+)/.test(ep.title)) {
-      // якщо у назві є "1–2 серії"
-      const match = ep.title.match(/(\d+)\s*[-–]\s*(\d+)/);
-      label = `${match[1]}–${match[2]} серія`;
-    } else {
-      label = `Серія ${ep.episode || idx + 1}`;
-    }
-  
-    btn.textContent = label;
+  const btn = document.createElement("button");
+  btn.className = "ep-btn";
+
+  // 🟢 Визначаємо текст кнопки
+  let label = "";
+  const epNum = parseInt(ep.episode);
+  const epToNum = parseInt(ep.episode_to);
+
+  if (!isNaN(epNum) && !isNaN(epToNum) && epToNum > epNum) {
+    label = `${epNum}–${epToNum} серія`;
+  } else if (ep.title && /(\d+)\s*[-–]\s*(\d+)/.test(ep.title)) {
+    const match = ep.title.match(/(\d+)\s*[-–]\s*(\d+)/);
+    label = `${match[1]}–${match[2]} серія`;
+  } else {
+    label = `Серія ${ep.episode || idx + 1}`;
+  }
+
+  btn.textContent = label;
+
   
  
 
