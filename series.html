@@ -415,72 +415,79 @@
 <div class="container">
   <h1 class="series-title" id="seriesTitle" data-enc=""></h1>
 
-  <div class="series-meta">
-  <div><span>Жанр</span><span id="seriesGenre"></span></div>
-  <div><span>Рік</span><span id="seriesYear"></span></div>
-  <div><span>IMDb</span><span id="seriesImdb"></span></div>
-  <div><span>Країна</span><span id="seriesCountry"></span></div>
-  <div><span>Режисер</span><span id="seriesDirector"></span></div>
-  <div><span>В ролях</span><span id="seriesCast"></span></div>
-  <div><span>Звук</span><span id="seriesSound"></span></div>
-  <div><span>Тривалість</span><span id="seriesDuration"></span></div>
-  <div><span>Вік</span><span id="seriesAge"></span></div>
-</div>
-     
+<div class="series-wrap">
 
+  <!-- 🖼️ Ліворуч постер і мета -->
+  <div class="series-left">
+    <img id="seriesPoster" src="" alt="Постер серіалу">
+
+    <div class="series-meta">
+      <div><span>Жанр</span><span id="seriesGenre"></span></div>
+      <div><span>Рік</span><span id="seriesYear"></span></div>
+      <div><span>IMDb</span><span id="seriesImdb"></span></div>
+      <div><span>Країна</span><span id="seriesCountry"></span></div>
+      <div><span>Режисер</span><span id="seriesDirector"></span></div>
+      <div><span>В ролях</span><span id="seriesCast"></span></div>
+      <div><span>Звук</span><span id="seriesSound"></span></div>
+      <div><span>Тривалість</span><span id="seriesDuration"></span></div>
+      <div><span>Вік</span><span id="seriesAge"></span></div>
     </div>
+  </div> <!-- /series-left -->
 
-    <!-- 🔹 Перемикач джерела (Серія / Трейлер) -->
+  <!-- 🎬 Праворуч відео, сезони, опис -->
+  <div class="series-right">
+
+    <!-- 🔹 Перемикач джерела -->
     <div class="source-row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 14px 0;">
       <div class="source-switch" style="display:flex;gap:10px;">
         <button id="btnEpisode" class="active">🎬 Серія</button>
         <button id="btnSeasonTrailer">🎞️ Трейлер</button>
       </div>
-    
+
       <div class="series-actions">
         <button id="bookmarkSeriesBtn" class="bookmark-btn">⭐ Додати в закладки</button>
         <div id="reportIssueBtn" class="report-link">⚠ Повідомити про проблему</div>
       </div>
     </div>
 
-      <div class="player-box">
-        <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
-        <div id="bigPlayOverlay"><div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-      </div>
-
-      <div class="episodes">
-        <h3>Серії</h3>
-        <h4 style="color:#00fff2;margin-top:8px;">Сезони:</h4>
-        <div id="episodesContainer"></div>
-      </div>
-
-      <div class="series-desc">
-        <h3>Про серіал</h3>
-        <p id="seriesDesc">Опис…</p>
-      </div>
-
-      <!-- 🎬 Рекомендовані серіали -->
-      <div class="recommended-section">
-        <h3>🎞️ Рекомендуємо подивитись</h3>
-        <div id="recommendedSeriesList" class="recommended-list"></div>
-      </div>
-
-      <!-- 💬 Коментарі -->
-<div class="comments-section">
-  <h3>💬 Коментарі</h3>
-
-  <div id="commentsList"></div>
-
-  <div class="comment-form">
-    <input type="text" id="username" placeholder="Ваше ім’я (необов’язково)">
-    <textarea id="commentText" placeholder="Напишіть свій коментар..." rows="3"></textarea>
-    <button id="sendComment">Надіслати</button>
-  </div>
-</div>
-
+    <!-- 🧩 Плеєр -->
+    <div class="player-box">
+      <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
+      <div id="bigPlayOverlay"><div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
     </div>
-  </div>
-</div>
+
+    <!-- 📺 Сезони й серії -->
+    <div class="episodes">
+      <h3>Серії</h3>
+      <h4 style="color:#00fff2;margin-top:8px;">Сезони:</h4>
+      <div id="episodesContainer"></div>
+    </div>
+
+    <!-- 📖 Опис -->
+    <div class="series-desc">
+      <h3>Про серіал</h3>
+      <p id="seriesDesc">Опис…</p>
+    </div>
+
+    <!-- 🎞️ Рекомендовані -->
+    <div class="recommended-section">
+      <h3>🎞️ Рекомендуємо подивитись</h3>
+      <div id="recommendedSeriesList" class="recommended-list"></div>
+    </div>
+
+    <!-- 💬 Коментарі -->
+    <div class="comments-section">
+      <h3>💬 Коментарі</h3>
+      <div id="commentsList"></div>
+      <div class="comment-form">
+        <input type="text" id="username" placeholder="Ваше ім’я (необов’язково)">
+        <textarea id="commentText" placeholder="Напишіть свій коментар..." rows="3"></textarea>
+        <button id="sendComment">Надіслати</button>
+      </div>
+    </div>
+
+  </div> <!-- /series-right -->
+</div> <!-- /series-wrap -->
 
 <footer>© 2025 KinoSite • Усі права захищені</footer>
 
