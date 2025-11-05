@@ -114,11 +114,22 @@
 
       box.innerHTML = `<p style='color:#aaa;'>Пошук: <b>${query}</b>...</p>`;
 
+      // 🧠 Розумний пошук за кількома словами
+      const words = query.split(/\s+/).filter(w => w.length > 1);
+      let orParts = [];
+      
+      words.forEach(word => {
+        orParts.push(`title.ilike.%${word}%`);
+        orParts.push(`main_title.ilike.%${word}%`);
+        orParts.push(`genre.ilike.%${word}%`);
+      });
+      
       const { data, error } = await supabase
         .from("films_site")
         .select("id, title, poster, genre, year, type, imdb, pro_access")
-        .or(`title.ilike.%${query}%,main_title.ilike.%${query}%,genre.ilike.%${query}%`)
+        .or(orParts.join(','))
         .order("id", { ascending: false });
+
 
       if (error) {
         console.error("❌ Помилка пошуку:", error);
