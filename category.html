@@ -292,6 +292,31 @@ async function loadFilms(sortMode = currentSort) {
 
   renderPagination(items.length);
 }
+// === Заповнення списку років ===
+async function fillYearOptions() {
+  const { data, error } = await supabase
+    .from("films_site")
+    .select("year")
+    .order("year", { ascending: false });
+
+  if (error) {
+    console.error("Помилка при завантаженні років:", error.message);
+    return;
+  }
+
+  const yearSelect = document.getElementById("yearSelect");
+  if (!yearSelect) return;
+
+  const years = [...new Set(
+    data
+      .map(f => String(f.year || "").trim())
+      .filter(y => y && y !== "undefined" && y !== "null")
+  )];
+
+  yearSelect.innerHTML =
+    '<option value="">Усі роки</option>' +
+    years.map(y => `<option value="${y}">${y}</option>`).join('');
+}
 
 // === ініціалізація ===
 async function initCategoryPage() {
