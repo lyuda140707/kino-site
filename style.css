@@ -295,37 +295,41 @@ footer {
   box-sizing: border-box;
   padding-bottom: 5px;
 }
-
+/* === 🎬 Банерні картки (ТОП-10) — фіксована ширина === */
 .banner-slider .slide {
-  flex: 0 0 220px;       /* фіксована ширина картки */
+  width: 220px;           /* ✅ фіксована ширина */
+  min-width: 220px;
   max-width: 220px;
+  flex: 0 0 220px;
+  height: auto;
   border-radius: 10px;
   overflow: hidden;
   background: #1e1e1e;
   border: 1px solid #000;
   box-shadow: 0 0 10px rgba(0,255,255,0.2);
-  transition: transform 0.3s;
+  transition: transform 0.3s ease;
   cursor: pointer;
 }
 
-.slide:hover {
+.banner-slider .slide:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 15px #00ffa14d;
+  box-shadow: 0 0 20px rgba(0,255,255,0.3);
 }
 
-.slide img {
+.banner-slider .slide img {
   width: 100%;
-  height: 180px; /* 🔹 було 230px */
+  height: 330px;           /* однакова висота постеру */
   object-fit: cover;
   display: block;
 }
 
-.slide p {
+.banner-slider .slide p {
+  margin: 8px 6px 10px;
   text-align: center;
-  font-size: 13px;
-  padding: 8px;
-  color: #eee;
-  font-weight: 600;
+  color: #fff;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.3;
 }
 
 html, body {
@@ -1912,4 +1916,5 @@ header {
   color: #fff;
   box-shadow: 0 0 12px rgba(58, 167, 87, 0.6);
 }
+
 
