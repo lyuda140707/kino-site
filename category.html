@@ -73,16 +73,23 @@
       text-align: center;
     }
 
-    /* === 🔹 Адаптація для мобільних (по 2 картки в ряд) === */
+      /* === 🔹 Мобільна адаптація з вужчими картками === */
     @media (max-width: 768px) {
       .film-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 14px;
         padding: 10px;
       }
     
+      .film-card {
+        width: 45%; /* 🟢 дві картки в ряд з невеликими відступами */
+        max-width: 200px;
+      }
+    
       .film-card img {
-        height: 220px;
+        height: 210px;
       }
     
       .film-card h3 {
@@ -90,6 +97,7 @@
         margin: 8px 5px;
       }
     }
+
 
     /* === ФІЛЬТРИ НАД КАРТКАМИ === */
 .filter-bar{
