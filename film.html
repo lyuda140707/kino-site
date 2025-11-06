@@ -1019,16 +1019,16 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
     
-// ===== 🎬 Рекомендовані фільми =====
+// ===== 🎬 Рекомендовані фільми (розширена логіка серій) =====
 async function loadRecommendedFilms(title, genre) {
   const list = document.getElementById("recommendedList");
   if (!list) return;
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
   const cleanTitle = (title || "").trim().replace(/[:\-–,]/g, " ");
-  const baseWord = cleanTitle.split(" ")[0]; // перше слово (Гарфілд)
+  const baseWord = cleanTitle.split(" ")[0]; // перше слово: Гарфілд
 
-  // 🔹 Формуємо пошук за назвою + жанром
+  // 🔹 Формуємо запит (назва + жанр)
   const orParts = [];
   if (genre) {
     genre.split(",").map(g => g.trim()).forEach(g => orParts.push(`genre.ilike.%${g}%`));
@@ -1056,19 +1056,19 @@ async function loadRecommendedFilms(title, genre) {
     const t = (f.title || "").trim().toLowerCase();
     if (!t || seen.has(t)) return;
     seen.add(t);
-
-    // 🔹 Виключаємо лише точний збіг поточного фільму
     if (t === current) return;
 
-    // 🔹 Якщо обидва мають спільне перше слово — це частина серії
-    if (t.startsWith(baseWord.toLowerCase()) || current.startsWith(baseWord.toLowerCase())) {
-      sameSeries.push(f);
-    } else {
-      related.push(f);
-    }
+    // 🧩 Перевіряємо, чи обидві назви мають спільне ключове слово (початок або двокрапку)
+    const sameBase =
+      t.startsWith(baseWord.toLowerCase()) ||
+      current.startsWith(baseWord.toLowerCase()) ||
+      t.includes(baseWord.toLowerCase() + " ") ||
+      current.includes(baseWord.toLowerCase() + " ");
+
+    if (sameBase) sameSeries.push(f);
+    else related.push(f);
   });
 
-  // 🧩 Формуємо результат: спочатку продовження серії, потім інші за жанром
   const combined = [...sameSeries, ...related].slice(0, 8);
 
   list.innerHTML = "";
