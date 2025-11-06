@@ -295,41 +295,40 @@ footer {
   box-sizing: border-box;
   padding-bottom: 5px;
 }
-/* === 🎬 Банерні картки (ТОП-10) — фіксована ширина === */
-.banner-slider .slide {
-  width: 220px;           /* ✅ фіксована ширина */
-  min-width: 220px;
-  max-width: 220px;
-  flex: 0 0 220px;
-  height: auto;
-  border-radius: 10px;
-  overflow: hidden;
+
+/* === 🎬 Банерні картки — фіксована ширина, без розтягування === */
+.slide {
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
+  flex: 0 0 140px;      /* не дає розтягуватись */
   background: #1e1e1e;
   border: 1px solid #000;
-  box-shadow: 0 0 10px rgba(0,255,255,0.2);
+  border-radius: 6px;
+  overflow: hidden;
   transition: transform 0.3s ease;
   cursor: pointer;
 }
 
-.banner-slider .slide:hover {
+.slide:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(0,255,255,0.3);
+  box-shadow: 0 0 15px #00ffa14d;
 }
 
-.banner-slider .slide img {
+.slide img {
   width: 100%;
-  height: 330px;           /* однакова висота постеру */
-  object-fit: cover;
+  height: 180px;
+  object-fit: cover;     /* ✅ зображення обрізається, не розтягується */
+  object-position: center;
   display: block;
 }
 
-.banner-slider .slide p {
-  margin: 8px 6px 10px;
+.slide p {
   text-align: center;
-  color: #fff;
-  font-weight: 500;
-  font-size: 15px;
-  line-height: 1.3;
+  font-size: 13px;
+  padding: 8px;
+  color: #eee;
+  font-weight: 600;
 }
 
 html, body {
@@ -1916,5 +1915,3 @@ header {
   color: #fff;
   box-shadow: 0 0 12px rgba(58, 167, 87, 0.6);
 }
-
-
