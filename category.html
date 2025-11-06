@@ -72,6 +72,25 @@
       color: #fff;
       text-align: center;
     }
+
+    /* === 🔹 Адаптація для мобільних (по 2 картки в ряд) === */
+    @media (max-width: 768px) {
+      .film-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 10px;
+      }
+    
+      .film-card img {
+        height: 220px;
+      }
+    
+      .film-card h3 {
+        font-size: 13px;
+        margin: 8px 5px;
+      }
+    }
+
     /* === ФІЛЬТРИ НАД КАРТКАМИ === */
 .filter-bar{
   max-width:1200px; margin:10px auto 0; padding:0 30px;
