@@ -1019,7 +1019,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
     
-// ===== 🎬 Рекомендовані фільми (розширена логіка серій) =====
+// ===== 🎬 Рекомендовані фільми (двосторонній пошук серій + жанр) =====
 async function loadRecommendedFilms(title, genre) {
   const list = document.getElementById("recommendedList");
   if (!list) return;
@@ -1028,45 +1028,50 @@ async function loadRecommendedFilms(title, genre) {
   const cleanTitle = (title || "").trim().replace(/[:\-–,]/g, " ");
   const baseWord = cleanTitle.split(" ")[0]; // перше слово: Гарфілд
 
-  // 🔹 Формуємо запит (назва + жанр)
-  const orParts = [];
-  if (genre) {
-    genre.split(",").map(g => g.trim()).forEach(g => orParts.push(`genre.ilike.%${g}%`));
+  // 🔹 Основна функція запиту
+  async function queryFilms(keyword) {
+    const orParts = [];
+    if (genre) {
+      genre.split(",").map(g => g.trim()).forEach(g => orParts.push(`genre.ilike.%${g}%`));
+    }
+    orParts.push(`title.ilike.%${keyword}%`);
+    cleanTitle.split(" ").filter(w => w.length > 2 && !/^\d+$/.test(w))
+      .forEach(k => orParts.push(`title.ilike.%${k}%`));
+
+    const { data, error } = await supabase
+      .from("films_site")
+      .select("id, title, poster, genre, year")
+      .or(orParts.join(","))
+      .limit(60);
+    if (error || !data) return [];
+    return data;
   }
-  cleanTitle.split(" ").filter(w => w.length > 2 && !/^\d+$/.test(w))
-    .forEach(k => orParts.push(`title.ilike.%${k}%`));
 
-  const { data, error } = await supabase
-    .from("films_site")
-    .select("id, title, poster, genre, year")
-    .or(orParts.join(","))
-    .limit(60);
+  // 🧩 1️⃣ Пошук за поточним словом
+  const results1 = await queryFilms(baseWord);
 
-  if (error || !data?.length) {
-    list.innerHTML = "<p style='color:#888'>Схожих фільмів не знайдено</p>";
-    return;
-  }
+  // 🧩 2️⃣ Пошук навпаки — знайти фільми, у яких цей title входить у назву
+  const shortTitle = cleanTitle.split(":")[0].split(" ")[0]; // "Гарфілд"
+  const results2 = await queryFilms(shortTitle);
 
+  // 🔹 Об’єднуємо унікальні результати
+  const all = [...results1, ...results2];
   const current = (title || "").trim().toLowerCase();
   const seen = new Set();
   const sameSeries = [];
   const related = [];
 
-  data.forEach(f => {
+  all.forEach(f => {
     const t = (f.title || "").trim().toLowerCase();
-    if (!t || seen.has(t)) return;
+    if (!t || t === current || seen.has(t)) return;
     seen.add(t);
-    if (t === current) return;
 
-    // 🧩 Перевіряємо, чи обидві назви мають спільне ключове слово (початок або двокрапку)
-    const sameBase =
-      t.startsWith(baseWord.toLowerCase()) ||
-      current.startsWith(baseWord.toLowerCase()) ||
-      t.includes(baseWord.toLowerCase() + " ") ||
-      current.includes(baseWord.toLowerCase() + " ");
-
-    if (sameBase) sameSeries.push(f);
-    else related.push(f);
+    // серії з однаковим коренем (Гарфілд, Гарфілд 2, Гарфілд: ...)
+    if (t.includes(baseWord.toLowerCase())) {
+      sameSeries.push(f);
+    } else {
+      related.push(f);
+    }
   });
 
   const combined = [...sameSeries, ...related].slice(0, 8);
@@ -1090,6 +1095,7 @@ async function loadRecommendedFilms(title, genre) {
     list.appendChild(item);
   });
 }
+
 
 
 
