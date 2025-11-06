@@ -132,21 +132,18 @@ async function loadLatestFilms(page = 1) {
     container.innerHTML = "<p style='color:white;'>Помилка завантаження.</p>";
     return;
   }
+// 🧠 НОВИЙ БЛОК: залишаємо лише по одному запису кожної назви
+const all = data.sort((a, b) => b.id - a.id); // спершу сортуємо, щоб новіші були першими
 
-// 🔹 Унікальні за назвою, але якщо є Фільм і Серіал з однаковою назвою — залишаємо Фільм
-const map = new Map();
-data.forEach(item => {
-  const key = (item.main_title || item.title).trim();
-  if (!map.has(key)) {
-    map.set(key, item);
-  } else {
-    const existing = map.get(key);
-    if (existing.type !== "Фільм" && item.type === "Фільм") {
-      map.set(key, item); // пріоритет фільмам
-    }
+const seen = new Map();
+for (const item of all) {
+  const key = (item.title || "").trim().toLowerCase();
+  if (!seen.has(key)) {
+    seen.set(key, item); // залишаємо тільки найновіший запис
   }
-});
-const unique = Array.from(map.values());
+}
+const unique = Array.from(seen.values());
+
 
 
   // 🔹 Пагінація
@@ -555,6 +552,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
 
 
 
