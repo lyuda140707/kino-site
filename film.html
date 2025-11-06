@@ -1025,6 +1025,10 @@ async function loadRecommendedFilms(title, genre) {
   if (!list) return;
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
+    // 🧠 ДІАГНОСТИКА
+  console.log("🔍 Поточний фільм:", title, "| жанр:", genre);
+
+
   const cleanTitle = (title || "").trim().replace(/[:\-–,]/g, " ");
   const baseWord = cleanTitle.split(" ")[0]; // перше слово: Гарфілд
 
@@ -1043,6 +1047,8 @@ async function loadRecommendedFilms(title, genre) {
       .select("id, title, poster, genre, year")
       .or(orParts.join(","))
       .limit(60);
+    console.log("📦 Результати запиту для", keyword, ":", data?.length || 0);
+    if (data?.length) console.log(data.map(f => f.title));
     if (error || !data) return [];
     return data;
   }
