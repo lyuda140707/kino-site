@@ -220,6 +220,12 @@ let currentSort = 'latest'; // latest | best | year
 let selectedYear = '';      // значення з випадаючого списку
 let currentPage = 1;
 const filmsPerPage = 30; // 6 рядків × 5 фільмів
+// 🔗 Елементи фільтрів у DOM
+const btnLatest  = document.getElementById('btn-latest');
+const btnBest    = document.getElementById('btn-best');
+const btnYear    = document.getElementById('btn-year');
+const yearSelect = document.getElementById('yearSelect');
+
 
 async function loadFilms(sortMode = currentSort) {
   currentSort = sortMode;
@@ -292,6 +298,45 @@ async function loadFilms(sortMode = currentSort) {
 
   renderPagination(items.length);
 }
+
+function renderPagination(totalItems) {
+  const totalPages = Math.ceil(totalItems / filmsPerPage);
+  const pagination = document.getElementById("pagination");
+  pagination.innerHTML = "";
+  if (totalPages <= 1) return;
+
+  const makeBtn = (label, page, {active=false, disabled=false}={}) => {
+    const b = document.createElement("button");
+    b.textContent = label;
+    b.className = "page-btn";
+    if (active) b.classList.add("active");
+    if (disabled) b.disabled = true;
+    b.addEventListener("click", () => {
+      if (disabled) return;
+      currentPage = page;
+      loadFilms(currentSort);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    return b;
+  };
+
+  const totalVisible = 5; // показувати по 5 номерів
+  let start = Math.max(1, currentPage - Math.floor(totalVisible/2));
+  let end   = Math.min(totalPages, start + totalVisible - 1);
+  if (end - start + 1 < totalVisible) start = Math.max(1, end - totalVisible + 1);
+
+  // ◀ попередня
+  pagination.appendChild(makeBtn("◀", Math.max(1, currentPage-1), {disabled: currentPage===1}));
+
+  // 1 2 3 4 5
+  for (let i = start; i <= end; i++) {
+    pagination.appendChild(makeBtn(String(i), i, {active: i===currentPage}));
+  }
+
+  // ▶ наступна
+  pagination.appendChild(makeBtn("▶", Math.min(totalPages, currentPage+1), {disabled: currentPage===totalPages}));
+}
+
 // === Заповнення списку років ===
 async function fillYearOptions() {
   const { data, error } = await supabase
