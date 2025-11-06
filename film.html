@@ -1018,60 +1018,38 @@ window.addEventListener("DOMContentLoaded", () => {
   if (id) updateBookmarkBtn(id);
 });
 
-// ===== 🎬 Рекомендовані фільми — пошук за назвою (в обидва боки) =====
+    // ===== 🎬 Рекомендовані фільми =====
+// 🎬 Рекомендовані фільми — без дублікатів назв
 async function loadRecommendedFilms(title, genre) {
   const list = document.getElementById("recommendedList");
   if (!list) return;
+
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
-  // 🔍 поточна назва
-  const cleanTitle = (title || "").trim();
-  const mainWords = cleanTitle
-    .replace(/[:\-–,]/g, " ")
-    .split(" ")
-    .map(w => w.trim())
-    .filter(w => w.length > 2 && !/^\d+$/.test(w));
-
-  // Створюємо список умов для пошуку
-  const orParts = [];
-  mainWords.forEach(word => orParts.push(`title.ilike.%${word}%`));
-  if (genre) {
-    genre.split(",").forEach(g => orParts.push(`genre.ilike.%${g.trim()}%`));
-  }
-
-  // 🧩 Запит 1: шукаємо всі фільми, у яких назва містить будь-яке слово з поточного title
-  const { data: forward } = await supabase
+  const keyword = (title || "").split(" ")[0] || "";
+  const { data, error } = await supabase
     .from("films_site")
-    .select("id, title, poster, genre, year")
-    .or(orParts.join(","))
-    .limit(60);
+    .select("id, title, poster, genre")
+    .or(`title.ilike.%${keyword}%,genre.ilike.%${genre}%`)
+    .limit(20);
 
-  // 🧩 Запит 2: шукаємо фільми, у назві яких МІСТИТЬСЯ поточна назва
-  const { data: backward } = await supabase
-    .from("films_site")
-    .select("id, title, poster, genre, year")
-    .ilike("title", `%${cleanTitle.split(":")[0].trim()}%`)
-    .limit(60);
-
-  // 🧹 Об'єднуємо результати без дублікатів
-  const all = [...(forward || []), ...(backward || [])];
-  const seen = new Set();
-  const current = cleanTitle.toLowerCase();
-  const unique = all.filter(f => {
-    const t = (f.title || "").trim().toLowerCase();
-    if (!t || t === current || seen.has(t)) return false;
-    seen.add(t);
-    return true;
-  });
-
-  if (!unique.length) {
+  if (error || !data || data.length === 0) {
     list.innerHTML = "<p style='color:#888'>Схожих фільмів не знайдено</p>";
     return;
   }
 
-  // 🎞️ Виводимо до 8 рекомендацій
+  // 🧹 Прибираємо дублікати по назві (і не показуємо поточний фільм)
+  const seen = new Set();
+  const current = (title || "").trim().toLowerCase();
+  const unique = data.filter(f => {
+    const name = (f.title || "").trim().toLowerCase();
+    if (!name || name === current || seen.has(name)) return false;
+    seen.add(name);
+    return true;
+  }).slice(0, 6); // максимум 6 карток
+
   list.innerHTML = "";
-  unique.slice(0, 8).forEach(film => {
+  unique.forEach(film => {
     const item = document.createElement("div");
     item.className = "recommended-item";
     item.innerHTML = `
@@ -1079,15 +1057,11 @@ async function loadRecommendedFilms(title, genre) {
       <p>${film.title}</p>
     `;
     item.addEventListener("click", () => {
-      window.location.href = "film.html?id=" + film.id;
+      window.location.href = `film.html?id=${film.id}`;
     });
     list.appendChild(item);
   });
 }
-
-
-
-
 
   </script>
 <!-- 🧾 Модальне вікно -->
