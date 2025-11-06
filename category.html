@@ -73,30 +73,31 @@
       text-align: center;
     }
 
-      /* === 🔹 Мобільна адаптація з вужчими картками === */
-    @media (max-width: 768px) {
-      .film-grid {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 14px;
-        padding: 10px;
-      }
-    
-      .film-card {
-        width: 45%; /* 🟢 дві картки в ряд з невеликими відступами */
-        max-width: 200px;
-      }
-    
-      .film-card img {
-        height: 210px;
-      }
-    
-      .film-card h3 {
-        font-size: 13px;
-        margin: 8px 5px;
-      }
-    }
+    /* === 🔹 Мобільна адаптація з вужчими картками (2 у ряд) === */
+@media (max-width: 768px) {
+  .film-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    justify-content: center;
+    gap: 14px;
+    padding: 10px 12px;
+  }
+
+  .film-card {
+    max-width: 180px;
+    margin: 0 auto;
+  }
+
+  .film-card img {
+    height: 210px;
+  }
+
+  .film-card h3 {
+    font-size: 13px;
+    margin: 8px 5px;
+  }
+}
+
 
 
     /* === ФІЛЬТРИ НАД КАРТКАМИ === */
