@@ -1026,27 +1026,37 @@ async function loadRecommendedFilms(title, genre) {
 
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
-  const keyword = (title || "").split(" ")[0] || "";
+  // 🔹 Беремо всі значущі слова з назви (без частин '2', ':', 'і')
+  const keywords = (title || "")
+    .replace(/[:\-–]/g, " ")
+    .split(" ")
+    .map(w => w.trim())
+    .filter(w => w.length > 2);
+
+  // 🔹 Формуємо OR-запит для кількох ключових слів + жанру
+  const orParts = keywords.map(k => `title.ilike.%${k}%`);
+  if (genre) orParts.push(`genre.ilike.%${genre}%`);
+
   const { data, error } = await supabase
     .from("films_site")
     .select("id, title, poster, genre")
-    .or(`title.ilike.%${keyword}%,genre.ilike.%${genre}%`)
-    .limit(20);
+    .or(orParts.join(","))
+    .limit(30);
 
-  if (error || !data || data.length === 0) {
+  if (error || !data?.length) {
     list.innerHTML = "<p style='color:#888'>Схожих фільмів не знайдено</p>";
     return;
   }
 
-  // 🧹 Прибираємо дублікати по назві (і не показуємо поточний фільм)
-  const seen = new Set();
+  // 🧹 Фільтруємо дублікати і поточний фільм
   const current = (title || "").trim().toLowerCase();
+  const seen = new Set();
   const unique = data.filter(f => {
     const name = (f.title || "").trim().toLowerCase();
     if (!name || name === current || seen.has(name)) return false;
     seen.add(name);
     return true;
-  }).slice(0, 6); // максимум 6 карток
+  }).slice(0, 6);
 
   list.innerHTML = "";
   unique.forEach(film => {
@@ -1057,11 +1067,12 @@ async function loadRecommendedFilms(title, genre) {
       <p>${film.title}</p>
     `;
     item.addEventListener("click", () => {
-      window.location.href = `film.html?id=${film.id}`;
+      window.location.href = \`film.html?id=\${film.id}\`;
     });
     list.appendChild(item);
   });
 }
+
 
   </script>
 <!-- 🧾 Модальне вікно -->
