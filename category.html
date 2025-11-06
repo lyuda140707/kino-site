@@ -101,6 +101,49 @@
 .filter-btn.active{ background:#00fff2; color:#000; box-shadow:0 0 10px rgba(0,255,255,.35) }
 
     footer { text-align:center; padding:20px; color:#777; }
+  #pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 25px 0 40px;
+}
+
+.page-btn {
+  background: linear-gradient(145deg, #0b0b0b, #151515);
+  border: 1px solid rgba(0, 255, 255, 0.35);
+  color: #00fff2;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.25);
+  transition: all 0.25s ease;
+}
+
+.page-btn:hover {
+  background: linear-gradient(145deg, #00fff2, #00b5b0);
+  color: #000;
+  transform: scale(1.08);
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.6);
+}
+
+.page-btn.active {
+  background: linear-gradient(145deg, #00fff2, #00b5b0);
+  color: #000;
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
   </style>
 </head>
 
@@ -155,6 +198,7 @@
 </div>
 
   <div class="film-grid" id="filmGrid"></div>
+  <div id="pagination" style="text-align:center; margin:20px 0;"></div>
 
   <footer>© 2025 Relax Kino</footer>
 
@@ -174,6 +218,8 @@
 
 let currentSort = 'latest'; // latest | best | year
 let selectedYear = '';      // значення з випадаючого списку
+let currentPage = 1;
+const filmsPerPage = 30; // 6 рядків × 5 фільмів
 
 async function loadFilms(sortMode = currentSort) {
   currentSort = sortMode;
@@ -238,33 +284,42 @@ if (type.toLowerCase().includes("серіал") || type.toLowerCase().includes("
     items.sort((a,b) => (parseInt(b.year||0)||0) - (parseInt(a.year||0)||0));
   } // latest уже відсортовано
 
-  // відмальовуємо картки
-  for (const film of items) {
-    const card = document.createElement("div");
-    card.className = "film-card";
-    card.innerHTML = `
-      <img src="${film.poster || 'https://via.placeholder.com/200x280?text=No+Image'}" alt="${film.title}">
-      <h3>${film.title}</h3>
-    `;
+  // 🔹 показуємо тільки поточну сторінку
+const grid = document.getElementById("filmGrid");
+grid.innerHTML = "";
 
-  // 🔹 логіка переходу
-if (film.type === "Серіал") {
-  card.addEventListener("click", () => {
-    window.location.href = `/series.html?title=${encodeURIComponent(film.title)}`;
-  });
-} else if (film.type === "Мультсеріал") {
-  card.addEventListener("click", () => {
-    window.location.href = `/multseries.html?title=${encodeURIComponent(film.title)}`;
-  });
-} else {
-  card.addEventListener("click", () => {
-    window.location.href = `/film.html?id=${film.id}`;
-  });
+const startIdx = (currentPage - 1) * filmsPerPage;
+const endIdx   = startIdx + filmsPerPage;
+const pageItems = items.slice(startIdx, endIdx);
+
+for (const film of pageItems) {
+  const card = document.createElement("div");
+  card.className = "film-card";
+  card.innerHTML = `
+    <img src="${film.poster || 'https://via.placeholder.com/200x280?text=No+Image'}" alt="${film.title}">
+    <h3>${film.title}</h3>
+  `;
+
+  if (film.type === "Серіал") {
+    card.addEventListener("click", () => {
+      window.location.href = `/series.html?title=${encodeURIComponent(film.title)}`;
+    });
+  } else if (film.type === "Мультсеріал") {
+    card.addEventListener("click", () => {
+      window.location.href = `/multseries.html?title=${encodeURIComponent(film.title)}`;
+    });
+  } else {
+    card.addEventListener("click", () => {
+      window.location.href = `/film.html?id=${film.id}`;
+    });
+  }
+
+  grid.appendChild(card);
 }
 
+// 🔹 перемалювати пагінацію під цю вибірку
+renderPagination(items.length);
 
-    grid.appendChild(card);
-  }
 }
 
 
@@ -273,6 +328,43 @@ const btnLatest = document.getElementById('btn-latest');
 const btnBest   = document.getElementById('btn-best');
 const btnYear   = document.getElementById('btn-year');
 const yearSelect = document.getElementById('yearSelect');
+function renderPagination(totalItems) {
+  const totalPages = Math.ceil(totalItems / filmsPerPage);
+  const pagination = document.getElementById("pagination");
+  pagination.innerHTML = "";
+  if (totalPages <= 1) return;
+
+  const makeBtn = (label, page, {active=false, disabled=false}={}) => {
+    const b = document.createElement("button");
+    b.textContent = label;
+    b.className = "page-btn";
+    if (active) b.classList.add("active");
+    if (disabled) b.disabled = true;
+    b.addEventListener("click", () => {
+      if (disabled) return;
+      currentPage = page;
+      loadFilms(currentSort);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    return b;
+  };
+
+  const totalVisible = 5; // показувати по 5 номерів
+  let start = Math.max(1, currentPage - Math.floor(totalVisible/2));
+  let end   = Math.min(totalPages, start + totalVisible - 1);
+  if (end - start + 1 < totalVisible) start = Math.max(1, end - totalVisible + 1);
+
+  // ← попередня
+  pagination.appendChild(makeBtn("←", Math.max(1, currentPage-1), {disabled: currentPage===1}));
+
+  // …динамічні цифри
+  for (let i = start; i <= end; i++) {
+    pagination.appendChild(makeBtn(String(i), i, {active: i===currentPage}));
+  }
+
+  // → наступна
+  pagination.appendChild(makeBtn("→", Math.min(totalPages, currentPage+1), {disabled: currentPage===totalPages}));
+}
 
 function setActive(btn){
   [btnLatest, btnBest, btnYear].forEach(b => b.classList.remove('active'));
@@ -308,24 +400,28 @@ async function initCategoryPage() {
   btnLatest.addEventListener('click', () => {
     setActive(btnLatest);
     currentSort = 'latest';
+    currentPage = 1;       
     loadFilms('latest');
   });
 
   btnBest.addEventListener('click', () => {
     setActive(btnBest);
     currentSort = 'best';
+    btnBest.addEventListener('click', () => {
     loadFilms('best');
   });
 
   btnYear.addEventListener('click', () => {
     setActive(btnYear);
     currentSort = 'year';
+    currentPage = 1;    
     loadFilms('year');
   });
 
   // Зміна року в select
   yearSelect.addEventListener('change', (e) => {
     selectedYear = e.target.value;
+    currentPage = 1;     
     loadFilms(currentSort);
   });
 }
