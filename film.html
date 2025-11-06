@@ -1065,11 +1065,12 @@ async function loadRecommendedFilms(title, genre) {
       <p>${film.title}</p>
     `;
     item.addEventListener("click", () => {
-      window.location.href = \`film.html?id=\${film.id}\`;
+      window.location.href = "film.html?id=" + film.id;
     });
     list.appendChild(item);
   });
 }
+
 
 
   </script>
