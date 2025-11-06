@@ -161,10 +161,24 @@ const unique = Array.from(map.values());
   currentFilms.forEach(item => {
     const card = document.createElement("div");
     card.className = "film";
+    // 🟢 Безпечна обробка постера через Cloudflare-проксі
+    const rawPoster = item.poster ? item.poster.replace(/^http:\/\//, "https://") : "";
+    const proxyPoster = rawPoster 
+      ? `https://uakino-proxy.lyuda14070702.workers.dev?url=${encodeURIComponent(rawPoster)}`
+      : "https://via.placeholder.com/200x300?text=No+Image";
+    
     card.innerHTML = `
       <div class="poster">
-        <img src="${item.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${item.title}">
-        ${String(item.pro_access || '').toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
+        <img 
+          src="${proxyPoster}" 
+          alt="${item.title}"
+          onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'; this.onerror=null;"
+          loading="lazy"
+          style="width:100%; height:300px; object-fit:cover; display:block;"
+        >
+        ${String(item.pro_access || '').toUpperCase() === 'PRO' 
+          ? '<span class="badge plus">PRO</span>' 
+          : ''}
       </div>
       <div class="title">${item.title}</div>
       <div class="meta">
@@ -174,6 +188,7 @@ const unique = Array.from(map.values());
         <span>IMDb: ${item.imdb || '—'}</span>
       </div>
     `;
+
     card.addEventListener("click", () => {
       if (item.type === "Серіал") {
         window.location.href = "series.html?title=" + encodeURIComponent(item.title);
@@ -530,6 +545,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
 
 
 
