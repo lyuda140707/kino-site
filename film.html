@@ -1017,6 +1017,8 @@ window.addEventListener("DOMContentLoaded", () => {
   const id = params.get("id");
   if (id) updateBookmarkBtn(id);
 });
+
+    
 // ===== 🎬 Рекомендовані фільми =====
 async function loadRecommendedFilms(title, genre) {
   const list = document.getElementById("recommendedList");
@@ -1024,26 +1026,14 @@ async function loadRecommendedFilms(title, genre) {
 
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
-  // 🔹 Витягуємо ключові слова з назви (без цифр і спецсимволів)
-  const keywords = (title || "")
-    .replace(/[:\-–,]/g, " ")
-    .split(" ")
-    .map(w => w.trim())
-    .filter(w => w.length > 2 && !/^\d+$/.test(w));
+  const cleanTitle = (title || "").trim().replace(/[:\-–,]/g, " ");
+  const baseWord = cleanTitle.split(" ")[0]; // перше слово: Гарфілд
 
-  // 🔹 Основний запит: за назвами та жанром
-  const orParts = [];
-  if (genre) {
-    // розділяємо жанри по комах
-    const genres = genre.split(",").map(g => g.trim());
-    genres.forEach(g => orParts.push(`genre.ilike.%${g}%`));
-  }
-  keywords.forEach(k => orParts.push(`title.ilike.%${k}%`));
-
+  // 🔹 Основний запит — все, що починається з цього слова або містить його
   const { data, error } = await supabase
     .from("films_site")
     .select("id, title, poster, genre")
-    .or(orParts.join(","))
+    .or(`title.ilike.%${baseWord}%,genre.ilike.%${genre || ""}%`)
     .limit(50);
 
   if (error || !data?.length) {
@@ -1051,15 +1041,18 @@ async function loadRecommendedFilms(title, genre) {
     return;
   }
 
-  // 🧹 Фільтруємо поточний фільм та дублікати
-  const current = (title || "").trim().toLowerCase();
+  // 🧹 Групуємо по основному слову (Гарфілд)
+  const current = (title || "").toLowerCase().trim();
   const seen = new Set();
   const unique = data.filter(f => {
-    const name = (f.title || "").trim().toLowerCase();
-    if (!name || name === current || seen.has(name)) return false;
-    seen.add(name);
+    const t = (f.title || "").toLowerCase();
+    if (!t.includes(baseWord.toLowerCase())) return false;
+    if (t === current) return false;
+    const base = t.split(":")[0].trim(); // щоб Гарфілд і Гарфілд 2 не дублювались
+    if (seen.has(base)) return false;
+    seen.add(base);
     return true;
-  }).slice(0, 8); // показуємо максимум 8
+  }).slice(0, 6);
 
   list.innerHTML = "";
   if (!unique.length) {
