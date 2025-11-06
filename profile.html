@@ -1051,6 +1051,19 @@ window.onclick = (e) => {
 ✅ Успішна авторизація через Telegram!
 </div>
 
+<script>
+// 🩵 Автоматичне оновлення після авторизації Telegram (для мобільних)
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    const tgUser = localStorage.getItem("telegram_user");
+    if (tgUser && !window.sessionStorage.getItem("tgReloaded")) {
+      console.log("🔁 Повернулись із Telegram — перезавантажуємо сторінку");
+      window.sessionStorage.setItem("tgReloaded", "1");
+      window.location.reload();
+    }
+  }
+});
+</script>
 
 </body>
 </html>
