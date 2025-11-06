@@ -407,7 +407,7 @@ async function initCategoryPage() {
   btnBest.addEventListener('click', () => {
     setActive(btnBest);
     currentSort = 'best';
-    btnBest.addEventListener('click', () => {
+    currentPage = 1;
     loadFilms('best');
   });
 
