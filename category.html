@@ -229,18 +229,6 @@ async function loadFilms(sortMode = currentSort) {
   if (genre) query = query.ilike("genre", `%${genre}%`);
 
   const { data, error } = await query.order("id", { ascending: false });
-  // 🎯 Фільтрація за точним жанром (щоб "Драма" не ловила "Мелодрама")
-let filtered = data || [];
-
-if (genre) {
-  filtered = filtered.filter(row => {
-    const genres = (row.genre || "")
-      .split(",")
-      .map(g => g.trim().toLowerCase());
-    return genres.includes(genre.toLowerCase());
-  });
-}
-
 
   const grid = document.getElementById("filmGrid");
   grid.innerHTML = "";
@@ -254,180 +242,92 @@ if (genre) {
     return;
   }
 
- // ✅ якщо це серіали — групуємо за назвою, навіть якщо дублюються в різних категоріях
-let items = [...filtered];
-if (type.toLowerCase().includes("серіал") || type.toLowerCase().includes("мультсеріал")) {
-  const uniqueMap = new Map();
+  // 🎬 Групування серіалів за назвою
+  let items = [...data];
+  if (type.toLowerCase().includes("серіал")) {
+    const unique = new Map();
+    items.forEach(row => {
+      const key = row.title?.trim().toLowerCase();
+      if (!unique.has(key)) unique.set(key, row);
+    });
+    items = Array.from(unique.values());
+  }
 
-  items.forEach(row => {
-    const titleKey = row.title?.trim().toLowerCase();
-    // Якщо вже доданий цей серіал — пропускаємо дубль
-    if (!uniqueMap.has(titleKey)) {
-      uniqueMap.set(titleKey, row);
-    }
-  });
-
-  items = Array.from(uniqueMap.values());
-}
-
-
-
-  // фільтрація за роком
+  // 🎞 Фільтрація за роком
   if (selectedYear) {
     items = items.filter(f => String(f.year).trim() === selectedYear);
   }
 
-  // сортування
-  if (sortMode === 'best') {
-    items.sort((a,b) => (parseFloat(b.imdb||0)||0) - (parseFloat(a.imdb||0)||0));
-  } else if (sortMode === 'year') {
-    items.sort((a,b) => (parseInt(b.year||0)||0) - (parseInt(a.year||0)||0));
-  } // latest уже відсортовано
-
-  // 🔹 показуємо тільки поточну сторінку
-const grid = document.getElementById("filmGrid");
-grid.innerHTML = "";
-
-const startIdx = (currentPage - 1) * filmsPerPage;
-const endIdx   = startIdx + filmsPerPage;
-const pageItems = items.slice(startIdx, endIdx);
-
-for (const film of pageItems) {
-  const card = document.createElement("div");
-  card.className = "film-card";
-  card.innerHTML = `
-    <img src="${film.poster || 'https://via.placeholder.com/200x280?text=No+Image'}" alt="${film.title}">
-    <h3>${film.title}</h3>
-  `;
-
-  if (film.type === "Серіал") {
-    card.addEventListener("click", () => {
-      window.location.href = `/series.html?title=${encodeURIComponent(film.title)}`;
-    });
-  } else if (film.type === "Мультсеріал") {
-    card.addEventListener("click", () => {
-      window.location.href = `/multseries.html?title=${encodeURIComponent(film.title)}`;
-    });
-  } else {
-    card.addEventListener("click", () => {
-      window.location.href = `/film.html?id=${film.id}`;
-    });
+  // 🎯 Сортування
+  if (sortMode === "best") {
+    items.sort((a, b) => (parseFloat(b.imdb || 0) || 0) - (parseFloat(a.imdb || 0) || 0));
+  } else if (sortMode === "year") {
+    items.sort((a, b) => (parseInt(b.year || 0) || 0) - (parseInt(a.year || 0) || 0));
   }
 
-  grid.appendChild(card);
-}
+  // 🧩 Пагінація
+  const start = (currentPage - 1) * filmsPerPage;
+  const end = start + filmsPerPage;
+  const pageItems = items.slice(start, end);
 
-// 🔹 перемалювати пагінацію під цю вибірку
-renderPagination(items.length);
-
-}
-
-
-// === кнопки фільтрів ===
-const btnLatest = document.getElementById('btn-latest');
-const btnBest   = document.getElementById('btn-best');
-const btnYear   = document.getElementById('btn-year');
-const yearSelect = document.getElementById('yearSelect');
-function renderPagination(totalItems) {
-  const totalPages = Math.ceil(totalItems / filmsPerPage);
-  const pagination = document.getElementById("pagination");
-  pagination.innerHTML = "";
-  if (totalPages <= 1) return;
-
-  const makeBtn = (label, page, {active=false, disabled=false}={}) => {
-    const b = document.createElement("button");
-    b.textContent = label;
-    b.className = "page-btn";
-    if (active) b.classList.add("active");
-    if (disabled) b.disabled = true;
-    b.addEventListener("click", () => {
-      if (disabled) return;
-      currentPage = page;
-      loadFilms(currentSort);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  // 🎨 Відмальовуємо картки
+  for (const film of pageItems) {
+    const card = document.createElement("div");
+    card.className = "film-card";
+    card.innerHTML = `
+      <img src="${film.poster || 'https://via.placeholder.com/200x280?text=No+Image'}" alt="${film.title}">
+      <h3>${film.title}</h3>
+    `;
+    card.addEventListener("click", () => {
+      if (film.type === "Серіал") {
+        window.location.href = "/series.html?title=" + encodeURIComponent(film.title);
+      } else if (film.type === "Мультсеріал") {
+        window.location.href = "/multseries.html?title=" + encodeURIComponent(film.title);
+      } else {
+        window.location.href = "/film.html?id=" + film.id;
+      }
     });
-    return b;
-  };
-
-  const totalVisible = 5; // показувати по 5 номерів
-  let start = Math.max(1, currentPage - Math.floor(totalVisible/2));
-  let end   = Math.min(totalPages, start + totalVisible - 1);
-  if (end - start + 1 < totalVisible) start = Math.max(1, end - totalVisible + 1);
-
-  // ← попередня
-  pagination.appendChild(makeBtn("←", Math.max(1, currentPage-1), {disabled: currentPage===1}));
-
-  // …динамічні цифри
-  for (let i = start; i <= end; i++) {
-    pagination.appendChild(makeBtn(String(i), i, {active: i===currentPage}));
+    grid.appendChild(card);
   }
 
-  // → наступна
-  pagination.appendChild(makeBtn("→", Math.min(totalPages, currentPage+1), {disabled: currentPage===totalPages}));
+  renderPagination(items.length);
 }
 
-function setActive(btn){
-  [btnLatest, btnBest, btnYear].forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
-// заповнення списку років з таблиці
-async function fillYearOptions() {
-  const { data, error } = await supabase
-    .from("films_site")
-    .select("year")
-    .order("year", { ascending: false });
-
-  if (!error && data) {
-    const years = [...new Set(
-      data
-        .map(f => String(f.year).trim())
-        .filter(y => y && y !== "undefined" && y !== "null")
-    )];
-
-    yearSelect.innerHTML =
-      '<option value="">Усі роки</option>' +
-      years.map(y => `<option value="${y}">${y}</option>`).join('');
-  }
-}
-
-// 🔹 Головна ініціалізація — обгорнута в async
+// === ініціалізація ===
 async function initCategoryPage() {
-  await fillYearOptions();  // заповнюємо роки перед завантаженням
-  loadFilms('latest');      // показуємо фільми одразу
+  await fillYearOptions();
+  loadFilms("latest");
 
-  // Кнопки фільтрів
-  btnLatest.addEventListener('click', () => {
+  btnLatest.addEventListener("click", () => {
     setActive(btnLatest);
-    currentSort = 'latest';
-    currentPage = 1;       
-    loadFilms('latest');
+    currentSort = "latest";
+    currentPage = 1;
+    loadFilms("latest");
   });
 
-  btnBest.addEventListener('click', () => {
-  setActive(btnBest);
-  currentSort = 'best';
-  currentPage = 1;
-  loadFilms('best');
-});
+  btnBest.addEventListener("click", () => {
+    setActive(btnBest);
+    currentSort = "best";
+    currentPage = 1;
+    loadFilms("best");
+  });
 
-  btnYear.addEventListener('click', () => {
+  btnYear.addEventListener("click", () => {
     setActive(btnYear);
-    currentSort = 'year';
-    currentPage = 1;    
-    loadFilms('year');
+    currentSort = "year";
+    currentPage = 1;
+    loadFilms("year");
   });
 
-  // Зміна року в select
-  yearSelect.addEventListener('change', (e) => {
+  yearSelect.addEventListener("change", (e) => {
     selectedYear = e.target.value;
-    currentPage = 1;     
+    currentPage = 1;
     loadFilms(currentSort);
   });
 }
 
-// 🚀 Запуск
 initCategoryPage();
+
 
 </script>
 <script src="auth.js"></script>
