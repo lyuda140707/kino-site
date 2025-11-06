@@ -191,8 +191,9 @@ const unique = Array.from(map.values());
           : ''}
       </div>
       <div class="title">${item.title}</div>
-      const safeGenre = (item.genre || '').replace(/[^\p{L}\p{N},.() ]+/gu, ' ').trim();
-
+      const safeGenre = typeof item.genre === "string"
+      ? item.genre.replace(/[^\p{L}\p{N},.() ]+/gu, ' ').trim() || "—"
+      : "—";
 card.innerHTML = `
   <div class="poster">
     <img 
@@ -573,6 +574,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
 
 
 
