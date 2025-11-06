@@ -1024,29 +1024,34 @@ async function loadRecommendedFilms(title, genre) {
 
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
-  // 🔹 Беремо всі значущі слова з назви (без цифр і розділових знаків)
+  // 🔹 Витягуємо ключові слова з назви (без цифр і спецсимволів)
   const keywords = (title || "")
     .replace(/[:\-–,]/g, " ")
     .split(" ")
     .map(w => w.trim())
     .filter(w => w.length > 2 && !/^\d+$/.test(w));
 
-  // 🔹 Формуємо OR-запит для кількох ключових слів + жанру
-  const orParts = keywords.map(k => `title.ilike.%${k}%`);
-  if (genre) orParts.push(`genre.ilike.%${genre}%`);
+  // 🔹 Основний запит: за назвами та жанром
+  const orParts = [];
+  if (genre) {
+    // розділяємо жанри по комах
+    const genres = genre.split(",").map(g => g.trim());
+    genres.forEach(g => orParts.push(`genre.ilike.%${g}%`));
+  }
+  keywords.forEach(k => orParts.push(`title.ilike.%${k}%`));
 
   const { data, error } = await supabase
     .from("films_site")
     .select("id, title, poster, genre")
     .or(orParts.join(","))
-    .limit(30);
+    .limit(50);
 
   if (error || !data?.length) {
     list.innerHTML = "<p style='color:#888'>Схожих фільмів не знайдено</p>";
     return;
   }
 
-  // 🧹 Унікальні, без поточного фільму
+  // 🧹 Фільтруємо поточний фільм та дублікати
   const current = (title || "").trim().toLowerCase();
   const seen = new Set();
   const unique = data.filter(f => {
@@ -1054,9 +1059,14 @@ async function loadRecommendedFilms(title, genre) {
     if (!name || name === current || seen.has(name)) return false;
     seen.add(name);
     return true;
-  }).slice(0, 6);
+  }).slice(0, 8); // показуємо максимум 8
 
   list.innerHTML = "";
+  if (!unique.length) {
+    list.innerHTML = "<p style='color:#888'>Схожих фільмів не знайдено</p>";
+    return;
+  }
+
   unique.forEach(film => {
     const item = document.createElement("div");
     item.className = "recommended-item";
@@ -1070,6 +1080,7 @@ async function loadRecommendedFilms(title, genre) {
     list.appendChild(item);
   });
 }
+
 
 
 
