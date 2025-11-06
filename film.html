@@ -1017,21 +1017,19 @@ window.addEventListener("DOMContentLoaded", () => {
   const id = params.get("id");
   if (id) updateBookmarkBtn(id);
 });
-
-    // ===== 🎬 Рекомендовані фільми =====
-// 🎬 Рекомендовані фільми — без дублікатів назв
+// ===== 🎬 Рекомендовані фільми =====
 async function loadRecommendedFilms(title, genre) {
   const list = document.getElementById("recommendedList");
   if (!list) return;
 
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
-  // 🔹 Беремо всі значущі слова з назви (без частин '2', ':', 'і')
+  // 🔹 Беремо всі значущі слова з назви (без цифр і розділових знаків)
   const keywords = (title || "")
-    .replace(/[:\-–]/g, " ")
+    .replace(/[:\-–,]/g, " ")
     .split(" ")
     .map(w => w.trim())
-    .filter(w => w.length > 2);
+    .filter(w => w.length > 2 && !/^\d+$/.test(w));
 
   // 🔹 Формуємо OR-запит для кількох ключових слів + жанру
   const orParts = keywords.map(k => `title.ilike.%${k}%`);
@@ -1048,7 +1046,7 @@ async function loadRecommendedFilms(title, genre) {
     return;
   }
 
-  // 🧹 Фільтруємо дублікати і поточний фільм
+  // 🧹 Унікальні, без поточного фільму
   const current = (title || "").trim().toLowerCase();
   const seen = new Set();
   const unique = data.filter(f => {
