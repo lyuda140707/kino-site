@@ -1064,6 +1064,47 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 </script>
+<script>
+// 🔹 Підказка після натискання "Увійти через Telegram"
+document.addEventListener("click", (e) => {
+  const tgWidget = document.querySelector("#telegram-widget");
+  if (!tgWidget || !tgWidget.contains(e.target)) return;
+
+  // якщо підказка вже показана — не дублюємо
+  if (document.querySelector(".tg-hint")) return;
+
+  const hint = document.createElement("div");
+  hint.className = "tg-hint";
+  hint.innerHTML = "📲 <b>Відкрий Telegram</b><br>Там з’явиться вікно <b>підтвердження входу</b>";
+
+  Object.assign(hint.style, {
+    position: "fixed",
+    top: "20px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    background: "linear-gradient(135deg, #00fff2, #007b7b)",
+    color: "#000",
+    fontWeight: "600",
+    padding: "14px 24px",
+    borderRadius: "14px",
+    boxShadow: "0 0 25px rgba(0,255,255,0.6)",
+    fontSize: "15px",
+    textAlign: "center",
+    zIndex: "9999",
+    opacity: "0",
+    transition: "opacity 0.4s ease",
+  });
+
+  document.body.appendChild(hint);
+  // плавна поява
+  setTimeout(() => (hint.style.opacity = "1"), 50);
+  // плавне зникнення
+  setTimeout(() => {
+    hint.style.opacity = "0";
+    setTimeout(() => hint.remove(), 500);
+  }, 5000);
+});
+</script>
 
 </body>
 </html>
