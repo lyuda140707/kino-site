@@ -296,14 +296,16 @@ footer {
   padding-bottom: 5px;
 }
 
-.slide {
-  min-width: 140px; /* 🔹 було 160px */
-  flex: 0 0 auto;
+.banner-slider .slide {
+  flex: 0 0 220px;       /* фіксована ширина картки */
+  max-width: 220px;
+  border-radius: 10px;
+  overflow: hidden;
   background: #1e1e1e;
   border: 1px solid #000;
-  border-radius: 6px;
-  overflow: hidden;
-  transition: 0.3s;
+  box-shadow: 0 0 10px rgba(0,255,255,0.2);
+  transition: transform 0.3s;
+  cursor: pointer;
 }
 
 .slide:hover {
@@ -1910,3 +1912,4 @@ header {
   color: #fff;
   box-shadow: 0 0 12px rgba(58, 167, 87, 0.6);
 }
+
