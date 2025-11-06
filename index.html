@@ -133,20 +133,14 @@ async function loadLatestFilms(page = 1) {
     return;
   }
 
-// 🔹 Унікальні за назвою, але якщо є Фільм і Серіал з однаковою назвою — залишаємо Фільм
+// 🔹 Унікальні за title+type (щоб серіали не злипались з фільмами)
 const map = new Map();
 data.forEach(item => {
-  const key = (item.main_title || item.title).trim();
-  if (!map.has(key)) {
-    map.set(key, item);
-  } else {
-    const existing = map.get(key);
-    if (existing.type !== "Фільм" && item.type === "Фільм") {
-      map.set(key, item); // пріоритет фільмам
-    }
-  }
+  const key = `${(item.main_title || item.title || '').trim()}_${item.type}_${item.id}`;
+  map.set(key, item);
 });
 const unique = Array.from(map.values());
+
 
 
   // 🔹 Пагінація
@@ -555,6 +549,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
 
 
 
