@@ -161,11 +161,21 @@ const unique = Array.from(map.values());
   currentFilms.forEach(item => {
     const card = document.createElement("div");
     card.className = "film";
-    // 🟢 Безпечна обробка постера через Cloudflare-проксі
+    // 🟢 Безпечна обробка постера (адаптивно для мобільних)
     const rawPoster = item.poster ? item.poster.replace(/^http:\/\//, "https://") : "";
-    const proxyPoster = rawPoster 
-      ? `https://uakino-proxy.lyuda14070702.workers.dev?url=${encodeURIComponent(rawPoster)}`
-      : "https://via.placeholder.com/200x300?text=No+Image";
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    
+    let proxyPoster = "";
+    if (rawPoster) {
+      // 🟣 На комп'ютері — через Cloudflare-проксі
+      // 🟢 На телефоні — напряму, без проксі (щоб не блокувалось)
+      proxyPoster = isMobile
+        ? rawPoster
+        : `https://uakino-proxy.lyuda14070702.workers.dev?url=${encodeURIComponent(rawPoster)}`;
+    } else {
+      proxyPoster = "https://via.placeholder.com/200x300?text=No+Image";
+    }
+
     
     card.innerHTML = `
       <div class="poster">
@@ -545,6 +555,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
 
 
 
