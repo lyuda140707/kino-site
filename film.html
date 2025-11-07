@@ -1118,8 +1118,9 @@ async function loadRecommendedFilms(title, genre) {
       <img src="${film.poster || 'https://via.placeholder.com/200x300?text=No+Poster'}" alt="${film.title}">
       <p>${film.title}</p>
     `;
+    // ❗ БЕЗ зворотних слешів
     item.addEventListener("click", () => {
-      window.location.href = \`film.html?id=\${film.id}\`;
+      window.location.href = 'film.html?id=' + film.id;
     });
     list.appendChild(item);
   });
