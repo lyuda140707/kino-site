@@ -710,15 +710,17 @@ if (url.includes("drive.google.com")) {
       overlay.style.pointerEvents = "none";
     });
 
-    // 🖥️ Відкривати відео на весь екран при натисканні Play
-    player.addEventListener("play", () => {
+     // === 📱 Повноекранний режим при натисканні на плеєр ===
+    player.addEventListener("click", () => {
       const elem = player;
+      // ✅ Запитати повноекранний лише під час взаємодії користувача
       if (elem.requestFullscreen) {
         elem.requestFullscreen().catch(() => {});
-      } else if (elem.webkitRequestFullscreen) { // для Safari
+      } else if (elem.webkitEnterFullscreen) {
+        // 🔹 для Safari на iPhone
+        try { elem.webkitEnterFullscreen(); } catch(e) {}
+      } else if (elem.webkitRequestFullscreen) {
         elem.webkitRequestFullscreen();
-      } else if (elem.msRequestFullscreen) { // для IE/Edge
-        elem.msRequestFullscreen();
       }
     });
 
