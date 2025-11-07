@@ -1019,7 +1019,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
     // ===== 🎬 Рекомендовані фільми =====
-// === 🎬 Розумний підбір схожих фільмів ===
+// === 🎬 Розумний підбір схожих фільмів (виправлений синтаксис) ===
 async function loadRecommendedFilms(title, genre) {
   const list = document.getElementById("recommendedList");
   if (!list) return;
@@ -1083,7 +1083,7 @@ async function loadRecommendedFilms(title, genre) {
       <p>${film.title}</p>
     `;
     item.addEventListener("click", () => {
-      window.location.href = \`film.html?id=\${film.id}\`;
+      window.location.href = `film.html?id=${film.id}`;
     });
     list.appendChild(item);
   });
