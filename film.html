@@ -1019,7 +1019,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
     // ===== 🎬 Рекомендовані фільми =====
-// === 🎬 Розумний підбір схожих фільмів із транслітом (робочий варіант) ===
+// === 🎬 Розумний пошук із fallback (українська + англійська + жанр) ===
 async function loadRecommendedFilms(title, genre) {
   const list = document.getElementById("recommendedList");
   if (!list) return;
@@ -1027,7 +1027,7 @@ async function loadRecommendedFilms(title, genre) {
 
   const cleanTitle = (title || "").trim().toLowerCase();
 
-  // 🔤 Таблиця трансліта
+  // 🔤 Трансліт
   const translitMap = {
     а:"a",б:"b",в:"v",г:"h",ґ:"g",д:"d",е:"e",є:"ye",ж:"zh",з:"z",и:"y",і:"i",ї:"yi",й:"y",
     к:"k",л:"l",м:"m",н:"n",о:"o",п:"p",р:"r",с:"s",т:"t",у:"u",ф:"f",х:"kh",ц:"ts",ч:"ch",
@@ -1049,31 +1049,36 @@ async function loadRecommendedFilms(title, genre) {
     return;
   }
 
-  // 🧠 Запит у Supabase — однорядковий `.or()`
-  const orQuery =
-    `title.ilike.%${baseWord}%` +
-    `,title.ilike.%${translitWord}%` +
-    (cleanGenre ? `,genre.ilike.%${cleanGenre}%` : "");
-
-  const { data, error } = await supabase
+  // 🔎 1️⃣ Основний пошук по назві
+  let { data, error } = await supabase
     .from("films_site")
     .select("id,title,poster,genre")
-    .or(orQuery)
-    .limit(100);
+    .or(`title.ilike.%${baseWord}%,title.ilike.%${translitWord}%`)
+    .limit(50);
+
+  // 🔄 2️⃣ Якщо порожньо — шукаємо за жанром
+  if ((!data || data.length === 0) && cleanGenre) {
+    ({ data, error } = await supabase
+      .from("films_site")
+      .select("id,title,poster,genre")
+      .ilike("genre", `%${cleanGenre}%`)
+      .limit(30));
+  }
 
   if (error) {
     console.error("❌ Помилка Supabase:", error);
     list.innerHTML = "<p style='color:#888'>Помилка запиту</p>";
     return;
   }
+
   if (!data || data.length === 0) {
     list.innerHTML = "<p style='color:#888'>Схожих фільмів не знайдено</p>";
     return;
   }
 
-  // 🧹 Фільтрація
+  // 🧹 Прибираємо дублікати і сам поточний фільм
   const seen = new Set();
-  const current = cleanTitle;
+  const current = cleanTitle.toLowerCase();
   const unique = data.filter(f => {
     const name = (f.title || "").trim().toLowerCase();
     if (!name || seen.has(name) || name === current) return false;
@@ -1085,9 +1090,22 @@ async function loadRecommendedFilms(title, genre) {
     );
   });
 
-  const selected = unique.slice(0, 6);
-  list.innerHTML = "";
+  // 📦 Якщо мало результатів — дозаповнимо випадковими того ж жанру
+  let selected = unique.slice(0, 6);
+  if (selected.length < 3 && cleanGenre) {
+    const { data: extra } = await supabase
+      .from("films_site")
+      .select("id,title,poster,genre")
+      .ilike("genre", `%${cleanGenre}%`)
+      .limit(10);
+    if (extra) {
+      const more = extra.filter(f => !seen.has(f.title?.toLowerCase()));
+      selected = [...selected, ...more].slice(0, 6);
+    }
+  }
 
+  // 🖼️ Вивід
+  list.innerHTML = "";
   if (selected.length === 0) {
     list.innerHTML = "<p style='color:#888'>Схожих фільмів не знайдено</p>";
     return;
@@ -1101,7 +1119,7 @@ async function loadRecommendedFilms(title, genre) {
       <p>${film.title}</p>
     `;
     item.addEventListener("click", () => {
-      window.location.href = `film.html?id=${film.id}`;
+      window.location.href = \`film.html?id=\${film.id}\`;
     });
     list.appendChild(item);
   });
