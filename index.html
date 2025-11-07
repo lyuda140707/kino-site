@@ -8,6 +8,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#00fff2">
+  <!-- iOS підтримка -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/icon-512.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icon-512.png">
+
 
 <!-- iOS підтримка -->
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -563,10 +569,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </script>
 
-
+<script src="/sw-register.js"></script> <!-- ✅ Service Worker -->
 </body>
 </body>
 </html>
+
 
 
 
