@@ -710,19 +710,6 @@ if (url.includes("drive.google.com")) {
       overlay.style.pointerEvents = "none";
     });
 
-     // === 📱 Повноекранний режим при натисканні на плеєр ===
-    player.addEventListener("click", () => {
-      const elem = player;
-      // ✅ Запитати повноекранний лише під час взаємодії користувача
-      if (elem.requestFullscreen) {
-        elem.requestFullscreen().catch(() => {});
-      } else if (elem.webkitEnterFullscreen) {
-        // 🔹 для Safari на iPhone
-        try { elem.webkitEnterFullscreen(); } catch(e) {}
-      } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-      }
-    });
 
 
     player.addEventListener("pause", () => {
