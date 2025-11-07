@@ -710,6 +710,19 @@ if (url.includes("drive.google.com")) {
       overlay.style.pointerEvents = "none";
     });
 
+    // 🖥️ Відкривати відео на весь екран при натисканні Play
+    player.addEventListener("play", () => {
+      const elem = player;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(() => {});
+      } else if (elem.webkitRequestFullscreen) { // для Safari
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { // для IE/Edge
+        elem.msRequestFullscreen();
+      }
+    });
+
+
     player.addEventListener("pause", () => {
       overlay.style.opacity = "1";
       overlay.style.pointerEvents = "auto";
