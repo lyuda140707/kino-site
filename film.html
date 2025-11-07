@@ -1019,48 +1019,61 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
     // ===== 🎬 Рекомендовані фільми =====
-// 🎬 Рекомендовані фільми — без дублікатів назв
-// === 🎬 Рекомендовані фільми (оновлена логіка) ===
+// === 🎬 Розумний підбір схожих фільмів ===
 async function loadRecommendedFilms(title, genre) {
   const list = document.getElementById("recommendedList");
   if (!list) return;
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
   const cleanTitle = (title || "").trim().toLowerCase();
-  const mainWord = cleanTitle.split(":")[0].split(" ")[0]; // перше слово без двокрапки
 
-  // 🧩 Шукаємо фільми, де назва або жанр містять це слово
-  const { data, error } = await supabase
-    .from("films_site")
-    .select("id, title, poster, genre, year")
-    .or(
-      `title.ilike.%${mainWord}%,genre.ilike.%${genre}%,title.ilike.%${cleanTitle.split(" ")[0]}%`
-    )
-    .limit(40);
+  // 🔹 Видаляємо цифри, двокрапки і зайві частини (наприклад, "2:", "частина")
+  const baseWord = cleanTitle
+    .replace(/[:\-–]/g, " ")
+    .replace(/\b\d+\b/g, "")
+    .split(" ")
+    .filter(w => w.length > 2)[0]; // перше осмислене слово (типу "гарфілд")
 
-  if (error || !data || data.length === 0) {
-    list.innerHTML = "<p style='color:#888'>Схожих фільмів не знайдено</p>";
+  if (!baseWord) {
+    list.innerHTML = "<p style='color:#888'>Немає даних для пошуку</p>";
     return;
   }
 
-  // 🧹 Унікальні назви + виключаємо поточний фільм
+  // 🔎 Отримуємо фільми, де назва або жанр містять це слово
+  const { data, error } = await supabase
+    .from("films_site")
+    .select("id, title, poster, genre")
+    .or(`title.ilike.%${baseWord}%,genre.ilike.%${genre}%`)
+    .limit(50);
+
+  if (error || !data) {
+    list.innerHTML = "<p style='color:#888'>Помилка або порожній результат</p>";
+    console.error(error);
+    return;
+  }
+
+  // 🧹 Фільтруємо унікальні назви, відкидаємо поточний
   const seen = new Set();
   const current = cleanTitle.toLowerCase();
   const unique = data.filter(f => {
     const name = (f.title || "").trim().toLowerCase();
-    if (!name || name === current || seen.has(name)) return false;
+    if (!name || seen.has(name) || name === current) return false;
     seen.add(name);
-    // трохи суворіше фільтруємо за схожістю назв
+    // беремо лише схожі за основним словом або тим же жанром
     return (
-      name.includes(mainWord) ||
-      cleanTitle.includes(name.split(" ")[0]) ||
-      (f.genre && f.genre.toLowerCase().includes((genre || "").toLowerCase()))
+      name.includes(baseWord) ||
+      (genre && f.genre && f.genre.toLowerCase().includes(genre.toLowerCase()))
     );
   });
 
-  // 🔝 Показуємо 3–6 найближчих варіантів
+  // 🔝 Відбираємо перші 3–6 штук
   const selected = unique.slice(0, 6);
   list.innerHTML = "";
+
+  if (selected.length === 0) {
+    list.innerHTML = "<p style='color:#888'>Схожих фільмів не знайдено</p>";
+    return;
+  }
 
   selected.forEach(film => {
     const item = document.createElement("div");
@@ -1070,16 +1083,12 @@ async function loadRecommendedFilms(title, genre) {
       <p>${film.title}</p>
     `;
     item.addEventListener("click", () => {
-      window.location.href = `film.html?id=${film.id}`;
+      window.location.href = \`film.html?id=\${film.id}\`;
     });
     list.appendChild(item);
   });
-
-  // Якщо після фільтрації нічого не залишилося
-  if (selected.length === 0) {
-    list.innerHTML = "<p style='color:#888'>Схожих фільмів не знайдено</p>";
-  }
 }
+
 
 
   </script>
