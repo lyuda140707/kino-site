@@ -28,3 +28,8 @@
     font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;
     img-src 'self' data: blob: https:;
     media-src 'self' https: data: blob:;
+    Cross-Origin-Opener-Policy: same-origin
+    Cross-Origin-Embedder-Policy: require-corp
+    Cross-Origin-Resource-Policy: same-origin
+    X-XSS-Protection: 1; mode=block
+
