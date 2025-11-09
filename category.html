@@ -437,6 +437,12 @@ async function initCategoryPage() {
     loadFilms(currentSort);
   });
 }
+// === Активна кнопка фільтра ===
+function setActive(activeBtn) {
+  const buttons = document.querySelectorAll('.filter-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+  activeBtn.classList.add('active');
+}
 
 initCategoryPage();
 
