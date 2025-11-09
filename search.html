@@ -128,15 +128,26 @@
 
       box.innerHTML = `<p style='color:#aaa;'>Пошук: <b>${query}</b>...</p>`;
 
-      // 🧠 Розумний пошук за кількома словами
-      const words = query.split(/\s+/).filter(w => w.length > 1);
-      let orParts = [];
-      
+     // 🧠 Розумний пошук: якщо є кілька слів — шукаємо фразу цілком
+    const words = query.split(/\s+/).filter(w => w.length > 1);
+    let orParts = [];
+    
+    if (query.includes(" ")) {
+      // 🔹 Якщо користувач ввів фразу (наприклад, "На вершині")
+      orParts.push(`title.ilike.%${query}%`);
+      orParts.push(`main_title.ilike.%${query}%`);
+      orParts.push(`genre.ilike.%${query}%`);
+      orParts.push(`description.ilike.%${query}%`); // шукає ще й по опису
+    } else {
+      // 🔹 Якщо одне слово — шукаємо по кожному окремо
       words.forEach(word => {
         orParts.push(`title.ilike.%${word}%`);
         orParts.push(`main_title.ilike.%${word}%`);
         orParts.push(`genre.ilike.%${word}%`);
+        orParts.push(`description.ilike.%${word}%`);
       });
+    }
+
       
       const { data, error } = await supabase
         .from("films_site")
