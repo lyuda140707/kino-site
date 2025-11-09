@@ -491,6 +491,35 @@
   color: #ccc;
   line-height: 1.3;
 }
+/* === 🔹 Telegram Banner (як у film.html) === */
+.tg-banner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 95%;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #00fff2;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 13.5px;
+  margin: 0 auto 12px auto; /* по центру і з відступом */
+  box-shadow: none;
+  transition: none;
+}
+.tg-banner:hover {
+  background: #0d0d0d;
+  transform: none;
+  box-shadow: none;
+}
+.tg-icon {
+  width: 18px;
+  height: 18px;
+  filter: invert(58%) sepia(82%) saturate(610%) hue-rotate(138deg) brightness(97%) contrast(97%);
+}
 
   </style>
 </head>
@@ -522,10 +551,19 @@
     </div>
   </div> <!-- /series-left -->
 
-  <!-- 🎬 Праворуч відео, сезони, опис -->
-  <div class="series-right">
-
-    <!-- 🔹 Перемикач джерела -->
+      <!-- 🎬 Праворуч відео, сезони, опис -->
+      <div class="series-right">
+    <!-- 🔹 Телеграм-банер -->
+    <a href="https://t.me/RelaxBoxUA_bot?start=series_1234" target="_blank" class="tg-banner" 
+       style="display:flex;align-items:center;gap:10px;background:#0d0d0d;border:1px solid rgba(0,255,255,0.3);
+              border-radius:10px;padding:10px 14px;margin-bottom:10px;text-decoration:none;color:#00fff2;
+              font-weight:600;box-shadow:0 0 10px rgba(0,255,255,0.15);">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"
+           alt="Telegram" style="width:28px;height:28px;">
+      <span>🔥 Новинки в каналі, перегляд у боті — усе в одному місці!</span>
+    </a>
+    
+        <!-- 🔹 Перемикач джерела -->
     <div class="source-row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 14px 0;">
       <div class="source-switch" style="display:flex;gap:10px;">
         <button id="btnEpisode" class="active">🎬 Серія</button>
