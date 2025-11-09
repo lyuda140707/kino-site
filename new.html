@@ -143,6 +143,7 @@
       <h1>Новинки&nbsp;<span>2024–2025</span></h1>
     </div>
     <div id="new-films" class="film-grid" style="margin-top:20px;"></div>
+    <div id="pagination" style="text-align:center;margin-top:25px;"></div>
   </main>
 
   <!-- === FOOTER === -->
@@ -155,82 +156,117 @@
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function loadNewItems() {
-      const box = document.getElementById("new-films");
-      box.innerHTML = "<p style='color:#aaa;'>Завантаження...</p>";
+    async function loadNewItems(page = 1) {
+  const box = document.getElementById("new-films");
+  const pagination = document.getElementById("pagination");
+  box.innerHTML = "<p style='color:#aaa;'>Завантаження...</p>";
+  pagination.innerHTML = "";
 
-      // Беремо всі потрібні типи
-      const { data, error } = await supabase
-        .from("films_site")
-        .select("id, title, poster, year, genre, type, imdb, pro_access")
-        .in("type", ["Фільм", "Серіал", "Мультфільм", "Мультсеріал"])
-        .gte("year", 2024)
-        .order("id", { ascending: false });
+  // 🧩 Кількість фільмів на сторінці
+  const perPage = 42;
 
-      if (error) {
-        console.error("❌ Помилка:", error);
-        box.innerHTML = "<p style='color:#aaa;'>Помилка завантаження.</p>";
-        return;
+  const { data, error } = await supabase
+    .from("films_site")
+    .select("id, title, poster, year, genre, type, imdb, pro_access")
+    .in("type", ["Фільм", "Серіал", "Мультфільм", "Мультсеріал"])
+    .gte("year", 2024)
+    .order("id", { ascending: false });
+
+  if (error) {
+    console.error("❌ Помилка:", error);
+    box.innerHTML = "<p style='color:#aaa;'>Помилка завантаження.</p>";
+    return;
+  }
+
+  if (!data?.length) {
+    box.innerHTML = "<p style='color:#aaa;'>Поки що немає нових фільмів чи серіалів.</p>";
+    return;
+  }
+
+  // 🔹 Унікальні фільми по назві
+  const map = new Map();
+  data.forEach(item => {
+    const key = item.title.trim();
+    if (!map.has(key)) map.set(key, item);
+  });
+  const unique = Array.from(map.values());
+
+  // 📄 Розрахунок сторінок
+  const totalPages = Math.ceil(unique.length / perPage);
+  const start = (page - 1) * perPage;
+  const end = start + perPage;
+  const items = unique.slice(start, end);
+
+  // 🧱 Малюємо картки
+  box.innerHTML = "";
+  items.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "film";
+    card.innerHTML = `
+      <div class="poster">
+        <img src="${item.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${item.title}">
+        ${String(item.pro_access || '').toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
+      </div>
+      <div class="title">${item.title}</div>
+      <div class="meta">
+        <span>${item.type || ''}</span> • 
+        <span>${item.genre || ''}</span> • 
+        <span>${item.year || ''}</span>
+      </div>
+    `;
+    card.addEventListener("click", () => {
+      if (item.type === "Серіал") {
+        window.location.href = "series.html?title=" + encodeURIComponent(item.title);
+      } else if (item.type === "Мультсеріал") {
+        window.location.href = "multseries.html?title=" + encodeURIComponent(item.title);
+      } else {
+        window.location.href = "film.html?id=" + item.id;
       }
+    });
+    box.appendChild(card);
+  });
 
-      if (!data?.length) {
-        box.innerHTML = "<p style='color:#aaa;'>Поки що немає нових фільмів чи серіалів.</p>";
-        return;
-      }
+  // 🔢 Малюємо пагінацію
+  pagination.innerHTML = "";
 
-      // 🔹 Об'єднуємо дублі за title і мерджимо жанри
-      const map = new Map();
-      data.forEach(item => {
-        const key = item.title.trim();
-        if (map.has(key)) {
-          const existing = map.get(key);
-          // додаємо жанр, якщо ще не доданий
-          if (item.genre && !existing.genre.includes(item.genre)) {
-            existing.genre = existing.genre ? `${existing.genre}, ${item.genre}` : item.genre;
-          }
-          // беремо найновіший рік/постер, якщо треба
-          if ((item.year || 0) > (existing.year || 0)) {
-            existing.year = item.year;
-            existing.poster = item.poster || existing.poster;
-            existing.id = item.id || existing.id;
-          }
-        } else {
-          map.set(key, { ...item });
-        }
-      });
-      const unique = Array.from(map.values());
-      
-      box.innerHTML = "";
-      unique.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "film";
-        card.innerHTML = `
-          <div class="poster">
-            <img src="${item.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${item.title}">
-            ${String(item.pro_access || '').toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
-          </div>
-          <div class="title">${item.title}</div>
-          <div class="meta">
-            <span>${item.type || ''}</span> • 
-            <span>${item.genre || ''}</span> • 
-            <span>${item.year || ''}</span>
-          </div>
-        `;
-        card.addEventListener("click", () => {
-          if (item.type === "Серіал") {
-            window.location.href = "series.html?title=" + encodeURIComponent(item.title);
-          } else if (item.type === "Мультсеріал") {
-            window.location.href = "multseries.html?title=" + encodeURIComponent(item.title);
-          } else {
-            window.location.href = "film.html?id=" + item.id;
-          }
-        });
-        box.appendChild(card);
-      });
+  const createPageButton = (label, newPage, disabled = false, active = false) => {
+    const btn = document.createElement("button");
+    btn.textContent = label;
+    btn.style.cssText = `
+      background:${active ? '#00fff2' : 'transparent'};
+      color:${active ? '#000' : '#00fff2'};
+      border:1px solid rgba(0,255,255,0.4);
+      border-radius:6px;
+      margin:0 4px;
+      padding:5px 10px;
+      cursor:${disabled ? 'default' : 'pointer'};
+      font-weight:600;
+    `;
+    if (!disabled && !active) btn.onclick = () => loadNewItems(newPage);
+    pagination.appendChild(btn);
+  };
 
+  // ⬅️ Стрілка "Назад"
+  createPageButton("⬅", page - 1, page === 1);
+
+  // 🔹 Номери сторінок
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || Math.abs(page - i) <= 2) {
+      createPageButton(i, i, false, i === page);
+    } else if (Math.abs(page - i) === 3) {
+      const dots = document.createElement("span");
+      dots.textContent = "...";
+      dots.style.color = "#999";
+      pagination.appendChild(dots);
     }
+  }
 
-    document.addEventListener("DOMContentLoaded", loadNewItems);
+  // ➡️ Стрілка "Вперед"
+  createPageButton("➡", page + 1, page === totalPages);
+}
+
+document.addEventListener("DOMContentLoaded", () => loadNewItems(1));
+
   </script>
 
   <script src="auth.js"></script>
