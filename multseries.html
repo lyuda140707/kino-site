@@ -583,7 +583,8 @@ function useSource(url) {
 
 
   if (error || !data?.length){
-    document.body.innerHTML = "<h2 style='color:#fff;text-align:center'>Мультсеріал не знайдено</h2>";
+    document.querySelector("#seriesDesc").textContent = "⚠️ Мультсеріал не знайдено або немає даних.";
+
     return;
   }
 
@@ -610,40 +611,6 @@ function useSource(url) {
   // 🎬 Далі залишаєш усе, що нижче — без змін (PRO, серії, тощо)
 
 
-
-
-    if (error || !data || !data.length){
-      document.body.innerHTML = "<h2 style='color:#fff;text-align:center'>Серіал не знайдено</h2>";
-      return;
-    }
-
-    // заповнення заголовку/постера/мети/опису з першого рядка
-    const first = data[0];
-    // 🧩 Захист назви мультсеріалу від ботів
-    const titleEl = document.getElementById("seriesTitle");
-    if (titleEl && first.title) {
-      const salt = "relaxbox2025"; // можеш змінити слово
-      const encoded = btoa(encodeURIComponent(first.title + "||" + salt));
-      titleEl.dataset.enc = encoded;
-    
-      try {
-        const decoded = decodeURIComponent(atob(encoded)).split("||")[0];
-        titleEl.textContent = decoded;
-      } catch (e) {
-        console.warn("Помилка декодування назви мультсеріалу:", e);
-        titleEl.textContent = first.title; // запасний варіант
-      }
-    } else {
-      document.getElementById("seriesTitle").textContent = seriesTitle;
-    }
-
-    document.getElementById("seriesPoster").src = first.poster || "";
-    document.getElementById("seriesGenre").textContent = first.genre || "";
-    document.getElementById("seriesYear").textContent  = first.year  || "";
-    document.getElementById("seriesImdb").textContent  = first.imdb  || "—";
-    document.getElementById("seriesDesc").textContent  = first.description || "Опис відсутній";
-    // 🎬 Підбірка рекомендованих серіалів
-    loadRecommendedSeries(first.title, first.genre);
 
 // 🧩 Перевірка PRO-доступу (працює і для Telegram, і для Email/Web)
 let hasPro = true;
@@ -894,11 +861,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 })();
 </script>
 
-<script>
-  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-</script>
+
 
 <!-- Підключення логіки коментарів -->
 <script src="comments.js"></script>
@@ -942,7 +905,7 @@ async function loadRecommendedCartoons(title, genre) {
   const { data, error } = await supabase
     .from("films_site")
     .select("id, title, poster, genre")
-    .ilike("type", "Мультсеріал")
+    .eq("type", "Мультсеріал")
     .or(`title.ilike.%${keyword}%,genre.ilike.%${genre}%`)
     .limit(20);
 
