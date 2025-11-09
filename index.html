@@ -476,7 +476,7 @@ try {
             ${randomCartoons
               .map(
                 (m) => `
-                <div class="mini-card" onclick="window.location.href='film.html?id=${m.id}'">
+                <div class="mini-card" onclick="window.location.href='multseries.html?title=${encodeURIComponent(m.title)}'">
                   <img src="${m.poster || 'https://via.placeholder.com/150'}">
                   <p>${m.title}</p>
                 </div>`
@@ -578,6 +578,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 </body>
 </body>
 </html>
+
 
 
 
