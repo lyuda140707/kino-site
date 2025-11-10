@@ -24,6 +24,15 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+
+  const url = new URL(event.request.url);
+
+  // 🚫 Не кешуємо sitemap.xml
+  if (url.pathname.endsWith("/sitemap.xml")) {
+    return fetch(event.request);
+  }
+
+  // 🟢 Основне кешування
   event.respondWith(
     fetch(event.request)
       .then((response) => {
@@ -35,21 +44,10 @@ self.addEventListener("fetch", (event) => {
         return caches.match(event.request).then((cached) => {
           if (cached) return cached;
 
-          // 🟣 Якщо немає кешу — показуємо fallback-сторінку
+          // 🟣 Якщо немає кешу — fallback-сторінка
           return new Response(
-            `
-              <html lang="uk">
-              <head><meta charset="UTF-8"><title>Relax Kino</title></head>
-              <body style="background:#000;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;text-align:center;">
-                <div>
-                  <h2>⏳ Завантаження...</h2>
-                  <p>Перевіряємо з’єднання з Relax Kino</p>
-                  <p style="font-size:13px;color:#999;">Якщо сторінка не відкривається — онови її пізніше.</p>
-                </div>
-              </body>
-              </html>
-            `,
-            { headers: { "Content-Type": "text/html; charset=UTF-8" } }
+            `<h1 style="text-align:center;margin-top:50px;">🔌 Немає інтернету</h1>`,
+            { headers: { "Content-Type": "text/html" } }
           );
         });
       })
