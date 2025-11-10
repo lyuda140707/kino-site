@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build": "node generate-sitemap.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
