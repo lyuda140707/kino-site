@@ -2,8 +2,9 @@ import fs from "fs";
 import fetch from "node-fetch";
 
 // 🔹 Підключення до Supabase
-const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
-const SUPABASE_KEY = "YOUR_PUBLIC_ANON_KEY";
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
+
 
 // 🔹 Основна функція
 async function generateSitemap() {
