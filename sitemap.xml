@@ -2,23 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <!-- 🏠 Головна сторінка -->
-  <url>
-    <loc>https://kino-site.pages.dev/</loc>
-    <priority>1.0</priority>
-  </url>
+  <url><loc>https://kino-site.pages.dev/</loc></url>
 
-  <!-- 🎞️ Категорії -->
+  <!-- 🔍 Пошук і категорії -->
+  <url><loc>https://kino-site.pages.dev/search.html</loc></url>
   <url><loc>https://kino-site.pages.dev/category.html</loc></url>
   <url><loc>https://kino-site.pages.dev/collections.html</loc></url>
+  <url><loc>https://kino-site.pages.dev/collection.html</loc></url>
   <url><loc>https://kino-site.pages.dev/new.html</loc></url>
 
-  <!-- 🎬 Типові сторінки -->
+  <!-- 🎬 Сторінки контенту -->
   <url><loc>https://kino-site.pages.dev/film.html</loc></url>
   <url><loc>https://kino-site.pages.dev/series.html</loc></url>
   <url><loc>https://kino-site.pages.dev/multseries.html</loc></url>
-  <url><loc>https://kino-site.pages.dev/collection.html</loc></url>
 
-  <!-- 🧩 Приклади сторінок фільмів -->
+  <!-- 💫 Додаткові сторінки -->
+  <url><loc>https://kino-site.pages.dev/profile.html</loc></url>
+  <url><loc>https://kino-site.pages.dev/bookmarks.html</loc></url>
+
+  <!-- 🧩 Приклади окремих фільмів -->
   <url><loc>https://kino-site.pages.dev/film.html?id=1</loc></url>
   <url><loc>https://kino-site.pages.dev/film.html?id=2</loc></url>
   <url><loc>https://kino-site.pages.dev/film.html?id=3</loc></url>
