@@ -1,56 +1,60 @@
 import fs from "fs";
 import fetch from "node-fetch";
 
-// 🔹 Підключення до Supabase
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
+const PAGE_SIZE = 1000;
+let allFilms = [];
+let from = 0;
+let to = PAGE_SIZE - 1;
 
-// 🔹 Основна функція
-async function generateSitemap() {
-  console.log("📡 Завантажуємо фільми з Supabase...");
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/films?select=id`, {
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-    },
-  });
+console.log("📡 Завантажуємо фільми з Supabase...");
 
-  const films = await response.json();
-  console.log(`✅ Отримано ${films.length} фільмів`);
+while (true) {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/films?select=id,title&order=id.asc&range=${from}-${to}`,
+    {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+      },
+    }
+  );
 
-  // 🔹 Формуємо XML
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-  xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+  if (!res.ok) {
+    console.error("❌ Помилка запиту:", res.status, await res.text());
+    break;
+  }
 
-  // Головні сторінки
-  const staticPages = [
-    "",
-    "search.html",
-    "category.html",
-    "collections.html",
-    "collection.html",
-    "new.html",
-    "film.html",
-    "series.html",
-    "multseries.html",
-    "profile.html",
-    "bookmarks.html",
-  ];
+  const data = await res.json();
+  if (!data.length) break; // коли більше немає даних — вихід
 
-  staticPages.forEach((page) => {
-    xml += `  <url><loc>https://kino-site.pages.dev/${page}</loc></url>\n`;
-  });
-
-  // Додаємо всі фільми
-  films.forEach((film) => {
-    xml += `  <url><loc>https://kino-site.pages.dev/film.html?id=${film.id}</loc></url>\n`;
-  });
-
-  xml += `</urlset>`;
-
-  fs.writeFileSync("sitemap.xml", xml);
-  console.log("🗺️  Sitemap оновлено успішно!");
+  allFilms = allFilms.concat(data);
+  from += PAGE_SIZE;
+  to += PAGE_SIZE;
 }
 
-generateSitemap();
+console.log(`✅ Отримано ${allFilms.length} фільмів`);
+
+let urls = allFilms.map(
+  (film) => `
+  <url>
+    <loc>https://kino-site.pages.dev/film.html?id=${film.id}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`
+);
+
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://kino-site.pages.dev/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  ${urls.join("\n")}
+</urlset>`;
+
+fs.writeFileSync("sitemap.xml", sitemap);
+console.log("🗺️ Sitemap оновлено успішно!");
