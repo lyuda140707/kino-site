@@ -12,15 +12,13 @@ let to = PAGE_SIZE - 1;
 console.log("📡 Завантажуємо фільми з Supabase...");
 
 while (true) {
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/films?select=id,title&order=id.asc&range=${from}-${to}`,
-    {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`,
-      },
-    }
-  );
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/films?select=id,title&order=id.asc`, {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      Range: `${from}-${to}`,
+    },
+  });
 
   if (!res.ok) {
     console.error("❌ Помилка запиту:", res.status, await res.text());
@@ -28,7 +26,7 @@ while (true) {
   }
 
   const data = await res.json();
-  if (!data.length) break; // коли більше немає даних — вихід
+  if (!data.length) break;
 
   allFilms = allFilms.concat(data);
   from += PAGE_SIZE;
