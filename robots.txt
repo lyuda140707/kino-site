@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sitemap-proxy.lyuda14070702.workers.dev/sitemap.xml
+Sitemap: https://kino-site.pages.dev/sitemap.xml
