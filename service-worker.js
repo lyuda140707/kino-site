@@ -24,15 +24,15 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-
   const url = new URL(event.request.url);
 
-  // 🚫 Не кешуємо sitemap.xml
+  // 🚫 Не кешуємо sitemap.xml — віддаємо напряму, без будь-якої обробки
   if (url.pathname.endsWith("/sitemap.xml")) {
-    return fetch(event.request);
+    event.respondWith(fetch(event.request, { cache: "no-store" }));
+    return;
   }
 
-  // 🟢 Основне кешування
+  // 🟢 Основне кешування для всіх інших запитів
   event.respondWith(
     fetch(event.request)
       .then((response) => {
