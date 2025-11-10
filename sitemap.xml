@@ -2,7 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <!-- 🏠 Головна сторінка -->
-  <url><loc>https://kino-site.pages.dev/</loc></url>
+  <url>
+    <loc>https://kino-site.pages.dev/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
 
   <!-- 🔍 Пошук і категорії -->
   <url><loc>https://kino-site.pages.dev/search.html</loc></url>
