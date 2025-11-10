@@ -864,48 +864,51 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
   // 🟢 Запускаємо підбірку схожих фільмів
   loadRecommendedFilms(data.title, data.genre);
 
-  // === 🧩 SEO МЕТА-ТЕГИ ===
-const cleanTitle = (data.title || "").trim();
-const cleanDesc = (data.description || "").trim().slice(0, 160);
 
-// 🟢 Заголовок сторінки
-document.title = `${cleanTitle} — дивитись онлайн українською | KinoSite`;
+     
+ // === 🧩 SEO МЕТА-ТЕГИ ===
+setTimeout(() => {
+  const cleanTitle = (data.title || "").trim();
+  const cleanDesc = (data.description || "").trim().slice(0, 160);
 
-// 🟢 <meta name="description">
-let metaDesc = document.querySelector('meta[name="description"]');
-if (!metaDesc) {
-  metaDesc = document.createElement("meta");
-  metaDesc.name = "description";
-  document.head.appendChild(metaDesc);
-}
-metaDesc.content = cleanDesc || `Дивись онлайн фільм ${cleanTitle} українською без реклами.`;
+  if (!cleanTitle) return console.warn("⚠️ Назва фільму порожня, пропускаю оновлення мета-тегів");
 
-// 🟢 <meta property="og:title"> (для Telegram / Facebook прев’ю)
-let ogTitle = document.querySelector('meta[property="og:title"]');
-if (!ogTitle) {
-  ogTitle = document.createElement("meta");
-  ogTitle.setAttribute("property", "og:title");
-  document.head.appendChild(ogTitle);
-}
-ogTitle.content = cleanTitle + " — KinoSite";
+  // 🟢 <title>
+  document.title = `${cleanTitle} — дивитись онлайн українською | KinoSite`;
 
-// 🟢 <meta property="og:description">
-let ogDesc = document.querySelector('meta[property="og:description"]');
-if (!ogDesc) {
-  ogDesc = document.createElement("meta");
-  ogDesc.setAttribute("property", "og:description");
-  document.head.appendChild(ogDesc);
-}
-ogDesc.content = cleanDesc;
+  // 🟢 <meta name="description">
+  let metaDesc = document.querySelector('meta[name="description"]');
+  if (!metaDesc) {
+    metaDesc = document.createElement("meta");
+    metaDesc.name = "description";
+    document.head.appendChild(metaDesc);
+  }
+  metaDesc.content = cleanDesc || `Дивись онлайн фільм ${cleanTitle} українською без реклами.`;
 
-// 🟢 <meta property="og:image">
-let ogImage = document.querySelector('meta[property="og:image"]');
-if (!ogImage) {
-  ogImage = document.createElement("meta");
-  ogImage.setAttribute("property", "og:image");
-  document.head.appendChild(ogImage);
-}
-ogImage.content = data.poster || "https://kino-site.pages.dev/icon-512.png";
+  // 🟢 Open Graph — прев’ю для Telegram / Facebook
+  const metaTags = [
+    { prop: "og:title", content: `${cleanTitle} — KinoSite` },
+    { prop: "og:description", content: cleanDesc || `Дивись онлайн ${cleanTitle} українською.` },
+    { prop: "og:image", content: data.poster || "https://kino-site.pages.dev/icon-512.png" }
+  ];
+
+  metaTags.forEach(({ prop, content }) => {
+    let tag = document.querySelector(`meta[property='${prop}']`);
+    if (!tag) {
+      tag = document.createElement("meta");
+      tag.setAttribute("property", prop);
+      document.head.appendChild(tag);
+    }
+    tag.content = content;
+  });
+
+  console.log("✅ Оновлено мета-теги для:", cleanTitle);
+}, 300); // невелика пауза, щоб DOM устиг оновитись
+
+
+
+
+     
 
 
   // 🔗 Джерела
