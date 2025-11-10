@@ -866,15 +866,17 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
 
 
      
- // === 🧩 SEO МЕТА-ТЕГИ ===
-setTimeout(() => {
-  const cleanTitle = (data.title || "").trim();
-  const cleanDesc = (data.description || "").trim().slice(0, 160);
+// === 🧩 SEO МЕТА-ТЕГИ (оновлюються, коли назва реально з'явиться) ===
+const updateMetaTags = () => {
+  const titleEl = document.getElementById("filmTitle");
+  const titleText = titleEl?.textContent?.trim() || (data.title || "").trim();
+  const descText = (data.description || "").trim().slice(0, 160);
+  const posterUrl = data.poster || "https://kino-site.pages.dev/icon-512.png";
 
-  if (!cleanTitle) return console.warn("⚠️ Назва фільму порожня, пропускаю оновлення мета-тегів");
+  if (!titleText) return; // ще не завантажилось — чекаємо
 
-  // 🟢 <title>
-  document.title = `${cleanTitle} — дивитись онлайн українською | KinoSite`;
+  // 🟢 Заголовок сторінки
+  document.title = `${titleText} — дивитись онлайн українською | KinoSite`;
 
   // 🟢 <meta name="description">
   let metaDesc = document.querySelector('meta[name="description"]');
@@ -883,17 +885,16 @@ setTimeout(() => {
     metaDesc.name = "description";
     document.head.appendChild(metaDesc);
   }
-  metaDesc.content = cleanDesc || `Дивись онлайн фільм ${cleanTitle} українською без реклами.`;
+  metaDesc.content = descText || `Дивись онлайн фільм ${titleText} українською без реклами.`;
 
-  // 🟢 Open Graph — прев’ю для Telegram / Facebook
-  const metaTags = [
-    { prop: "og:title", content: `${cleanTitle} — KinoSite` },
-    { prop: "og:description", content: cleanDesc || `Дивись онлайн ${cleanTitle} українською.` },
-    { prop: "og:image", content: data.poster || "https://kino-site.pages.dev/icon-512.png" }
+  // 🟢 Open Graph (Telegram прев’ю)
+  const tags = [
+    ["og:title", `${titleText} — KinoSite`],
+    ["og:description", descText],
+    ["og:image", posterUrl]
   ];
-
-  metaTags.forEach(({ prop, content }) => {
-    let tag = document.querySelector(`meta[property='${prop}']`);
+  tags.forEach(([prop, content]) => {
+    let tag = document.querySelector(`meta[property="${prop}"]`);
     if (!tag) {
       tag = document.createElement("meta");
       tag.setAttribute("property", prop);
@@ -902,8 +903,19 @@ setTimeout(() => {
     tag.content = content;
   });
 
-  console.log("✅ Оновлено мета-теги для:", cleanTitle);
-}, 300); // невелика пауза, щоб DOM устиг оновитись
+  console.log("✅ Оновлено мета-теги для:", titleText);
+};
+
+// 🕓 Чекаємо, поки з’явиться назва у DOM
+const observer = new MutationObserver(() => {
+  const titleReady = document.getElementById("filmTitle")?.textContent?.trim();
+  if (titleReady) {
+    updateMetaTags();
+    observer.disconnect();
+  }
+});
+observer.observe(document.body, { subtree: true, childList: true });
+
 
 
 
