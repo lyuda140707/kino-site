@@ -864,6 +864,50 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
   // 🟢 Запускаємо підбірку схожих фільмів
   loadRecommendedFilms(data.title, data.genre);
 
+  // === 🧩 SEO МЕТА-ТЕГИ ===
+const cleanTitle = (data.title || "").trim();
+const cleanDesc = (data.description || "").trim().slice(0, 160);
+
+// 🟢 Заголовок сторінки
+document.title = `${cleanTitle} — дивитись онлайн українською | KinoSite`;
+
+// 🟢 <meta name="description">
+let metaDesc = document.querySelector('meta[name="description"]');
+if (!metaDesc) {
+  metaDesc = document.createElement("meta");
+  metaDesc.name = "description";
+  document.head.appendChild(metaDesc);
+}
+metaDesc.content = cleanDesc || `Дивись онлайн фільм ${cleanTitle} українською без реклами.`;
+
+// 🟢 <meta property="og:title"> (для Telegram / Facebook прев’ю)
+let ogTitle = document.querySelector('meta[property="og:title"]');
+if (!ogTitle) {
+  ogTitle = document.createElement("meta");
+  ogTitle.setAttribute("property", "og:title");
+  document.head.appendChild(ogTitle);
+}
+ogTitle.content = cleanTitle + " — KinoSite";
+
+// 🟢 <meta property="og:description">
+let ogDesc = document.querySelector('meta[property="og:description"]');
+if (!ogDesc) {
+  ogDesc = document.createElement("meta");
+  ogDesc.setAttribute("property", "og:description");
+  document.head.appendChild(ogDesc);
+}
+ogDesc.content = cleanDesc;
+
+// 🟢 <meta property="og:image">
+let ogImage = document.querySelector('meta[property="og:image"]');
+if (!ogImage) {
+  ogImage = document.createElement("meta");
+  ogImage.setAttribute("property", "og:image");
+  document.head.appendChild(ogImage);
+}
+ogImage.content = data.poster || "https://kino-site.pages.dev/icon-512.png";
+
+
   // 🔗 Джерела
   movieUrl   = data.stream_url   || "";
   trailerUrl = data.trailer_url  || "";
