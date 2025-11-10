@@ -866,89 +866,6 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
 
 
      
-// === 🧩 SEO МЕТА-ТЕГИ (оновлюються, коли назва реально з'явиться) ===
-const updateMetaTags = () => {
-  const titleEl = document.getElementById("filmTitle");
-  const titleText = titleEl?.textContent?.trim() || (data.title || "").trim();
-  const descText = (data.description || "").trim().slice(0, 160);
-  const posterUrl = data.poster || "https://kino-site.pages.dev/icon-512.png";
-
-  if (!titleText) return; // ще не завантажилось — чекаємо
-
-  // 🟢 Заголовок сторінки
-  document.title = `${titleText} — дивитись онлайн українською | KinoSite`;
-
-  // 🟢 <meta name="description">
-  let metaDesc = document.querySelector('meta[name="description"]');
-  if (!metaDesc) {
-    metaDesc = document.createElement("meta");
-    metaDesc.name = "description";
-    document.head.appendChild(metaDesc);
-  }
-  metaDesc.content = descText || `Дивись онлайн фільм ${titleText} українською без реклами.`;
-
-  // 🟢 Open Graph (Telegram прев’ю)
-  const tags = [
-    ["og:title", `${titleText} — KinoSite`],
-    ["og:description", descText],
-    ["og:image", posterUrl]
-  ];
-  tags.forEach(([prop, content]) => {
-    let tag = document.querySelector(`meta[property="${prop}"]`);
-    if (!tag) {
-      tag = document.createElement("meta");
-      tag.setAttribute("property", prop);
-      document.head.appendChild(tag);
-    }
-    tag.content = content;
-  });
-
-  console.log("✅ Оновлено мета-теги для:", titleText);
-  // === 🎬 JSON-LD Schema.org для Google ===
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "Movie",
-  "name": titleText,
-  "description": descText || `Дивись онлайн фільм ${titleText} українською без реклами.`,
-  "image": posterUrl,
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": data.imdb || "7.0",
-    "bestRating": "10",
-    "ratingCount": "1000"
-  },
-  "genre": data.genre || "",
-  "datePublished": data.year || "",
-  "director": {
-    "@type": "Person",
-    "name": data.director || ""
-  },
-  "actor": (data.cast || "")
-    .split(",")
-    .map(name => ({ "@type": "Person", "name": name.trim() }))
-};
-
-let scriptTag = document.querySelector('script[type="application/ld+json"]');
-if (!scriptTag) {
-  scriptTag = document.createElement("script");
-  scriptTag.type = "application/ld+json";
-  document.head.appendChild(scriptTag);
-}
-scriptTag.textContent = JSON.stringify(schema, null, 2);
-console.log("🎬 JSON-LD Schema додано:", schema);
-  
-};
-
-// 🕓 Чекаємо, поки з’явиться назва у DOM
-const observer = new MutationObserver(() => {
-  const titleReady = document.getElementById("filmTitle")?.textContent?.trim();
-  if (titleReady) {
-    updateMetaTags();
-    observer.disconnect();
-  }
-});
-observer.observe(document.body, { subtree: true, childList: true });
-
 
 
 
@@ -1366,6 +1283,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script src="/sw-register.js"></script> <!-- ✅ Service Worker -->
+<script src="seo.js"></script>
 </body>
 
 </body>
