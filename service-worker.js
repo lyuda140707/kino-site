@@ -27,10 +27,30 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
   // 🚫 Не кешуємо sitemap.xml — віддаємо напряму, без будь-якої обробки
-  if (url.pathname.endsWith("/sitemap.xml")) {
-    event.respondWith(fetch(event.request, { cache: "no-store" }));
+    if (url.pathname.endsWith("/sitemap.xml")) {
+    event.respondWith(
+      fetch(event.request, {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-store" },
+      })
+        .then((response) => {
+          // Примусово повертаємо правильний тип контенту
+          return new Response(response.body, {
+            status: response.status,
+            headers: {
+              "Content-Type": "application/xml; charset=utf-8",
+              "Cache-Control": "no-store",
+            },
+          });
+        })
+        .catch(() => new Response("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset></urlset>", {
+          status: 200,
+          headers: { "Content-Type": "application/xml; charset=utf-8" },
+        }))
+    );
     return;
   }
+
 
   // 🟢 Основне кешування для всіх інших запитів
   event.respondWith(
