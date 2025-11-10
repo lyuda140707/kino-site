@@ -44,7 +44,9 @@ let urls = allFilms.map(
   </url>`
 );
 
-const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+// 🧩 Додаємо XML декларацію та структуру sitemap
+const sitemapHeader = `<?xml version="1.0" encoding="UTF-8"?>`;
+const sitemapBody = `
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://kino-site.pages.dev/</loc>
@@ -53,6 +55,12 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
   </url>
   ${urls.join("\n")}
 </urlset>`;
+
+const sitemap = sitemapHeader + sitemapBody.trim();
+
+fs.writeFileSync("sitemap.xml", sitemap, "utf8");
+console.log("🗺️ Sitemap оновлено успішно!");
+
 
 fs.writeFileSync("sitemap.xml", sitemap);
 console.log("🗺️ Sitemap оновлено успішно!");
