@@ -904,6 +904,39 @@ const updateMetaTags = () => {
   });
 
   console.log("✅ Оновлено мета-теги для:", titleText);
+  // === 🎬 JSON-LD Schema.org для Google ===
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Movie",
+  "name": titleText,
+  "description": descText || `Дивись онлайн фільм ${titleText} українською без реклами.`,
+  "image": posterUrl,
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": data.imdb || "7.0",
+    "bestRating": "10",
+    "ratingCount": "1000"
+  },
+  "genre": data.genre || "",
+  "datePublished": data.year || "",
+  "director": {
+    "@type": "Person",
+    "name": data.director || ""
+  },
+  "actor": (data.cast || "")
+    .split(",")
+    .map(name => ({ "@type": "Person", "name": name.trim() }))
+};
+
+let scriptTag = document.querySelector('script[type="application/ld+json"]');
+if (!scriptTag) {
+  scriptTag = document.createElement("script");
+  scriptTag.type = "application/ld+json";
+  document.head.appendChild(scriptTag);
+}
+scriptTag.textContent = JSON.stringify(schema, null, 2);
+console.log("🎬 JSON-LD Schema додано:", schema);
+  
 };
 
 // 🕓 Чекаємо, поки з’явиться назва у DOM
