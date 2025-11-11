@@ -38,18 +38,17 @@ console.log(`✅ Отримано ${allFilms.length} фільмів`);
 let urls = allFilms.map(
   (film) => `
   <url>
-    <loc>https://kino-site.pages.dev/film.html?id=${film.id}</loc>
+    <loc>https://kino-site.top/film.html?id=${film.id}</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>`
 );
 
-// 🧩 Додаємо XML декларацію та структуру sitemap
 const sitemapHeader = `<?xml version="1.0" encoding="UTF-8"?>`;
 const sitemapBody = `
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://kino-site.pages.dev/</loc>
+    <loc>https://kino-site.top/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -59,8 +58,4 @@ const sitemapBody = `
 const sitemap = sitemapHeader + sitemapBody.trim();
 
 fs.writeFileSync("sitemap.xml", sitemap, "utf8");
-console.log("🗺️ Sitemap оновлено успішно!");
-
-
-fs.writeFileSync("sitemap.xml", sitemap);
 console.log("🗺️ Sitemap оновлено успішно!");
