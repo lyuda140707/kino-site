@@ -891,7 +891,7 @@ currentSource = "movie";
 // якщо користувач має PRO — показуємо відео
 if (hasPro) {
   document.querySelector(".player-box").innerHTML =
-    `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
+    `<video id="filmPlayer" controls playsinline allow="autoplay; picture-in-picture" allowfullscreen muted crossorigin="anonymous" preload="metadata"></video>`;
   setupPlayer(movieUrl);
 }
 // якщо НЕ має PRO — показуємо банер
