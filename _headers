@@ -30,7 +30,7 @@
     media-src 'self' https: data: blob:;
     Cross-Origin-Opener-Policy: same-origin
     Cross-Origin-Embedder-Policy: require-corp
-    Cross-Origin-Resource-Policy: same-origin
+    Cross-Origin-Resource-Policy: cross-origin
     X-XSS-Protection: 1; mode=block
 
 /sitemap-main.xml
