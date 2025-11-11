@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kino-site.top/sitemap.xml
-Sitemap: https://kino-site.top/sitemap-main.xml
+Sitemap: https://kino-site.pages.dev/sitemap.xml
+Sitemap: https://kino-site.pages.dev/sitemap-main.xml
