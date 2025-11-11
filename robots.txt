@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
 
+
 Sitemap: https://kino-site.pages.dev/sitemap.xml
+Sitemap: https://kino-site.pages.dev/sitemap-index.xml
