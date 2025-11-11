@@ -731,47 +731,8 @@ if (url.includes("drive.google.com")) {
       overlay.style.pointerEvents = "auto";
     });
   }
-  // === 🖼️ Додаємо кнопку "Картинка в картинці"
-  addPiPButton(player);
+
     }
-
-
-  // === 🖼️ Додаємо кнопку "Картинка в картинці"
-function addPiPButton(videoEl) {
-  if (!('pictureInPictureEnabled' in document)) return;
-  if (videoEl.dataset.pipAdded) return;
-  videoEl.dataset.pipAdded = "true";
-
-  const btn = document.createElement("button");
-  btn.textContent = "🖼️ PiP";
-  btn.style.position = "absolute";
-  btn.style.bottom = "12px";
-  btn.style.right = "12px";
-  btn.style.zIndex = "10";
-  btn.style.background = "rgba(0,0,0,0.6)";
-  btn.style.color = "#00fff2";
-  btn.style.border = "1px solid rgba(0,255,255,0.4)";
-  btn.style.borderRadius = "6px";
-  btn.style.padding = "6px 10px";
-  btn.style.cursor = "pointer";
-  btn.style.fontWeight = "600";
-  btn.style.fontSize = "13px";
-
-  btn.onclick = async () => {
-    try {
-      if (document.pictureInPictureElement) {
-        await document.exitPictureInPicture();
-      } else {
-        await videoEl.requestPictureInPicture();
-      }
-    } catch (err) {
-      console.warn("❌ PiP error:", err);
-    }
-  };
-
-  videoEl.parentElement.style.position = "relative";
-  videoEl.parentElement.appendChild(btn);
-}
 
    async function loadFilm() {
   const params = new URLSearchParams(window.location.search);
@@ -930,7 +891,7 @@ currentSource = "movie";
 // якщо користувач має PRO — показуємо відео
 if (hasPro) {
   document.querySelector(".player-box").innerHTML =
-    `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata" allow="picture-in-picture"></video>`;
+    `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
   setupPlayer(movieUrl);
 }
 // якщо НЕ має PRO — показуємо банер
