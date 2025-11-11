@@ -931,6 +931,44 @@ btnMovie.addEventListener("click", () => {
   if (hasPro) {
     setupPlayer(movieUrl);
   }
+  // 🔹 Кнопка "Картинка в картинці"
+const pipBtn = document.createElement("button");
+pipBtn.textContent = "📺 Картинка в картинці";
+pipBtn.style.cssText = `
+  margin-top: 10px;
+  background: #00fff2;
+  color: #000;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: block;
+  width: fit-content;
+  transition: 0.2s;
+`;
+pipBtn.onmouseenter = () => pipBtn.style.boxShadow = "0 0 10px #00fff2";
+pipBtn.onmouseleave = () => pipBtn.style.boxShadow = "none";
+
+const playerBox = document.querySelector(".player-box");
+playerBox.appendChild(pipBtn);
+
+// 🎬 Запуск Picture-in-Picture
+pipBtn.addEventListener("click", async () => {
+  const video = document.getElementById("filmPlayer");
+  try {
+    if (document.pictureInPictureElement) {
+      await document.exitPictureInPicture();
+    } else if (video.requestPictureInPicture) {
+      await video.requestPictureInPicture();
+    } else {
+      alert("Ваш браузер не підтримує режим 'Картинка в картинці'");
+    }
+  } catch (err) {
+    console.error("❌ Помилка PiP:", err);
+  }
+});
+
 });
 
   btnTrailer.addEventListener("click", () => {
