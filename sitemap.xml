@@ -2,24 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://kino-site.top/</loc>
+    <loc>https://kino-site.pages.dev/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <url><loc>https://kino-site.top/search.html</loc></url>
-  <url><loc>https://kino-site.top/category.html</loc></url>
-  <url><loc>https://kino-site.top/collections.html</loc></url>
-  <url><loc>https://kino-site.top/collection.html</loc></url>
-  <url><loc>https://kino-site.top/new.html</loc></url>
-  <url><loc>https://kino-site.top/film.html</loc></url>
-  <url><loc>https://kino-site.top/series.html</loc></url>
-  <url><loc>https://kino-site.top/multseries.html</loc></url>
-  <url><loc>https://kino-site.top/profile.html</loc></url>
-  <url><loc>https://kino-site.top/bookmarks.html</loc></url>
+  <url><loc>https://kino-site.pages.dev/search.html</loc></url>
+  <url><loc>https://kino-site.pages.dev/category.html</loc></url>
+  <url><loc>https://kino-site.pages.dev/collections.html</loc></url>
+  <url><loc>https://kino-site.pages.dev/collection.html</loc></url>
+  <url><loc>https://kino-site.pages.dev/new.html</loc></url>
+  <url><loc>https://kino-site.pages.dev/film.html</loc></url>
+  <url><loc>https://kino-site.pages.dev/series.html</loc></url>
+  <url><loc>https://kino-site.pages.dev/multseries.html</loc></url>
+  <url><loc>https://kino-site.pages.dev/profile.html</loc></url>
+  <url><loc>https://kino-site.pages.dev/bookmarks.html</loc></url>
 
-  <url><loc>https://kino-site.top/film.html?id=1</loc></url>
-  <url><loc>https://kino-site.top/film.html?id=2</loc></url>
-  <url><loc>https://kino-site.top/film.html?id=3</loc></url>
+  <url><loc>https://kino-site.pages.dev/film.html?id=1</loc></url>
+  <url><loc>https://kino-site.pages.dev/film.html?id=2</loc></url>
+  <url><loc>https://kino-site.pages.dev/film.html?id=3</loc></url>
 
 </urlset>
