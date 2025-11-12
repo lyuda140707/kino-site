@@ -579,10 +579,22 @@ function useSource(url) {
   }
 }
 
+ // ▶️ Клік на великий Play
   overlay.addEventListener("click", async ()=>{
-    try{ await player.play(); overlay.style.opacity="0"; overlay.style.pointerEvents="none"; }catch(e){}
+    try {
+      player.muted = false; // ✅ Вимикаємо "mute", щоб був звук
+      await player.play();
+      overlay.style.opacity = "0";
+      overlay.style.pointerEvents = "none";
+    } catch(e) {}
   });
-  player.addEventListener("play", ()=>{ overlay.style.opacity="0"; overlay.style.pointerEvents="none"; });
+
+  player.addEventListener("play", ()=>{
+    player.muted = false; // ✅ гарантовано ввімкнути звук
+    overlay.style.opacity = "0";
+    overlay.style.pointerEvents = "none";
+  });
+
   player.addEventListener("pause", ()=>{ overlay.style.opacity="1"; overlay.style.pointerEvents="auto"; });
 
   function groupBySeason(rows){
