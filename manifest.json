@@ -2,7 +2,7 @@
   "name": "Relax Kino",
   "short_name": "KinoSite",
   "start_url": "/index.html",
-  "display": "minimal-ui",
+  "display": "browser",
   "background_color": "#000000",
   "theme_color": "#00fff2",
   "description": "Онлайн фільми, серіали та мультики українською",
