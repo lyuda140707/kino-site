@@ -618,34 +618,44 @@ function buildVideoTag() {
 
 // Прив'язуємо UX: відновлення, автозбереження, PiP
 function bindPlayerUX(player) {
+  const filmId = getFilmId();
+  const keyPos = `playback_${filmId}`;
+  const keyState = `playstate_${filmId}`;
 
-    wrapper.style.position = "relative";
-    wrapper.appendChild(btn);
+  // 🔹 Відновлення позиції та стану
+  player.addEventListener("loadedmetadata", () => {
+    const saved = parseFloat(localStorage.getItem(keyPos) || "0");
+    if (saved && saved > 1) player.currentTime = saved;
 
-    async function togglePiP() {
-      try {
-        if (document.pictureInPictureEnabled && !player.disablePictureInPicture) {
-          if (document.pictureInPictureElement)
-            await document.exitPictureInPicture();
-          else
-            await player.requestPictureInPicture();
-        } else if (typeof player.webkitSupportsPresentationMode === "function") {
-          const mode = player.webkitPresentationMode === "picture-in-picture"
-            ? "inline" : "picture-in-picture";
-          player.webkitSetPresentationMode(mode);
-        }
-      } catch (err) {
-        console.warn("PiP error:", err);
-      }
+    const wasPlaying = localStorage.getItem(keyState) === "playing";
+    if (wasPlaying && document.visibilityState === "visible") {
+      player.play().catch(() => {});
     }
+  });
 
-    btn.addEventListener("click", togglePiP);
-    player.addEventListener("dblclick", togglePiP);
-  }
+  // 🔹 Записуємо позицію під час перегляду
+  player.addEventListener("timeupdate", () => {
+    if (!player.seeking && !player.paused) {
+      localStorage.setItem(keyPos, player.currentTime);
+    }
+  });
+
+  // 🔹 Фіксуємо стан (грав / пауза)
+  player.addEventListener("play", () => localStorage.setItem(keyState, "playing"));
+  player.addEventListener("pause", () => localStorage.setItem(keyState, "paused"));
+
+  // 🔹 Збереження перед закриттям сторінки
+  window.addEventListener("pagehide", () => {
+    localStorage.setItem(keyPos, player.currentTime);
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      localStorage.setItem(keyPos, player.currentTime);
+    }
+  });
 }
 
-
-    // Утиліта: знищення Hls при перемиканні
     function destroyHls() {
       if (hls) {
         try { hls.destroy(); } catch(e) {}
