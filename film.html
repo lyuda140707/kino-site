@@ -627,6 +627,14 @@ function bindPlayerUX(player) {
     const saved = parseFloat(localStorage.getItem(keyPos) || "0");
     if (saved && saved > 1) player.currentTime = saved;
 
+
+      // Якщо є глобальний запис останнього перегляду — теж відновлюємо
+      const last = JSON.parse(localStorage.getItem("lastWatched") || "null");
+      if (last && last.id === filmId && last.time && last.time > 1) {
+        player.currentTime = last.time;
+      }
+
+
     const wasPlaying = localStorage.getItem(keyState) === "playing";
     if (wasPlaying && document.visibilityState === "visible") {
       player.play().catch(() => {});
@@ -654,7 +662,27 @@ function bindPlayerUX(player) {
       localStorage.setItem(keyPos, player.currentTime);
     }
   });
+    // 🔹 Зберігаємо останній переглянутий фільм
+  player.addEventListener("timeupdate", () => {
+    if (player.currentTime > 30) { // після 30 секунд
+      const filmTitle = document.getElementById("filmTitle")?.textContent.trim() || "Без назви";
+      const filmPoster = document.getElementById("filmPoster")?.src || "";
+      const filmId = getFilmId();
+      const data = {
+        id: filmId,
+        title: filmTitle,
+        poster: filmPoster,
+        type: "Фільм",
+        time: player.currentTime
+      };
+      localStorage.setItem("lastWatched", JSON.stringify(data));
+    }
+  });
+
 }
+
+
+
 
     function destroyHls() {
       if (hls) {
