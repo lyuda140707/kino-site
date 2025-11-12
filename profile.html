@@ -354,7 +354,36 @@ footer {
     ✅ Я оплатив(ла) — без Telegram
   </button>
 </div>
+<!-- ▶️ Продовжити перегляд -->
+<div class="card" id="continue-watch-card">
+  <h3>▶️ Продовжити перегляд</h3>
+  <div id="continue-watch-box"></div>
+</div>
 
+<script>
+function renderContinueWatchingInProfile() {
+  const box = document.getElementById("continue-watch-box");
+  const data = JSON.parse(localStorage.getItem("lastWatched") || "null");
+
+  if (!data) {
+    box.innerHTML = "<p style='color:#9aa0a6;'>Поки що немає переглянутих фільмів 🎞️</p>";
+    return;
+  }
+
+  const time = Math.floor(data.time / 60);
+  box.innerHTML = `
+    <div class="bookmark-card" style="cursor:pointer;" onclick="window.location.href='film.html?id=${data.id}'">
+      <img src="${data.poster}" alt="${data.title}">
+      <p>${data.title}</p>
+      <small style="color:#aaa;">Продовжити з ${time} хв</small>
+    </div>
+  `;
+}
+
+window.addEventListener("DOMContentLoaded", renderContinueWatchingInProfile);
+</script>
+
+  
 <!-- ⭐ Мої закладки у кабінеті -->
 <div class="card" id="favorites-card">
   <div class="fav-head">
