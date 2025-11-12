@@ -647,7 +647,8 @@ function bindPlayerUX(player) {
     if (document.visibilityState === "hidden")
       localStorage.setItem(keyPos, player.currentTime);
   });
-
+  // 🚫 Не створюємо PiP кнопку в PWA або коли вбудована PiP працює сама
+  if (window.matchMedia("(display-mode: standalone)").matches) return;
   // === 📺 Picture-in-Picture ===
   const wrapper = player.closest(".player-box") || player.parentElement;
   if (wrapper && !wrapper.querySelector(".pip-btn")) {
