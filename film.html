@@ -1230,35 +1230,6 @@ window.addEventListener("pageshow", (e) => {
   }
 });
 
-  // 🟢 Двічі натисни по відео — перемикає мінірежим вручну
-  player.addEventListener("dblclick", () => {
-    player.classList.toggle("mini-pip");
-  });
-
-  // 🟢 Можна перетягувати міні-плеєр по екрану
-  let offsetX = 0, offsetY = 0, isDragging = false;
-  player.addEventListener("mousedown", (e) => {
-    if (!player.classList.contains("mini-pip")) return;
-    isDragging = true;
-    offsetX = e.clientX - player.getBoundingClientRect().left;
-    offsetY = e.clientY - player.getBoundingClientRect().top;
-    player.style.transition = "none";
-  });
-  document.addEventListener("mousemove", (e) => {
-  if (!isDragging) return;
-  e.preventDefault();
-  player.style.left = e.clientX - offsetX + "px";
-  player.style.top  = e.clientY - offsetY + "px";
-});
-document.addEventListener("mouseup", () => {
-  if (isDragging) {
-    isDragging = false;
-    player.style.transition = "all .3s ease";
-  }
-});
-}
-
-window.addEventListener("DOMContentLoaded", enableMiniPiP);
 
 
   </script>
