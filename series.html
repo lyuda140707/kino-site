@@ -1346,6 +1346,25 @@ async function loadRecommendedSeries(title, genre) {
 </script>
 <script src="/sw-register.js"></script> <!-- ✅ Service Worker -->
 <script src="seo.js"></script>
+<script>
+// 🧩 Відновлення стану після повернення з PWA
+window.addEventListener("pageshow", (e) => {
+  if (e.persisted) {
+    const player = document.getElementById("seriesPlayer");
+    if (!player) return;
+
+    // 🆔 Робимо унікальний ключ для серіалів та мультсеріалів
+    const isMult = location.pathname.includes("multseries");
+    const title = (document.getElementById("seriesTitle")?.textContent || "").trim();
+    const filmId = (isMult ? "mult_" : "series_") + title;
+
+    const wasPlaying = localStorage.getItem(`playstate_${filmId}`) === "playing";
+    if (wasPlaying) {
+      player.play().catch(()=>{});
+    }
+  }
+});
+</script>
 
 </body>
 </html>
