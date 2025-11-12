@@ -451,6 +451,39 @@
 
   <div class="player-box">
     <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
+    <script>
+// 🕒 Запам’ятовуємо останній переглянутий серіал або мультсеріал
+const typeName = location.pathname.includes("multseries") ? "Мультсеріал" : "Серіал";
+
+const playerEl = document.getElementById("seriesPlayer");
+playerEl.addEventListener("timeupdate", () => {
+  const currentTime = playerEl.currentTime;
+  if (currentTime > 30) { // зберігаємо лише якщо подивились більше 30 сек
+    const title = document.getElementById("seriesTitle")?.textContent.trim();
+    const poster = document.getElementById("seriesPoster")?.src || "";
+    const lastData = { 
+      id: title, 
+      title, 
+      poster, 
+      time: currentTime, 
+      type: typeName,
+      url: location.href
+    };
+    localStorage.setItem("lastWatched", JSON.stringify(lastData));
+  }
+});
+
+// ▶️ Відновлюємо позицію при повторному відкритті
+document.addEventListener("DOMContentLoaded", () => {
+  const title = document.getElementById("seriesTitle")?.textContent.trim();
+  const last = JSON.parse(localStorage.getItem("lastWatched") || "null");
+  if (last && last.title === title && last.type === typeName) {
+    const player = document.getElementById("seriesPlayer");
+    player.currentTime = last.time;
+  }
+});
+</script>
+
     <div id="bigPlayOverlay">
       <div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
     </div>
