@@ -355,15 +355,69 @@ footer {
   </button>
 </div>
 <!-- ▶️ Продовжити перегляд -->
-<div class="card" id="continue-watch-card">
-  <h3>▶️ Продовжити перегляд</h3>
+<div class="card" id="continue-watch-card" style="position:relative;">
+  <h3 style="margin:0 0 10px; color:#00fff2; display:flex; align-items:center; gap:8px;">
+    <span style="font-size:20px;">▶️</span> Продовжити перегляд
+    <button id="clearLastWatch" 
+      style="margin-left:auto; background:transparent; border:none; color:#888; 
+             font-size:13px; cursor:pointer; transition:color .2s;">
+      🗑 Очистити
+    </button>
+  </h3>
   <div id="continue-watch-box"></div>
 </div>
+
+<style>
+#continue-watch-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.continue-card {
+  background: #0d0f14;
+  border: 1px solid rgba(0,255,255,0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,255,255,0.08);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  max-width: 400px;
+}
+.continue-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(0,255,255,0.3);
+}
+.continue-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-bottom: 1px solid rgba(0,255,255,0.1);
+}
+.continue-info {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.continue-info p {
+  margin: 0;
+  font-weight: 600;
+  color: #eaeaea;
+}
+.continue-info small {
+  color: #9aa0a6;
+  font-size: 13px;
+}
+</style>
 
 <script>
 function renderContinueWatchingInProfile() {
   const box = document.getElementById("continue-watch-box");
   const data = JSON.parse(localStorage.getItem("lastWatched") || "null");
+
+  if (!box) return;
 
   if (!data) {
     box.innerHTML = "<p style='color:#9aa0a6;'>Поки що немає переглянутих фільмів 🎞️</p>";
@@ -372,16 +426,26 @@ function renderContinueWatchingInProfile() {
 
   const time = Math.floor(data.time / 60);
   box.innerHTML = `
-    <div class="bookmark-card" style="cursor:pointer;" onclick="window.location.href='film.html?id=${data.id}'">
+    <div class="continue-card" onclick="window.location.href='film.html?id=${data.id}'">
       <img src="${data.poster}" alt="${data.title}">
-      <p>${data.title}</p>
-      <small style="color:#aaa;">Продовжити з ${time} хв</small>
+      <div class="continue-info">
+        <p>${data.title}</p>
+        <small>Продовжити з ${time} хв</small>
+      </div>
     </div>
   `;
 }
 
+// 🗑 Кнопка очищення
+document.getElementById("clearLastWatch")?.addEventListener("click", () => {
+  if (!confirm("Очистити історію перегляду?")) return;
+  localStorage.removeItem("lastWatched");
+  renderContinueWatchingInProfile();
+});
+
 window.addEventListener("DOMContentLoaded", renderContinueWatchingInProfile);
 </script>
+
 
   
 <!-- ⭐ Мої закладки у кабінеті -->
