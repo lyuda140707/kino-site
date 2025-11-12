@@ -471,6 +471,22 @@
   gap: 10px;
 }
 
+/* === 🎬 ІМІТАЦІЯ PICTURE-IN-PICTURE ДЛЯ PWA === */
+#filmPlayer.mini-pip {
+  position: fixed !important;
+  width: 220px !important;
+  height: 124px !important;
+  bottom: 16px;
+  right: 16px;
+  z-index: 9999;
+  border-radius: 12px;
+  box-shadow: 0 0 25px rgba(0,255,255,0.5);
+  transition: all .3s ease;
+  cursor: move;
+}
+#filmPlayer.mini-pip:hover {
+  transform: scale(1.05);
+}
 
   </style>
 </head>
@@ -1282,6 +1298,39 @@ window.addEventListener("pageshow", (e) => {
     }
   }
 });
+// === 🧩 ІМІТАЦІЯ PICTURE-IN-PICTURE ДЛЯ PWA ===
+function enableMiniPiP() {
+  const player = document.getElementById("filmPlayer");
+  if (!player) return;
+
+  // 🟢 Автоматично зменшує плеєр, коли сторінка прихована
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && !player.paused) {
+      player.classList.add("mini-pip");
+    } else {
+      player.classList.remove("mini-pip");
+    }
+  });
+
+  // 🟢 Двічі натисни по відео — перемикає мінірежим вручну
+  player.addEventListener("dblclick", () => {
+    player.classList.toggle("mini-pip");
+  });
+
+  // 🟢 Можна перетягувати міні-плеєр по екрану
+  let offsetX = 0, offsetY = 0, isDragging = false;
+  player.addEventListener("mousedown", (e) => {
+    if (!player.classList.contains("mini-pip")) return;
+    isDragging = true;
+    offsetX = e.clientX - player.getBoundingClientRect().left;
+    offsetY = e.clientY - player.getBoundingClientRect().top;
+    player.style.transition = "none";
+  });
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    player.style.left = e.clientX - offsetX + "px";
+    play
 
   </script>
 <!-- 🧾 Модальне вікно -->
