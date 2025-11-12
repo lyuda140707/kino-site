@@ -711,14 +711,16 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay = div;
   }
 
-  // підʼєднуємо поведінку кнопки ▶️
+  // коли користувач натисне ▶️, прибираємо overlay
   overlay.onclick = async () => {
     try {
-      await video.play();
+      player.muted = false; // ✅ Автоматично вмикаємо звук
+      await player.play();
       overlay.style.opacity = "0";
       overlay.style.pointerEvents = "none";
     } catch (e) {}
   };
+
 
   video.addEventListener("play", () => {
     overlay.style.opacity = "0";
@@ -791,6 +793,7 @@ function useSource(url) {
   };
 
   player.addEventListener("play", () => {
+    player.muted = false; // ✅ Гарантовано вмикає звук після Play
     overlay.style.opacity = "0";
     overlay.style.pointerEvents = "none";
   });
