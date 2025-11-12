@@ -593,6 +593,107 @@
     let movieUrl = "";                // головний потік
     let trailerUrl = "";              // трейлер
 
+    // === 🔧 Хелпери для PWA-відновлення і PiP ===
+
+// Поточний id фільму
+function getFilmId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("id") || "unknown";
+}
+
+// Будуємо <video> з усіма потрібними атрибутами
+function buildVideoTag() {
+  return `
+    <video id="filmPlayer"
+      controls
+      playsinline
+      webkit-playsinline
+      disablepictureinpicture="false"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      crossorigin="anonymous"
+      preload="metadata"
+      style="border-radius:12px;width:100%;height:auto;display:block;max-width:100vw;">
+    </video>`;
+}
+
+
+// Прив'язуємо UX: відновлення, автозбереження, PiP
+function bindPlayerUX(player) {
+  const filmId = getFilmId();
+  const keyPos = `playback_${filmId}`;
+  const keyState = `playstate_${filmId}`;
+
+  player.addEventListener("loadedmetadata", () => {
+    const saved = parseFloat(localStorage.getItem(keyPos) || "0");
+    if (saved && saved > 1) player.currentTime = saved;
+
+    const wasPlaying = localStorage.getItem(keyState) === "playing";
+    if (wasPlaying && document.visibilityState === "visible") {
+      player.play().catch(()=>{});
+    }
+  });
+
+  player.addEventListener("timeupdate", () => {
+    if (!player.seeking && !player.paused)
+      localStorage.setItem(keyPos, player.currentTime);
+  });
+
+  player.addEventListener("play",  () => localStorage.setItem(keyState, "playing"));
+  player.addEventListener("pause", () => localStorage.setItem(keyState, "paused"));
+  window.addEventListener("pagehide", () => {
+    localStorage.setItem(keyPos, player.currentTime);
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden")
+      localStorage.setItem(keyPos, player.currentTime);
+  });
+
+  // === 📺 Picture-in-Picture ===
+  const wrapper = player.closest(".player-box") || player.parentElement;
+  if (wrapper && !wrapper.querySelector(".pip-btn")) {
+    const btn = document.createElement("button");
+    btn.className = "pip-btn";
+    btn.textContent = "PiP";
+    Object.assign(btn.style, {
+      position: "absolute",
+      right: "12px",
+      top: "12px",
+      zIndex: "5",
+      border: "1px solid rgba(0,255,255,0.4)",
+      background: "rgba(0,0,0,0.5)",
+      color: "#00fff2",
+      padding: "6px 10px",
+      borderRadius: "8px",
+      cursor: "pointer",
+      fontWeight: "700",
+      backdropFilter: "blur(4px)"
+    });
+    wrapper.style.position = "relative";
+    wrapper.appendChild(btn);
+
+    async function togglePiP() {
+      try {
+        if (document.pictureInPictureEnabled && !player.disablePictureInPicture) {
+          if (document.pictureInPictureElement)
+            await document.exitPictureInPicture();
+          else
+            await player.requestPictureInPicture();
+        } else if (typeof player.webkitSupportsPresentationMode === "function") {
+          const mode = player.webkitPresentationMode === "picture-in-picture"
+            ? "inline" : "picture-in-picture";
+          player.webkitSetPresentationMode(mode);
+        }
+      } catch (err) {
+        console.warn("PiP error:", err);
+      }
+    }
+
+    btn.addEventListener("click", togglePiP);
+    player.addEventListener("dblclick", togglePiP);
+  }
+}
+
+
     // Утиліта: знищення Hls при перемиканні
     function destroyHls() {
       if (hls) {
@@ -672,6 +773,7 @@ if (url.includes("drive.google.com")) {
           });
           hls.loadSource(url);
           hls.attachMedia(player);
+          bindPlayerUX(player);
         } else if (player.canPlayType("application/vnd.apple.mpegurl")) {
           player.src = url; // Safari / iOS
         } else {
@@ -890,9 +992,9 @@ currentSource = "movie";
 
 // якщо користувач має PRO — показуємо відео
 if (hasPro) {
-  document.querySelector(".player-box").innerHTML =
-    `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
+  document.querySelector(".player-box").innerHTML = buildVideoTag();
   setupPlayer(movieUrl);
+
 }
 // якщо НЕ має PRO — показуємо банер
 else {
@@ -926,8 +1028,7 @@ btnMovie.addEventListener("click", () => {
   btnTrailer.classList.remove("active");
 
   const box = document.querySelector(".player-box");
-  box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"></video>`;
-
+  box.innerHTML = buildVideoTag();
   if (hasPro) {
     setupPlayer(movieUrl);
   }
@@ -964,8 +1065,9 @@ btnMovie.addEventListener("click", () => {
         </iframe>`;
     } else {
       // Інакше — звичайний відео-плеєр
-      box.innerHTML = `<video id="filmPlayer" controls playsinline muted crossorigin="anonymous"></video>`;
+      box.innerHTML = buildVideoTag();
       setupPlayer(trailerUrl);
+
     }
   });
   
@@ -1153,6 +1255,18 @@ async function loadRecommendedFilms(title, genre) {
 
 
 
+// 🧩 Відновлення стану після повернення з PWA
+window.addEventListener("pageshow", (e) => {
+  if (e.persisted) {
+    const player = document.getElementById("filmPlayer");
+    if (!player) return;
+    const filmId = getFilmId();
+    const wasPlaying = localStorage.getItem(`playstate_${filmId}`) === "playing";
+    if (wasPlaying) {
+      player.play().catch(()=>{});
+    }
+  }
+});
 
   </script>
 <!-- 🧾 Модальне вікно -->
