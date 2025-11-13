@@ -292,6 +292,8 @@ async function loadFilms(sortMode = currentSort) {
 
   // 🎬 Групування серіалів за назвою
   let items = [...data];
+  // 🎲 Перемішування всіх фільмів
+  items = items.sort(() => Math.random() - 0.5);
   if (type.toLowerCase().includes("серіал")) {
     const unique = new Map();
     items.forEach(row => {
