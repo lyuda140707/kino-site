@@ -582,95 +582,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 <script src="seo.js"></script>
 
 
-<script>
-// === PULL TO REFRESH (стабільний, без хибних спрацювань) ===
-
-let startY = 0;
-let currentY = 0;
-let pulling = false;
-let triggered = false;
-const threshold = 80;  // скільки треба потягнути вниз
-const minMove = 10;    // мінімальний рух, щоб не реагувати на тапи
-
-// Панель
-const refresher = document.createElement("div");
-refresher.style.cssText = `
-  position: fixed;
-  top: -60px;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: #00fff2;
-  color: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  font-size: 16px;
-  transition: top 0.25s ease;
-  z-index: 99999;
-`;
-refresher.innerHTML = "⬇️ Потягни, щоб оновити...";
-document.body.appendChild(refresher);
-
-
-// Торкання
-document.addEventListener("touchstart", (e) => {
-  // працює тільки коли сторінка повністю зверху
-  if (window.scrollY === 0) {
-    pulling = true;
-    startY = e.touches[0].clientY;
-    triggered = false;
-  }
-});
-
-
-// Рух пальця
-document.addEventListener("touchmove", (e) => {
-  if (!pulling) return;
-
-  currentY = e.touches[0].clientY;
-  let diff = currentY - startY;
-
-  // якщо рух слишком малий — це просто тап → не оновлюємо
-  if (diff < minMove) return;
-
-  // тягнемо лише ВНИЗ
-  if (diff > 0) {
-    refresher.style.top = Math.min(diff - 60, 20) + "px";
-  }
-});
-
-
-// Відпускання
-document.addEventListener("touchend", () => {
-  if (!pulling) return;
-  pulling = false;
-
-  let diff = currentY - startY;
-
-  // Якщо не тягнули вниз — нічого не робимо
-  if (diff < threshold) {
-    refresher.style.top = "-60px";
-    return;
-  }
-
-  // Тільки тут оновлюємо
-  refresher.innerHTML = "🔄 Оновлюємо...";
-  refresher.style.top = "0px";
-
-  setTimeout(() => {
-    window.scrollTo(0, 0);
-    setTimeout(() => location.reload(), 150);
-  }, 150);
-});
-</script>
-
+<script src="/pull-refresh.js"></script>
 
 
 </body>
 </body>
 </html>
+
 
 
 
