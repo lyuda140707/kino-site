@@ -583,12 +583,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 <script>
-// === PULL TO REFRESH (повністю робочий) ===
+// === PULL TO REFRESH (стабільний, без хибних спрацювань) ===
 
 let startY = 0;
+let currentY = 0;
 let pulling = false;
-let threshold = 70;
+let triggered = false;
+const threshold = 80;  // скільки треба потягнути вниз
+const minMove = 10;    // мінімальний рух, щоб не реагувати на тапи
 
+// Панель
 const refresher = document.createElement("div");
 refresher.style.cssText = `
   position: fixed;
@@ -606,57 +610,68 @@ refresher.style.cssText = `
   transition: top 0.25s ease;
   z-index: 99999;
 `;
-refresher.textContent = "⬇️ Потягни, щоб оновити...";
+refresher.innerHTML = "⬇️ Потягни, щоб оновити...";
 document.body.appendChild(refresher);
 
-// Початок свайпу
+
+// Торкання
 document.addEventListener("touchstart", (e) => {
+  // працює тільки коли сторінка повністю зверху
   if (window.scrollY === 0) {
-    startY = e.touches[0].clientY;
     pulling = true;
+    startY = e.touches[0].clientY;
+    triggered = false;
   }
 });
+
 
 // Рух пальця
 document.addEventListener("touchmove", (e) => {
   if (!pulling) return;
-  let diff = e.touches[0].clientY - startY;
 
+  currentY = e.touches[0].clientY;
+  let diff = currentY - startY;
+
+  // якщо рух слишком малий — це просто тап → не оновлюємо
+  if (diff < minMove) return;
+
+  // тягнемо лише ВНИЗ
   if (diff > 0) {
-    refresher.style.top = Math.min(diff - 60, 15) + "px";
+    refresher.style.top = Math.min(diff - 60, 20) + "px";
   }
 });
+
 
 // Відпускання
 document.addEventListener("touchend", () => {
   if (!pulling) return;
   pulling = false;
 
-  let pos = parseInt(refresher.style.top);
+  let diff = currentY - startY;
 
-  if (pos > threshold * -1) {
-    refresher.textContent = "🔄 Оновлюємо...";
-    refresher.style.top = "0px";
-
-    // ⬅️ ГОЛОВНИЙ ТРИК: дати жесту завершитись
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-
-      setTimeout(() => {
-        location.reload(true);
-      }, 150);
-
-    }, 150);
-  } else {
+  // Якщо не тягнули вниз — нічого не робимо
+  if (diff < threshold) {
     refresher.style.top = "-60px";
+    return;
   }
+
+  // Тільки тут оновлюємо
+  refresher.innerHTML = "🔄 Оновлюємо...";
+  refresher.style.top = "0px";
+
+  setTimeout(() => {
+    window.scrollTo(0, 0);
+    setTimeout(() => location.reload(), 150);
+  }, 150);
 });
 </script>
+
 
 
 </body>
 </body>
 </html>
+
 
 
 
