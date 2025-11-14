@@ -651,15 +651,19 @@ function useSource(url) {
   document.getElementById("seriesSound").textContent = first.sound || "—";
   document.getElementById("seriesDuration").textContent = first.duration || "—";
 
-  // 🔄 Автоматична заміна джерела на Worker
-const WORKER_URL = "https://kino-hls.lyuda14070702.workers.dev";
+// 🛡️ Worker тільки для моїх доменів
+const WORKER_URL = "https://kino-hls-stealth.lyuda14070702.workers.dev";
 
-if (first.stream_url) {
-    first.stream_url = first.stream_url.replace(
-        "https://kino-video.pages.dev",
-        WORKER_URL
-    );
+const MY_DOMAINS = [
+  "kino-video.pages.dev",
+  "3bf2950b.kino-video.pages.dev"
+];
+
+// якщо МОЄ відео → через Worker
+if (MY_DOMAINS.some(domain => (first.stream_url || "").includes(domain))) {
+  first.stream_url = WORKER_URL + "/proxy?src=" + encodeURIComponent(first.stream_url);
 }
+
 
 
   // 🎬 Далі залишаєш усе, що нижче — без змін (PRO, серії, тощо)
