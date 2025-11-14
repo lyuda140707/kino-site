@@ -922,7 +922,7 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
   trailerUrl = data.trailer_url  || "";
 
   // 🔄 Автоматична заміна домену на Worker CDN
-  const WORKER_URL = "https://kino-hls.ludmila.workers.dev";  // ← твій Worker
+  const WORKER_URL = "https://kino-hls.lyuda14070702.workers.dev";  // ← твій Worker
   movieUrl   = movieUrl.replace("https://kino-video.pages.dev", WORKER_URL);
   trailerUrl = trailerUrl.replace("https://kino-video.pages.dev", WORKER_URL);
 
