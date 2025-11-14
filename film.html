@@ -925,7 +925,7 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
  const WORKER_URL = "https://kino-hls-stealth.lyuda14070702.workers.dev";
   
   // filmId у тебе є в коді loadFilm()
-  movieUrl = `${WORKER_URL}/proxy?src=` + encodeURIComponent(data.stream_url);
+  movieUrl = WORKER_URL + "/proxy?src=" + encodeURIComponent(data.stream_url);
 
 
 
