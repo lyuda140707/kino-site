@@ -921,10 +921,19 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
   movieUrl   = data.stream_url   || "";
   trailerUrl = data.trailer_url  || "";
 
-  // 🔄 Автоматична заміна домену на Worker CDN
-  const WORKER_URL = "https://kino-hls.lyuda14070702.workers.dev";  // ← твій Worker
-  movieUrl   = movieUrl.replace("https://kino-video.pages.dev", WORKER_URL);
-  trailerUrl = trailerUrl.replace("https://kino-video.pages.dev", WORKER_URL);
+ // 🔄 АВТОМАТИЧНА СУПЕР-ЗАМІНА ВСІХ МОЖЛИВИХ ДОМЕНІВ
+const WORKER_URL = "https://kino-hls.lyuda14070702.workers.dev";
+
+const DOMAINS_TO_REPLACE = [
+  "https://3bf2950b.kino-video.pages.dev",
+  "https://kino-video.pages.dev"
+];
+
+DOMAINS_TO_REPLACE.forEach(d => {
+  movieUrl   = movieUrl.replace(d, WORKER_URL);
+  trailerUrl = trailerUrl.replace(d, WORKER_URL);
+});
+
 
 
   // 🎛️ Кнопки
