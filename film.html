@@ -928,18 +928,6 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
   movieUrl = `${WORKER_URL}/api/watch/${id}`;
 
 
- // 🔄 АВТОМАТИЧНА СУПЕР-ЗАМІНА ВСІХ МОЖЛИВИХ ДОМЕНІВ
-const WORKER_URL = "https://kino-hls.lyuda14070702.workers.dev";
-
-const DOMAINS_TO_REPLACE = [
-  "https://3bf2950b.kino-video.pages.dev",
-  "https://kino-video.pages.dev"
-];
-
-DOMAINS_TO_REPLACE.forEach(d => {
-  movieUrl   = movieUrl.replace(d, WORKER_URL);
-  trailerUrl = trailerUrl.replace(d, WORKER_URL);
-});
 
 
 
