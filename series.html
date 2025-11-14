@@ -1074,6 +1074,9 @@ function renderEpisodes(season) {
   ensureVideoPlayer();
 
   episodes.forEach((ep, idx) => {
+    const WORKER_URL = "https://kino-stealth.lyuda14070702.workers.dev";
+    ep.stream_url = `${WORKER_URL}/api/watch/${ep.id}`;
+
     const btn = document.createElement("button");
     btn.className = "ep-btn";
     const label = ep.episode_label?.trim() || `Серія ${ep.episode || idx + 1}`;
