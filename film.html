@@ -707,123 +707,76 @@ function getYouTubeId(url) {
   return ""; // для googlevideo краще вносити нормальний YouTube-URL у таблицю
 }
 
-    // Універсальне підключення джерела до <video>
-    function setupPlayer(url) {
-      const player = document.getElementById("filmPlayer");
-      destroyHls();                   // вимикаємо попередній інстанс
+ function setupPlayer(url) {
+  const player = document.getElementById("filmPlayer");
 
-      // Обнуляємо src і паузимо
-      try { player.pause(); } catch(e) {}
-      player.removeAttribute("src");
-      player.load();
+  destroyHls();
 
-      if (!url) {
-        console.warn("Порожній URL для відтворення");
-        return;
-      }
-      // ✅ Якщо це Google Drive — будуємо пряме API-посилання
-if (url.includes("drive.google.com")) {
-  const match = url.match(/\/d\/([^/]+)/);
-  const id = match ? match[1] : null;
-  if (id) {
-    const API_KEY = "ТВОЙ_API_KEY_СЮДИ"; // встав свій справжній ключ
-    url = `https://www.googleapis.com/drive/v3/files/${id}?alt=media&key=${API_KEY}`;
-    console.log("🎥 Відтворення через Google Drive API:", url);
+  try { player.pause(); } catch(e) {}
+  player.removeAttribute("src");
+  player.load();
+
+  if (!url) {
+    console.warn("Порожній URL");
+    return;
   }
-}
 
-      // 🎬 Перевірка — якщо посилання з Google Drive
-      if (url.includes("drive.google.com") || url.includes("uc?export=download")) {
-        const fileIdMatch = url.match(/\/d\/([^/]+)\//);
-        const fileId = fileIdMatch ? fileIdMatch[1] : null;
-      
-        // Формуємо пряме посилання для плеєра
-        const direct = fileId
-          ? `https://drive.google.com/uc?export=download&id=${fileId}`
-          : url;
-      
-        player.src = direct;
-        console.log("🎥 Відтворення з Google Drive:", direct);
-        return; // ⛔ зупиняємо далі, щоб не оброблявся як .m3u8
-      }
+  // === Google Drive ===
+  if (url.includes("drive.google.com") || url.includes("uc?export=download")) {
+    const fileId = url.match(/\/d\/([^/]+)/)?.[1];
+    player.src = fileId
+      ? `https://drive.google.com/uc?export=download&id=${fileId}`
+      : url;
 
+    bindPlayerUX(player);
+    return;
+  }
 
-      if (url.includes(".m3u8")) {
-        if (window.Hls && Hls.isSupported()) {
-          hls = new Hls({
-            maxBufferLength: 30,
-            enableWorker: true,
-            lowLatencyMode: true,
-            xhrSetup: function (xhr, url) {
-              xhr.withCredentials = false;
-              xhr.setRequestHeader("Origin", "https://relax-time2.onrender.com");
-              xhr.setRequestHeader("Referer", "https://relax-time2.onrender.com");
-            }
-          });
-          hls.loadSource(url);
-          hls.attachMedia(player);
-          bindPlayerUX(player);
-        } else if (player.canPlayType("application/vnd.apple.mpegurl")) {
-          player.src = url; // Safari / iOS
-        } else {
-          console.error("Цей браузер не підтримує HLS без hls.js");
+  // === YouTube → iframe ===
+  if (
+    url.includes("youtube.com") ||
+    url.includes("youtu.be") ||
+    url.includes("googlevideo.com")
+  ) {
+    player.outerHTML = `
+      <iframe width="100%" height="480"
+        src="${url}"
+        frameborder="0"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen
+        style="border-radius:12px;width:100%;aspect-ratio:16/9;">
+      </iframe>`;
+    return;
+  }
+
+  // === HLS (.m3u8) ===
+  if (url.includes(".m3u8")) {
+    if (window.Hls && Hls.isSupported()) {
+
+      hls = new Hls({
+        maxBufferLength: 30,
+        enableWorker: true,
+        lowLatencyMode: true,
+        xhrSetup: function (xhr, url) {
+          xhr.withCredentials = false;
         }
-      } else {
-        // MP4 та інші контейнери
-        player.src = url;
-      }
+      });
 
-      // Автовідтворення вимкнено — користувач сам натисне Play
-        // 🎬 Додаємо велику кнопку Play поверх відео
-  const wrapper = player.parentElement;
+      hls.loadSource(url);
+      hls.attachMedia(player);
+      bindPlayerUX(player);
 
-  // Якщо кнопки ще нема — створюємо
-  if (!wrapper.querySelector("#bigPlayBtn")) {
-    const bigPlay = document.createElement("div");
-    bigPlay.id = "bigPlayBtn";
-    bigPlay.innerHTML = `
-      <div style="
-        position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-        background:rgba(0,0,0,0.45);cursor:pointer;border-radius:12px;
-        transition:opacity 0.3s ease;">
-        <div style="
-          width:100px;height:100px;border-radius:50%;background:rgba(0,0,0,0.6);
-          display:flex;align-items:center;justify-content:center;
-          box-shadow:0 0 25px rgba(0,255,255,0.5);">
-          <svg width="58" height="58" viewBox="0 0 24 24" fill="#00fff2">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
-        </div>
-      </div>
-    `;
-    wrapper.appendChild(bigPlay);
-
-    // Події
-    const overlay = bigPlay.firstElementChild;
-    overlay.addEventListener("click", async () => {
-      try {
-        await player.play();
-        overlay.style.opacity = "0";
-        overlay.style.pointerEvents = "none";
-      } catch (err) {
-        console.warn("Не вдалося запустити відео:", err);
-      }
-    });
-
-    player.addEventListener("play", () => {
-      overlay.style.opacity = "0";
-      overlay.style.pointerEvents = "none";
-    });
-
-
-
-    player.addEventListener("pause", () => {
-      overlay.style.opacity = "1";
-      overlay.style.pointerEvents = "auto";
-    });
+    } else if (player.canPlayType("application/vnd.apple.mpegurl")) {
+      player.src = url;
+      bindPlayerUX(player);
+    }
+    return;
   }
 
-    }
+  // === MP4 інші формати ===
+  player.src = url;
+  bindPlayerUX(player);
+}
 
    async function loadFilm() {
   const params = new URLSearchParams(window.location.search);
