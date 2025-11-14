@@ -921,6 +921,13 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
   movieUrl   = data.stream_url   || "";
   trailerUrl = data.trailer_url  || "";
 
+  // 🛡️ Підключаємо маскований Worker
+  const WORKER_URL = "https://kino-stealth.lyuda14070702.workers.dev";
+  
+  // filmId у тебе є в коді loadFilm()
+  movieUrl = `${WORKER_URL}/api/watch/${id}`;
+
+
  // 🔄 АВТОМАТИЧНА СУПЕР-ЗАМІНА ВСІХ МОЖЛИВИХ ДОМЕНІВ
 const WORKER_URL = "https://kino-hls.lyuda14070702.workers.dev";
 
