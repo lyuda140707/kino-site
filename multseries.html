@@ -642,8 +642,7 @@ function useSource(url) {
   document.getElementById("seriesCountry").textContent = first.country || "—";
   document.getElementById("seriesDirector").textContent = first.director || "—";
   document.getElementById("seriesCast").textContent = first.cast || "—";
-  document.getElementById("seriesSound").textContent = first.sound || "—";
-  document.getElementById("seriesDuration").textContent = first.duration || "—";
+
   document.getElementById("seriesImdb").textContent  = first.imdb  || "—";
   document.getElementById("seriesDesc").textContent  = first.description || "Опис відсутній";
   document.getElementById("seriesCountry").textContent = first.country || "—";
@@ -651,6 +650,16 @@ function useSource(url) {
   document.getElementById("seriesCast").textContent = first.cast || "—";
   document.getElementById("seriesSound").textContent = first.sound || "—";
   document.getElementById("seriesDuration").textContent = first.duration || "—";
+
+  // 🔄 Автоматична заміна джерела на Worker
+const WORKER_URL = "https://kino-hls.ludmila.workers.dev";
+
+if (first.stream_url) {
+    first.stream_url = first.stream_url.replace(
+        "https://kino-video.pages.dev",
+        WORKER_URL
+    );
+}
 
 
   // 🎬 Далі залишаєш усе, що нижче — без змін (PRO, серії, тощо)
