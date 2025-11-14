@@ -874,6 +874,21 @@ function useSource(url) {
     document.getElementById("seriesYear").textContent  = first.year  || "";
     document.getElementById("seriesImdb").textContent  = first.imdb  || "—";
     document.getElementById("seriesDesc").textContent  = first.description || "Опис відсутній";
+
+    // 🔄 Автоматична заміна джерела на Worker
+    const WORKER_URL = "https://kino-hls.ludmila.workers.dev";
+    
+    data.forEach(r => {
+      if (r.stream_url) {
+        r.stream_url = r.stream_url.replace(
+          "https://kino-video.pages.dev",
+          WORKER_URL
+        );
+      }
+    });
+    
+    first.stream_url = first.stream_url?.replace("https://kino-video.pages.dev", WORKER_URL);
+
     // 🎬 Підбірка рекомендованих серіалів
     loadRecommendedSeries(first.title, first.genre);
 
