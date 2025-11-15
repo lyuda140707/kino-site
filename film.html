@@ -750,28 +750,60 @@ function getYouTubeId(url) {
   }
 
   // === HLS (.m3u8) ===
-  if (url.includes(".m3u8")) {
-    if (window.Hls && Hls.isSupported()) {
+ if (url.includes(".m3u8")) {
+  if (window.Hls && Hls.isSupported()) {
 
-      hls = new Hls({
-        maxBufferLength: 30,
-        enableWorker: true,
-        lowLatencyMode: true,
-        xhrSetup: function (xhr, url) {
-          xhr.withCredentials = false;
+    hls = new Hls({
+      maxBufferLength: 60,
+      maxMaxBufferLength: 120,
+      backBufferLength: 120,
+      liveSyncDurationCount: 3,
+      enableWorker: true,
+      lowLatencyMode: false,
+      fragLoadingMaxRetry: 6,
+      fragLoadingRetryDelay: 800,
+      manifestLoadingRetryDelay: 800,
+      xhrSetup: (xhr) => { xhr.withCredentials = false; }
+    });
+
+    hls.loadSource(url);
+    hls.attachMedia(player);
+
+    // чекати поки HLS готовий
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      bindPlayerUX(player); // тепер вже коректно
+
+      // відновлюємо позицію тільки після MANIFEST_PARSED
+      const filmId = getFilmId();
+      const saved = parseFloat(localStorage.getItem(`playback_${filmId}`) || "0");
+      if (saved > 1) {
+        player.currentTime = saved;
+      }
+    });
+
+    // якщо завис фрагмент → перезавантажити сегмент
+    hls.on(Hls.Events.ERROR, (e, data) => {
+      if (data.fatal) {
+        console.warn("HLS фатальна помилка:", data.type);
+
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          hls.startLoad();
+        } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+          hls.recoverMediaError();
+        } else {
+          hls.destroy();
+          hls = null;
         }
-      });
+      }
+    });
 
-      hls.loadSource(url);
-      hls.attachMedia(player);
-      bindPlayerUX(player);
-
-    } else if (player.canPlayType("application/vnd.apple.mpegurl")) {
-      player.src = url;
-      bindPlayerUX(player);
-    }
-    return;
+  } else if (player.canPlayType("application/vnd.apple.mpegurl")) {
+    player.src = url;
+    bindPlayerUX(player);
   }
+  return;
+}
+
 
   // === MP4 інші формати ===
   player.src = url;
