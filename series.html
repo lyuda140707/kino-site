@@ -735,73 +735,94 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
 function useSource(url) {
-  ensureVideoPlayer(); // гарантуємо наявність плеєра й overlay
+  ensureVideoPlayer(); 
   const player = document.getElementById("seriesPlayer");
   const overlay = document.getElementById("bigPlayOverlay");
 
-  if (hls) { try { hls.destroy(); } catch (e) {} hls = null; }
+  // 🔥 Знищуємо попередній інстанс HLS
+  if (hls) {
+    try { hls.destroy(); } catch (e) {}
+    hls = null;
+  }
+
   try { player.pause(); } catch (e) {}
   player.removeAttribute("src");
   player.load();
 
-  // завжди показуємо overlay перед новим відтворенням
-  overlay.style.opacity = "1";
-  overlay.style.pointerEvents = "auto";
+  // показуємо кнопку Play
+  if (overlay) {
+    overlay.style.opacity = "1";
+    overlay.style.pointerEvents = "auto";
+  }
 
   if (!url) return;
 
-  // 🎬 Google Drive через Cloudflare-проксі
+  // === Google Drive → проксі Worker ===
   if (url.includes("drive.google.com") || url.includes("uc?export=download")) {
-    const fileIdMatch = url.match(/\/d\/([^/]+)\//);
-    const fileId = fileIdMatch ? fileIdMatch[1] : null;
+    const fileId = url.match(/\/d\/([^/]+)/)?.[1];
     if (fileId) {
       url = `https://driveproxy.lyuda14070702.workers.dev/?id=${fileId}`;
-      console.log("🎥 Проксі Google Drive:", url);
+      console.log("🎥 Google Drive через проксі:", url);
     }
   }
 
+  // === HLS (.m3u8) ===
   if (url.includes(".m3u8")) {
     if (window.Hls && Hls.isSupported()) {
+
       hls = new Hls({
-        maxBufferLength: 30,
+        maxBufferLength: 60,
+        maxMaxBufferLength: 120,
+        backBufferLength: 120,
+        liveSyncDurationCount: 3,
         enableWorker: true,
-        lowLatencyMode: true,
-        xhrSetup: function (xhr, url) {
+        lowLatencyMode: false,
+
+        fragLoadingMaxRetry: 6,
+        fragLoadingRetryDelay: 800,
+        manifestLoadingRetryDelay: 800,
+
+        xhrSetup: (xhr) => {
           xhr.withCredentials = false;
-          xhr.setRequestHeader("Origin", "https://relax-time2.onrender.com");
-          xhr.setRequestHeader("Referer", "https://relax-time2.onrender.com");
         }
       });
+
       hls.loadSource(url);
       hls.attachMedia(player);
+
+      // Коли HLS готовий — відновлюємо час перегляду
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        const title = document.getElementById("seriesTitle")?.textContent.trim();
+        const last = JSON.parse(localStorage.getItem("lastWatched") || "null");
+        if (last && last.title === title && last.time > 1) {
+          player.currentTime = last.time;
+        }
+      });
+
+      // Автовідновлення при помилках
+      hls.on(Hls.Events.ERROR, (ev, data) => {
+        if (data.fatal) {
+          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+            hls.startLoad();
+          } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+            hls.recoverMediaError();
+          } else {
+            hls.destroy();
+            hls = null;
+          }
+        }
+      });
+
     } else if (player.canPlayType("application/vnd.apple.mpegurl")) {
+      // Safari / iPhone
       player.src = url;
-    } else {
-      console.error("Браузер не підтримує HLS без hls.js");
     }
-  } else {
-    player.src = url; // mp4 тощо
+
+    return;
   }
 
-  // коли користувач натисне ▶️, прибираємо overlay
-  overlay.onclick = async () => {
-    try {
-      await player.play();
-      overlay.style.opacity = "0";
-      overlay.style.pointerEvents = "none";
-    } catch (e) {}
-  };
-
-  player.addEventListener("play", () => {
-    player.muted = false; // ✅ Гарантовано вмикає звук після Play
-    overlay.style.opacity = "0";
-    overlay.style.pointerEvents = "none";
-  });
-
-  player.addEventListener("pause", () => {
-    overlay.style.opacity = "1";
-    overlay.style.pointerEvents = "auto";
-  });
+  // === mp4 ===
+  player.src = url;
 }
 
 
