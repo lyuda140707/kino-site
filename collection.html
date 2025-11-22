@@ -73,6 +73,11 @@
 // Показує до 30 фільмів
 // Автоматично оновлюється при додаванні нових фільмів у Supabase
 
+// === 🧠 Розумний автоматичний підбір фільмів по збірці ===
+// Використовує жанр + ключові слова опису (варіант C)
+// Показує до 30 фільмів
+// Автоматично оновлюється при додаванні нових фільмів у Supabase
+
 async function loadCollectionSmart() {
   const params = new URLSearchParams(window.location.search);
   const name = params.get("name")?.trim();
@@ -85,7 +90,7 @@ async function loadCollectionSmart() {
   const { data: films, error } = await supabase
     .from("films_site")
     .select("*")
-    .order("id", { ascending: false }); // нові фільми автоматично потрапляють першими
+    .order("id", { ascending: false });
 
   if (error || !films?.length) {
     container.innerHTML = "<p style='color:white;'>Помилка завантаження.</p>";
@@ -173,7 +178,7 @@ async function loadCollectionSmart() {
   const normalize = (str) =>
     (str || "").toLowerCase().replace(/[^\p{L}\p{N} ]/gu, "");
 
-  // === 4️⃣ Фільтр
+  // === 4️⃣ Фільтр фільмів за жанром + ключовими словами
   let result = films.filter((film) => {
     const g = normalize(film.genre);
     const d = normalize(film.description);
@@ -181,7 +186,7 @@ async function loadCollectionSmart() {
     let score = 0;
 
     rule.genre?.forEach((word) => {
-      if (g.includes(word)) score += 3; // жанр сильніший
+      if (g.includes(word)) score += 3;
     });
 
     rule.keywords?.forEach((word) => {
@@ -189,13 +194,25 @@ async function loadCollectionSmart() {
       if (g.includes(word)) score += 1;
     });
 
-    return score > 0; // підходить
+    return score > 0;
   });
 
-  // === 5️⃣ Перемішуємо і беремо до 30 фільмів
+  // === 🧹 5️⃣ УНІКАЛІЗАЦІЯ — прибираємо дублікати фільмів
+  const uniqueMap = new Map();
+
+  result.forEach((film) => {
+    const key = film.id || film.title.toLowerCase();
+    if (!uniqueMap.has(key)) {
+      uniqueMap.set(key, film);
+    }
+  });
+
+  result = Array.from(uniqueMap.values());
+
+  // === 6️⃣ Перемішуємо і беремо до 30 фільмів
   result = result.sort(() => Math.random() - 0.5).slice(0, 30);
 
-  // === 6️⃣ Вивід
+  // === 7️⃣ Вивід фільмів
   container.innerHTML = "";
   result.forEach((film) => {
     const card = document.createElement("div");
@@ -207,13 +224,16 @@ async function loadCollectionSmart() {
       <div class='title'>${film.title}</div>
       <div class='meta'>${film.genre} • ${film.year}</div>
     `;
-    card.onclick = () => window.location.href = "film.html?id=" + film.id;
+    card.onclick = () =>
+      (window.location.href = "film.html?id=" + film.id);
+
     container.appendChild(card);
   });
 }
 
-// 🚀 Запускаємо
+// 🚀 Запускаємо розумний підбір
 document.addEventListener("DOMContentLoaded", loadCollectionSmart);
+
 
 </script>
 <style>
