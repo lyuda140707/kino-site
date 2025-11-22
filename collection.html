@@ -217,7 +217,10 @@ const rules = {
 
   // === 3️⃣ Нормалізація ===
   const normalize = (str) =>
-    (str || "").toLowerCase().replace(/[^\p{L}\p{N} ]/gu, "");
+  (str || "")
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s\-']/gu, " ");
+
 // === 4️⃣ Фільтр: тільки фільми + жанри + ключові слова
 let result = films.filter((film) => {
   // тільки фільми
