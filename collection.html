@@ -174,8 +174,7 @@ async function loadCollectionSmart() {
   // === 3️⃣ Нормалізація ===
   const normalize = (str) =>
     (str || "").toLowerCase().replace(/[^\p{L}\p{N} ]/gu, "");
-
-  // === 4️⃣ Фільтр: тільки фільми + жанри + ключові слова
+// === 4️⃣ Фільтр: тільки фільми + жанри + ключові слова
 let result = films.filter((film) => {
   if (film.type !== "Фільм") return false; // ⛔ прибираємо серіали та мультсеріали повністю
 
@@ -214,19 +213,6 @@ result.forEach((film) => {
 });
 
 result = Array.from(uniqueMap.values());
-
-
-  // === 🧹 5️⃣ УНІКАЛІЗАЦІЯ — прибираємо дублікати фільмів
-  const uniqueMap = new Map();
-
-  result.forEach((film) => {
-    const key = film.id || film.title.toLowerCase();
-    if (!uniqueMap.has(key)) {
-      uniqueMap.set(key, film);
-    }
-  });
-
-  result = Array.from(uniqueMap.values());
 
   // === 6️⃣ Перемішуємо і беремо до 30 фільмів
   result = result.sort(() => Math.random() - 0.5).slice(0, 30);
