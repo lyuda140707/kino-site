@@ -198,7 +198,13 @@ async function loadLatestFilms(page = 1) {
     const card = document.createElement("div");
     card.className = "film";
 
-    const rawPoster = item.poster ? item.poster.replace(/^http:\/\//, "https://") : "";
+    const rawPoster = item.poster
+  ? item.poster
+      .toString()
+      .trim()                         // 💥 очищає пробіли
+      .replace(/\s+/g, "")            // 💥 прибирає випадкові пробіли всередині
+      .replace(/^http:\/\//, "https://")
+  : "";
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         let proxyPoster = rawPoster;
     
@@ -585,9 +591,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 <script src="/pull-refresh.js"></script>
 
 
-</body>
+
 </body>
 </html>
+
 
 
 
