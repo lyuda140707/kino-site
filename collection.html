@@ -175,24 +175,46 @@ async function loadCollectionSmart() {
   const normalize = (str) =>
     (str || "").toLowerCase().replace(/[^\p{L}\p{N} ]/gu, "");
 
-  // === 4️⃣ Фільтр фільмів за жанром + ключовими словами
-  let result = films.filter((film) => {
-    const g = normalize(film.genre);
-    const d = normalize(film.description);
+  // === 4️⃣ Фільтр: тільки фільми + жанри + ключові слова
+let result = films.filter((film) => {
+  if (film.type !== "Фільм") return false; // ⛔ прибираємо серіали та мультсеріали повністю
 
-    let score = 0;
+  const g = normalize(film.genre);
+  const d = normalize(film.description);
 
-    rule.genre?.forEach((word) => {
-      if (g.includes(word)) score += 3;
-    });
+  let score = 0;
 
-    rule.keywords?.forEach((word) => {
-      if (d.includes(word)) score += 2;
-      if (g.includes(word)) score += 1;
-    });
-
-    return score > 0;
+  rule.genre?.forEach((word) => {
+    if (g.includes(word)) score += 3;
   });
+
+  rule.keywords?.forEach((word) => {
+    if (d.includes(word)) score += 2;
+    if (g.includes(word)) score += 1;
+  });
+
+  return score > 0;
+});
+
+// === 🧹 5️⃣ УНІКАЛІЗАЦІЯ: по id, title і poster
+const uniqueMap = new Map();
+
+result.forEach((film) => {
+  // 🔥 ключ по поєднанню назви + року + типу
+  const key =
+    (film.title?.toLowerCase() || "") +
+    "_" +
+    (film.year || "") +
+    "_" +
+    (film.type || "");
+
+  if (!uniqueMap.has(key)) {
+    uniqueMap.set(key, film);
+  }
+});
+
+result = Array.from(uniqueMap.values());
+
 
   // === 🧹 5️⃣ УНІКАЛІЗАЦІЯ — прибираємо дублікати фільмів
   const uniqueMap = new Map();
