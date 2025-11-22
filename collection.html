@@ -68,47 +68,153 @@
   const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 
-  async function loadCollection() {
-    const params = new URLSearchParams(window.location.search);
-    const name = params.get("name");
-    const title = document.getElementById("collectionTitle");
-    const container = document.getElementById("filmsList");
+// === 🧠 Розумний автоматичний підбір фільмів по збірці ===
+// Використовує жанр + ключові слова опису (варіант C)
+// Показує до 30 фільмів
+// Автоматично оновлюється при додаванні нових фільмів у Supabase
 
-    title.textContent = name;
+async function loadCollectionSmart() {
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get("name")?.trim();
+  const container = document.getElementById("filmsList");
+  const title = document.getElementById("collectionTitle");
 
-    const { data, error } = await supabase
-      .from("films_site")
-      .select("*")
-      .ilike("collection", `%${name}%`);
+  title.textContent = name;
 
-    if (error) {
-      container.innerHTML = "<p style='color:white;'>Помилка завантаження.</p>";
-      return;
-    }
+  // 1️⃣ Тягаємо ВСІ фільми з Supabase
+  const { data: films, error } = await supabase
+    .from("films_site")
+    .select("*")
+    .order("id", { ascending: false }); // нові фільми автоматично потрапляють першими
 
-    if (!data.length) {
-      container.innerHTML = "<p style='color:white;'>Поки що немає фільмів у цій збірці.</p>";
-      return;
-    }
-
-    container.innerHTML = "";
-    data.forEach(film => {
-      const card = document.createElement("div");
-      card.className = "film";
-      card.innerHTML = `
-        <div class="poster">
-          <img src="${film.poster}" alt="${film.title}">
-          ${String(film.pro_access || '').toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
-        </div>
-        <div class="title">${film.title}</div>
-        <div class="meta">${film.genre} • ${film.year}</div>
-      `;
-      card.onclick = () => window.location.href = "film.html?id=" + film.id;
-      container.appendChild(card);
-    });
+  if (error || !films?.length) {
+    container.innerHTML = "<p style='color:white;'>Помилка завантаження.</p>";
+    return;
   }
 
-  document.addEventListener("DOMContentLoaded", loadCollection);
+  // === 2️⃣ Правила для кожної збірки ===
+  const rules = {
+    "Фантастика, що вражає уяву": {
+      genre: ["фантаст", "sci-fi"],
+      keywords: ["робот", "штуч", "майбут", "космос", "паранорм"],
+    },
+    "Найстрашніші фільми жахів": {
+      genre: ["жах"],
+      keywords: ["маніяк", "вбив", "страш", "кров", "демон"],
+    },
+    "Обов’язкові до перегляду фільми": {
+      genre: ["драма", "біограф", "кримінал"],
+      keywords: ["реальн", "істор"],
+    },
+    "Комедії, що піднімуть настрій": {
+      genre: ["комеді"],
+      keywords: ["сміх", "весел", "кумед"],
+    },
+    "Адреналін і швидкість — про гонки": {
+      keywords: ["гонк", "перего", "драйв", "швидк"],
+    },
+    "Фільми про танці та музику": {
+      keywords: ["танц", "музик", "спів", "ритм"],
+    },
+    "Новорічний і різдвяний настрій": {
+      keywords: ["різдв", "новор", "свят"],
+    },
+    "Фільми про виживання": {
+      keywords: ["виживан", "боротьб", "втеч", "екстрим"],
+    },
+    "Історії, засновані на реальних подіях": {
+      keywords: ["істор", "реальн", "біограф"],
+    },
+    "Кіно про собак 🐾": {
+      keywords: ["пес", "собак", "dog"],
+    },
+    "Мафія, гангстери та бандити": {
+      genre: ["кримінал"],
+      keywords: ["маф", "ганг", "банд"],
+    },
+    "Шпигуни, агенти й спецоперації": {
+      keywords: ["агент", "шпиг", "розвід", "спец"],
+    },
+    "Маніяки, психопати та трилери": {
+      genre: ["трилер"],
+      keywords: ["маніяк", "вбив", "псих", "страх"],
+    },
+    "Штучний інтелект і технології майбутнього": {
+      keywords: ["робот", "ai", "штуч", "технолог"],
+    },
+    "Життя за ґратами — фільми про тюрму": {
+      keywords: ["тюрм", "в’язн", "ув’язн"],
+    },
+    "Пограбування, афери та трюки": {
+      keywords: ["пограб", "афер", "крадіж"],
+    },
+    "Апокаліпсис і кінець світу": {
+      keywords: ["апокал", "кінець", "катастроф"],
+    },
+    "Фільми про кохання 💞": {
+      genre: ["роман", "мелодрам"],
+      keywords: ["кохан", "романс"],
+    },
+    "Фільми про космос": {
+      keywords: ["космос", "галактик", "орбіта"],
+    },
+    "Улюблені фільми Disney": {
+      keywords: ["сімейн", "дитяч", "мульт", "пригод"],
+    },
+  };
+
+  const rule = rules[name];
+  if (!rule) {
+    container.innerHTML = "<p style='color:white;'>Категорія не знайдена.</p>";
+    return;
+  }
+
+  // === 3️⃣ Нормалізація ===
+  const normalize = (str) =>
+    (str || "").toLowerCase().replace(/[^\p{L}\p{N} ]/gu, "");
+
+  // === 4️⃣ Фільтр
+  let result = films.filter((film) => {
+    const g = normalize(film.genre);
+    const d = normalize(film.description);
+
+    let score = 0;
+
+    rule.genre?.forEach((word) => {
+      if (g.includes(word)) score += 3; // жанр сильніший
+    });
+
+    rule.keywords?.forEach((word) => {
+      if (d.includes(word)) score += 2;
+      if (g.includes(word)) score += 1;
+    });
+
+    return score > 0; // підходить
+  });
+
+  // === 5️⃣ Перемішуємо і беремо до 30 фільмів
+  result = result.sort(() => Math.random() - 0.5).slice(0, 30);
+
+  // === 6️⃣ Вивід
+  container.innerHTML = "";
+  result.forEach((film) => {
+    const card = document.createElement("div");
+    card.className = "film";
+    card.innerHTML = `
+      <div class='poster'>
+        <img src="${film.poster}">
+      </div>
+      <div class='title'>${film.title}</div>
+      <div class='meta'>${film.genre} • ${film.year}</div>
+    `;
+    card.onclick = () => window.location.href = "film.html?id=" + film.id;
+    container.appendChild(card);
+  });
+}
+
+// 🚀 Запускаємо
+document.addEventListener("DOMContentLoaded", loadCollectionSmart);
+
 </script>
 <style>
 /* === СІТКА ФІЛЬМІВ === */
