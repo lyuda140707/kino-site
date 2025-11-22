@@ -200,11 +200,12 @@ async function loadLatestFilms(page = 1) {
 
     const rawPoster = item.poster ? item.poster.replace(/^http:\/\//, "https://") : "";
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const proxyPoster = rawPoster
-      ? (isMobile
-          ? rawPoster
-          : `https://uakino-proxy.lyuda14070702.workers.dev?url=${encodeURIComponent(rawPoster)}`)
-      : "https://via.placeholder.com/200x300?text=No+Image";
+        let proxyPoster = rawPoster;
+    
+    if (rawPoster && !rawPoster.includes("postimg.cc") && !isMobile) {
+      proxyPoster = `https://uakino-proxy.lyuda14070702.workers.dev?url=${encodeURIComponent(rawPoster)}`;
+    }
+
 
     card.innerHTML = `
       <div class="poster">
@@ -588,6 +589,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 </body>
 </body>
 </html>
+
 
 
 
