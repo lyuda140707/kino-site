@@ -219,7 +219,7 @@ async function loadCollectionSmart() {
     card.className = "film";
     card.innerHTML = `
       <div class='poster'>
-        <img src="${film.poster}" onerror="this.onerror=null; this.src=this.src + '?dl=1';">
+        <img src="${film.poster}">
       </div>
       <div class='title'>${film.title}</div>
       <div class='meta'>${film.genre} • ${film.year}</div>
