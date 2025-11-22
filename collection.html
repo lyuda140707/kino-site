@@ -228,6 +228,7 @@ let result = films.filter((film) => {
 
   const g = normalize(film.genre);
   const d = normalize(film.description);
+  const t = normalize(film.title);
 
   let score = 0;
 
@@ -241,6 +242,9 @@ let result = films.filter((film) => {
   });
 
   // новий поріг — мінімум 3 бали
+rule.keywords?.forEach((word) => {
+  if (t.includes(word)) score += 3; // назва має найбільшу вагу
+});
   return score >= 3;
 });
 
