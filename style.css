@@ -300,27 +300,28 @@ footer {
 
 
 /* === TOP 10 SLIDER — ОНОВЛЕНИЙ РОЗМІР === */
+/* === TOP 10 SLIDER — КОМПАКТНІ КАРТКИ === */
 .slide {
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
-  flex: 0 0 200px;
+  width: 165px;
+  min-width: 165px;
+  max-width: 165px;
+  flex: 0 0 165px;
   background: #1e1e1e;
   border: 1px solid #000;
   border-radius: 10px;
   overflow: hidden;
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease;
   cursor: pointer;
 }
 
 .slide:hover {
-  transform: scale(1.07);
-  box-shadow: 0 0 18px #00ffa150;
+  transform: scale(1.06);
+  box-shadow: 0 0 14px #00ffa140;
 }
 
 .slide img {
   width: 100%;
-  height: 290px;       /* 🔥 вища картинка */
+  height: 230px;         /* 🔥 компактно, але красиво */
   object-fit: cover;
   object-position: center;
   display: block;
@@ -328,13 +329,14 @@ footer {
 
 .slide p {
   text-align: center;
-  font-size: 15px;
-  padding: 10px;
+  font-size: 14px;
+  padding: 8px;
   color: #fff;
-  height: 50px;        /* компактний текст */
+  height: 42px;         /* 🔥 невеликий текстовий блок */
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 
@@ -1926,4 +1928,5 @@ header {
   color: #fff;
   box-shadow: 0 0 12px rgba(58, 167, 87, 0.6);
 }
+
 
