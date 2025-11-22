@@ -297,39 +297,50 @@ footer {
 }
 
 /* === 🎬 Банерні картки — фіксована ширина, без розтягування === */
+
+
+/* === TOP 10 SLIDER — ОНОВЛЕНИЙ РОЗМІР === */
 .slide {
-  width: 140px;
-  min-width: 140px;
-  max-width: 140px;
-  flex: 0 0 140px;      /* не дає розтягуватись */
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  flex: 0 0 200px;
   background: #1e1e1e;
   border: 1px solid #000;
-  border-radius: 6px;
+  border-radius: 10px;
   overflow: hidden;
   transition: transform 0.3s ease;
   cursor: pointer;
 }
 
 .slide:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px #00ffa14d;
+  transform: scale(1.07);
+  box-shadow: 0 0 18px #00ffa150;
 }
 
 .slide img {
   width: 100%;
-  height: 180px;
-  object-fit: cover;     /* ✅ зображення обрізається, не розтягується */
+  height: 290px;       /* 🔥 вища картинка */
+  object-fit: cover;
   object-position: center;
   display: block;
 }
 
 .slide p {
   text-align: center;
-  font-size: 13px;
-  padding: 8px;
-  color: #eee;
-  font-weight: 600;
+  font-size: 15px;
+  padding: 10px;
+  color: #fff;
+  height: 50px;        /* компактний текст */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+
+
+
+
 
 html, body {
   max-width: 100%;
@@ -1915,3 +1926,4 @@ header {
   color: #fff;
   box-shadow: 0 0 12px rgba(58, 167, 87, 0.6);
 }
+
