@@ -520,6 +520,38 @@
   height: 18px;
   filter: invert(58%) sepia(82%) saturate(610%) hue-rotate(138deg) brightness(97%) contrast(97%);
 }
+/* === 🔄 LOADING ПОКИ ЙДЕ ПЕРЕВІРКА PRO === */
+.pro-check-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  color: #00fff2;
+  font-size: 20px;
+  font-weight: 700;
+  text-shadow: 0 0 15px rgba(0,255,255,0.6);
+}
+
+.pro-check-spinner {
+  width: 70px;
+  height: 70px;
+  border: 5px solid rgba(0,255,255,0.35);
+  border-top: 5px solid #00fff2;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  margin-bottom: 16px;
+  box-shadow: 0 0 20px rgba(0,255,255,0.4);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
 
   </style>
 </head>
@@ -578,6 +610,10 @@
 
     <!-- 🧩 Плеєр -->
     <div class="player-box">
+      <div id="proLoading" class="pro-check-overlay" style="display:flex;">
+        <div class="pro-check-spinner"></div>
+        Перевірка PRO доступу...
+      </div>
       <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
       <script>
 // 🕒 Запам’ятовуємо останній переглянутий серіал або мультсеріал
@@ -914,6 +950,9 @@ function useSource(url) {
     loadRecommendedSeries(first.title, first.genre);
 
 // 🧩 Перевірка PRO-доступу (працює і для Telegram, і для Email/Web)
+// 🟢 показуємо LOADING перед перевіркою PRO
+const proLoader = document.getElementById("proLoading");
+if (proLoader) proLoader.style.display = "flex";
 let hasPro = true;
 const isProSeries = String(first.pro_access || '').toUpperCase() === 'PRO';
 
@@ -945,6 +984,8 @@ if (isProSeries) {
     const res = await fetch(url);
     const json = await res.json();
     hasPro = json?.isPro === true;
+    // 🟢 ховаємо LOADING після перевірки
+    if (proLoader) proLoader.style.display = "none";
     console.log("🔎 Результат PRO:", json);
 
   } catch (err) {
