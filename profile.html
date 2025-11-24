@@ -674,22 +674,14 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     try {
       const res = await fetch(`${window.APPS_SCRIPT_URL}?user_id=${encodeURIComponent(user.id)}`);
       const json = await res.json();
-      if (json.isPro) {
-        // Якщо дата вже у форматі 30.11.2025 — не перетворюємо
-        let d = json.expireDate;
-        if (d && d.includes("-")) {
-          d = d.split("T")[0].split("-").reverse().join(".");
-        }
-        document.getElementById("pro-status").innerHTML = `✅ PRO активний до <b>${d || "невідомо"}</b>`;
-      } else {
-        document.getElementById("pro-status").innerText = "❌ Без PRO";
-      }
+      
     } catch (err) {
       console.error(err);
       document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
     }
        await tryBindWebToTg(user);
        await checkProStatus();
+       localStorage.removeItem("pro_cache");
       // ✅ Завантажити повідомлення користувача
       loadMessagesForUser(user.id);
   }
@@ -1008,6 +1000,7 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-paid-tg").onclick  = notifyPaymentTG;
   document.getElementById("btn-paid-web").onclick = notifyPaymentWEB;
   checkProStatus();
+  localStorage.removeItem("pro_cache");
   
 });
 </script>
