@@ -1,3 +1,6 @@
+// 🔗 Адреса твого активного Apps Script (нова!)
+window.APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUl7EZMk9KlBUgirrZtCg6sK9POdlrqKVSuJt0NqQ1NHJWj2_-EX_gLLvN0DoykM0qsQ/exec";
+
 // === 🔹 Глобальна перевірка користувача (Telegram або Email) + кешування PRO ===
 window.addEventListener("DOMContentLoaded", async () => {
   // 🧩 Отримуємо користувача з Telegram або Email
