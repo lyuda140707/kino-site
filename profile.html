@@ -731,19 +731,7 @@ async function checkProStatus() {
   const statusEl = document.getElementById("pro-status-text");
   statusEl.innerText = "⏳ Перевіряю статус...";
 
-  // 🧠 1️⃣ Перевіряємо кеш (6 годин)
-  const cache = localStorage.getItem("pro_cache");
-  if (cache) {
-    try {
-      const cached = JSON.parse(cache);
-      if (cached.id === idParam && Date.now() - cached.time < 6 * 60 * 60 * 1000) {
-        console.log("⚡ Використано кешований PRO статус");
-        showProStatus(cached.data);
-        return;
-      }
-    } catch (_) {}
-  }
-
+  
   // 🌐 2️⃣ Якщо кешу немає — робимо реальний запит
   try {
     const url = `${window.APPS_SCRIPT_URL}?${paramType}=${encodeURIComponent(idParam)}`;
@@ -774,11 +762,10 @@ function showProStatus(data) {
     statusEl.innerHTML = `💎 PRO активний до <b>${d}</b>`;
     if (proLabel) proLabel.innerHTML = `✅ PRO активний до <b>${d}</b>`;
     localStorage.removeItem("pro_payment_started");
-    localStorage.setItem("isPro", "true");
   } else {
     statusEl.innerText = "🔒 Без PRO";
     if (proLabel) proLabel.innerText = "❌ Без PRO";
-    localStorage.setItem("isPro", "false");
+   
   }
 
   updateProUI();
