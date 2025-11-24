@@ -328,16 +328,7 @@ async function loadFilms(sortMode = currentSort) {
       <div style="position:relative;">
           <img src="${film.poster || 'https://via.placeholder.com/200x280?text=No+Image'}" alt="${film.title}">
           
-          ${(
-            film.pro == true ||
-            film.pro == "true" ||
-            film.pro == 1 ||
-            film.pro == "1" ||
-            film.is_pro == true ||
-            film.is_pro == "true" ||
-            film.is_pro == 1 ||
-            film.is_pro == "1"
-        ) ? `
+          ${String(film.pro_access || "").toUpperCase() === "PRO" ? `
             <div style="
                 position:absolute;
                 top:10px;
@@ -352,6 +343,7 @@ async function loadFilms(sortMode = currentSort) {
                 backdrop-filter:blur(4px);
             ">PRO</div>
         ` : ""}
+        
 
       </div>
     
