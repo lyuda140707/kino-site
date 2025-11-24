@@ -23,9 +23,12 @@ window.addEventListener("DOMContentLoaded", async () => {
   window.currentUser = user;
 
   // 🔗 Перевірка PRO лише раз на 5 хв
+  // ❗ Завжди очищаємо кеш при відкритті профілю
+  localStorage.removeItem("isPro");
+  localStorage.removeItem("pro_last_check");
   const lastCheck = Number(localStorage.getItem("pro_last_check") || 0);
   const now = Date.now();
-  if (now - lastCheck < 5 * 60 * 1000) {
+  if (now - lastCheck < 5 * 1000) {  // 5 секунд
     console.log("⚡ Використано кешований PRO-статус:", localStorage.getItem("isPro"));
     return;
   }
