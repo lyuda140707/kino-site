@@ -325,9 +325,29 @@ async function loadFilms(sortMode = currentSort) {
     const card = document.createElement("div");
     card.className = "film-card";
     card.innerHTML = `
-      <img src="${film.poster || 'https://via.placeholder.com/200x280?text=No+Image'}" alt="${film.title}">
+      <div style="position:relative;">
+          <img src="${film.poster || 'https://via.placeholder.com/200x280?text=No+Image'}" alt="${film.title}">
+          
+          ${film.pro === true || film.is_pro === true ? `
+            <div style="
+                position:absolute;
+                top:10px;
+                right:10px;
+                background:rgba(0,0,0,0.75);
+                color:#00fff2;
+                padding:4px 8px;
+                border-radius:8px;
+                font-size:12px;
+                font-weight:700;
+                border:1px solid rgba(0,255,255,0.4);
+                backdrop-filter:blur(4px);
+            ">PRO</div>
+          ` : ""}
+      </div>
+    
       <h3>${film.title}</h3>
     `;
+
     card.addEventListener("click", () => {
       if (film.type === "Серіал") {
         window.location.href = "/series.html?title=" + encodeURIComponent(film.title);
