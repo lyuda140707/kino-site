@@ -987,6 +987,35 @@ if (isProSeries) {
     // 🟢 ховаємо LOADING після перевірки
     if (proLoader) proLoader.style.display = "none";
     console.log("🔎 Результат PRO:", json);
+    // ====== ПОКАЗУЄМО ВІДЕО АБО PRO-БЛОК ======
+    const playerBox = document.querySelector('.player-box');
+    
+    if (isProSeries && !hasPro) {
+      playerBox.innerHTML = `
+        <div style="
+          background:#000;
+          color:#00fff2;
+          text-align:center;
+          padding:45px 20px;
+          border-radius:12px;
+          border:1px solid rgba(0,255,255,0.3);
+          box-shadow:0 0 30px rgba(0,255,255,0.15);
+          font-size:18px;
+          line-height:1.6;
+        ">
+          💎 Цей серіал доступний лише для <b>PRO користувачів</b>.<br><br>
+          <a href="profile.html" 
+             style="color:#fff;text-decoration:underline;font-weight:600;">
+             Отримати PRO доступ
+          </a>
+        </div>
+      `;
+      return; // 🔥 Зупиняємо виконання — відео не запускається
+    } 
+    
+    // 👉 Якщо PRO є або серіал НЕ PRO — запускаємо відео
+    useSource(first.stream_url || "");
+
 
   } catch (err) {
     console.warn("❌ Помилка перевірки PRO:", err);
