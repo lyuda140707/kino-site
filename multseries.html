@@ -408,6 +408,38 @@
   height: 18px;
   filter: invert(58%) sepia(82%) saturate(610%) hue-rotate(138deg) brightness(97%) contrast(97%);
 }
+/* === 🔄 PRO LOADER для мультсеріалів === */
+.pro-check-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  color: #ffd966;
+  font-size: 20px;
+  font-weight: 700;
+  text-shadow: 0 0 15px rgba(255,215,0,0.8);
+}
+
+.pro-check-spinner {
+  width: 70px;
+  height: 70px;
+  border: 5px solid rgba(255,215,0,0.25);
+  border-top: 5px solid #ffd500;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  box-shadow: 0 0 20px rgba(255,215,0,0.6);
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
   </style>
 </head>
@@ -450,6 +482,10 @@
   </div>
 
   <div class="player-box">
+    <div id="proCheckOverlay" class="pro-check-overlay" style="display:none;">
+      <div class="pro-check-spinner"></div>
+      Перевіряємо PRO доступ…
+    </div>
     <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
     <script>
 // 🕒 Запам’ятовуємо останній переглянутий серіал або мультсеріал
@@ -683,6 +719,8 @@ function useSource(url) {
   }
 
   const first = data[0];
+  // 🟢 Підставляємо реальну назву мультсеріалу
+  document.getElementById("seriesTitle").textContent = first.title || "Мультсеріал";
 
   // 🧩 Заповнюємо всю мета-інформацію
   document.getElementById("seriesPoster").src = first.poster || "";
@@ -721,6 +759,9 @@ if (MY_DOMAINS.some(domain => (first.stream_url || "").includes(domain))) {
 
 // 🧩 Перевірка PRO-доступу (працює і для Telegram, і для Email/Web)
 let hasPro = true;
+const proOverlay = document.getElementById("proCheckOverlay");
+if (proOverlay) proOverlay.style.display = "flex";   // 🔄 ПОКАЗУЄМ ЛОАДЕР
+    
 const isProSeries = String(first.pro_access || '').toUpperCase() === 'PRO';
 
 if (isProSeries) {
@@ -752,6 +793,7 @@ if (isProSeries) {
     const json = await res.json();
     hasPro = json?.isPro === true;
     console.log("🔎 Результат PRO:", json);
+    if (proOverlay) proOverlay.style.display = "none";   // ✅ ХОВАЄМО ЛОАДЕР
 
   } catch (err) {
     console.warn("❌ Помилка перевірки PRO:", err);
