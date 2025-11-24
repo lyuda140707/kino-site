@@ -757,6 +757,17 @@ localStorage.removeItem("pro_cache");
 
 // 🧩 Функція оновлення інтерфейсу
 function showProStatus(data) {
+    // ⛔ Перевірка: якщо дата прострочена — вимикаємо PRO
+  if (data.expireDate && data.expireDate.includes(".")) {
+    const [dd, mm, yyyy] = data.expireDate.split(".");
+    const exp = new Date(yyyy, mm - 1, dd);
+    const today = new Date();
+
+    if (exp < today) {
+      data.isPro = false;
+    }
+  }
+
   const statusEl = document.getElementById("pro-status-text");
   const proLabel = document.getElementById("pro-status");
 
