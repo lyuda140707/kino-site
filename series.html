@@ -951,13 +951,15 @@ function useSource(url) {
 
 // 🧩 Перевірка PRO-доступу (працює і для Telegram, і для Email/Web)
 // 🟢 показуємо LOADING перед перевіркою PRO
-const proLoader = document.getElementById("proLoading");
-if (proLoader) proLoader.style.display = "flex";
+
 let hasPro = true;
 const isProSeries = String(first.pro_access || '').toUpperCase() === 'PRO';
 
 if (isProSeries) {
   hasPro = false;
+
+  const proLoader = document.getElementById("proLoading");
+  if (proLoader) proLoader.style.display = "flex";
 
   const tgUser   = localStorage.getItem('telegram_user');
   const emailUser = localStorage.getItem('email_user');
@@ -1021,7 +1023,10 @@ if (isProSeries) {
     console.warn("❌ Помилка перевірки PRO:", err);
   }
 
- 
+ // 🔥 Якщо серіал НЕ PRO — стартує одразу
+if (!isProSeries) {
+  useSource(first.stream_url || "");
+}
 }
 
 
