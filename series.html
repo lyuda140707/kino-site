@@ -1019,14 +1019,15 @@ if (isProSeries) {
     useSource(first.stream_url || "");
 
 
-  } catch (err) {
-    console.warn("❌ Помилка перевірки PRO:", err);
-  }
+ } catch (err) {
+  console.warn("❌ Помилка перевірки PRO:", err);
+}
 
- // 🔥 Якщо серіал НЕ PRO — стартує одразу
+} // ← кінець if (isProSeries)
+
+// 🔥 Якщо серіал НЕ PRO — стартує одразу
 if (!isProSeries) {
   useSource(first.stream_url || "");
-}
 }
 
 
