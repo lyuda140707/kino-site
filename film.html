@@ -934,8 +934,7 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
 
   // 💎 Якщо PRO неактивний — блокуємо відео
   if (!hasPro) {
-    const playerBox = document.querySelector(".player-box");
-    playerBox.innerHTML = `
+    document.getElementById("playerContent").innerHTML = `
       <div style="
         background:#000;
         color:#00fff2;
@@ -949,7 +948,8 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
         <a href="profile.html" style="color:#fff;text-decoration:underline;">Отримати PRO</a>
       </div>
     `;
-  }
+}
+
 }
 
 
@@ -1073,7 +1073,7 @@ btnMovie.addEventListener("click", () => {
   btnTrailer.classList.remove("active");
 
   const box = document.querySelector(".player-box");
-  box.innerHTML = buildVideoTag();
+  document.getElementById("playerContent").innerHTML = buildVideoTag();
   if (hasPro) {
     setupPlayer(movieUrl);
   }
@@ -1099,7 +1099,7 @@ btnMovie.addEventListener("click", () => {
       const ytId = m ? m[1] : "";
       const src = ytId ? `https://www.youtube.com/embed/${ytId}` : trailerUrl;
 
-      box.innerHTML = `
+     document.getElementById("playerContent").innerHTML = `
         <iframe
           width="100%" height="480"
           src="${src}"
@@ -1111,7 +1111,7 @@ btnMovie.addEventListener("click", () => {
 
     } else {
       // Інакше — звичайний відео-плеєр
-      box.innerHTML = buildVideoTag();
+      document.getElementById("playerContent").innerHTML = buildVideoTag();
       setupPlayer(trailerUrl);
 
     }
