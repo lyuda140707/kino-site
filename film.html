@@ -564,6 +564,8 @@
     <div class="pro-check-spinner"></div>
     Перевіряємо PRO доступ…
   </div>
+  <img id="playerPoster" src="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.35;filter:blur(3px);z-index:1;">
+
 
   <div class="player-wrapper">
     <video id="filmPlayer" controls playsinline muted crossorigin="anonymous" preload="metadata"
@@ -949,6 +951,7 @@ if (String(data.pro_access || '').toUpperCase() === 'PRO') {
 
   // 🟢 Заповнення даних
   document.getElementById("filmPoster").src = data.poster || "";
+  document.getElementById("playerPoster").src = data.poster || "";
   // 🧩 Захист від ботів з "сіллю" (salt)
   const titleEl = document.getElementById("filmTitle");
   if (titleEl && data.title) {
