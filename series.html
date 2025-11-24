@@ -992,28 +992,7 @@ if (isProSeries) {
     console.warn("❌ Помилка перевірки PRO:", err);
   }
 
-  // 💎 Якщо немає PRO — показуємо банер
-  if (!hasPro) {
-    const playerBox = document.querySelector('.player-box');
-    playerBox.innerHTML = `
-      <div style="
-        background:#000;
-        color:#00fff2;
-        text-align:center;
-        padding:45px 20px;
-        border-radius:12px;
-        border:1px solid rgba(0,255,255,0.3);
-        box-shadow:0 0 30px rgba(0,255,255,0.15);
-        font-size:18px;
-        line-height:1.6;
-      ">
-        💎 Цей контент доступний лише для <b>PRO користувачів</b>.<br><br>
-        <a href="profile.html" style="color:#fff;text-decoration:underline;font-weight:600;">
-          Отримати PRO
-        </a>
-      </div>
-    `;
-  }
+ 
 }
 
 
