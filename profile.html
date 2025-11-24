@@ -731,9 +731,18 @@ async function checkProStatus() {
   const statusEl = document.getElementById("pro-status-text");
   statusEl.innerText = "⏳ Перевіряю статус...";
 
-  // ❌ ВИМКНЕНО КЕШ
-localStorage.removeItem("pro_cache");
-
+  // 🧠 1️⃣ Перевіряємо кеш (6 годин)
+  const cache = localStorage.getItem("pro_cache");
+  if (cache) {
+    try {
+      const cached = JSON.parse(cache);
+      if (cached.id === idParam && Date.now() - cached.time < 6 * 60 * 60 * 1000) {
+        console.log("⚡ Використано кешований PRO статус");
+        showProStatus(cached.data);
+        return;
+      }
+    } catch (_) {}
+  }
 
   // 🌐 2️⃣ Якщо кешу немає — робимо реальний запит
   try {
@@ -757,17 +766,6 @@ localStorage.removeItem("pro_cache");
 
 // 🧩 Функція оновлення інтерфейсу
 function showProStatus(data) {
-    // ⛔ Перевірка: якщо дата прострочена — вимикаємо PRO
-  if (data.expireDate && data.expireDate.includes(".")) {
-    const [dd, mm, yyyy] = data.expireDate.split(".");
-    const exp = new Date(yyyy, mm - 1, dd);
-    const today = new Date();
-
-    if (exp < today) {
-      data.isPro = false;
-    }
-  }
-
   const statusEl = document.getElementById("pro-status-text");
   const proLabel = document.getElementById("pro-status");
 
