@@ -958,8 +958,11 @@ const isProSeries = String(first.pro_access || '').toUpperCase() === 'PRO';
 if (isProSeries) {
   hasPro = false;
 
+  // ⬇️ показуємо лоадер ТІЛЬКИ якщо це PRO серіал
   const proLoader = document.getElementById("proLoading");
   if (proLoader) proLoader.style.display = "flex";
+}
+
 
   const tgUser   = localStorage.getItem('telegram_user');
   const emailUser = localStorage.getItem('email_user');
