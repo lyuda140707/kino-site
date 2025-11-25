@@ -759,10 +759,14 @@ if (MY_DOMAINS.some(domain => (first.stream_url || "").includes(domain))) {
 
 // 🧩 Перевірка PRO-доступу (працює і для Telegram, і для Email/Web)
 let hasPro = true;
-const proOverlay = document.getElementById("proCheckOverlay");
-if (proOverlay) proOverlay.style.display = "flex";   // 🔄 ПОКАЗУЄМ ЛОАДЕР
-    
 const isProSeries = String(first.pro_access || '').toUpperCase() === 'PRO';
+
+if (isProSeries) {
+  hasPro = false;
+
+  const proOverlay = document.getElementById("proCheckOverlay");
+  if (proOverlay) proOverlay.style.display = "flex";
+
 
 if (isProSeries) {
   hasPro = false;
