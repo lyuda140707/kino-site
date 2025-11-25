@@ -949,20 +949,18 @@ function useSource(url) {
     // 🎬 Підбірка рекомендованих серіалів
     loadRecommendedSeries(first.title, first.genre);
 
-// 🧩 Перевірка PRO-доступу (працює і для Telegram, і для Email/Web)
-// 🟢 показуємо LOADING перед перевіркою PRO
-
+// 🧩 Перевірка PRO-доступу
 let hasPro = true;
 const isProSeries = String(first.pro_access || '').toUpperCase() === 'PRO';
+
+// 🔹 Захоплюємо лоадер ОДИН раз, щоб був доступний всюди
+const proLoader = document.getElementById("proLoading");
 
 if (isProSeries) {
   hasPro = false;
 
-  // ⬇️ показуємо лоадер ТІЛЬКИ якщо це PRO серіал
-  const proLoader = document.getElementById("proLoading");
+  // показуємо лоадер тільки для PRO серіалів
   if (proLoader) proLoader.style.display = "flex";
-}
-
 
   const tgUser   = localStorage.getItem('telegram_user');
   const emailUser = localStorage.getItem('email_user');
@@ -970,32 +968,25 @@ if (isProSeries) {
   let url = window.APPS_SCRIPT_URL;
 
   try {
-    // 🟢 Telegram-вхід
     if (tgUser) {
       const parsed = JSON.parse(tgUser);
       if (parsed?.id) url += `?user_id=${encodeURIComponent(parsed.id)}`;
-
-    // 🟣 Email / Web-вхід (WEB-ID)
     } else if (webId) {
       url += `?user_id=${encodeURIComponent(webId)}`;
-
-    // 🔸 Резерв — якщо ID є всередині emailUser
     } else if (emailUser) {
       const parsed = JSON.parse(emailUser);
       if (parsed?.id) url += `?user_id=${encodeURIComponent(parsed.id)}`;
     }
 
-    console.log("📡 Перевірка PRO:", url);
     const res = await fetch(url);
     const json = await res.json();
     hasPro = json?.isPro === true;
-    // 🟢 ховаємо LOADING після перевірки
+
     if (proLoader) proLoader.style.display = "none";
-    console.log("🔎 Результат PRO:", json);
-    // ====== ПОКАЗУЄМО ВІДЕО АБО PRO-БЛОК ======
+
     const playerBox = document.querySelector('.player-box');
-    
-    if (isProSeries && !hasPro) {
+
+    if (!hasPro) {
       playerBox.innerHTML = `
         <div style="
           background:#000;
@@ -1004,7 +995,6 @@ if (isProSeries) {
           padding:45px 20px;
           border-radius:12px;
           border:1px solid rgba(0,255,255,0.3);
-          box-shadow:0 0 30px rgba(0,255,255,0.15);
           font-size:18px;
           line-height:1.6;
         ">
@@ -1015,21 +1005,19 @@ if (isProSeries) {
           </a>
         </div>
       `;
-      return; // 🔥 Зупиняємо виконання — відео не запускається
-    } 
-    
-    // 👉 Якщо PRO є або серіал НЕ PRO — запускаємо відео
+      return;
+    }
+
+    // ✔️ якщо PRO активний
     useSource(first.stream_url || "");
 
+  } catch (err) {
+    console.warn("❌ Помилка перевірки PRO:", err);
+  }
 
- } catch (err) {
-  console.warn("❌ Помилка перевірки PRO:", err);
-}
-
-} // ← кінець if (isProSeries)
-
-// 🔥 Якщо серіал НЕ PRO — стартує одразу
-if (!isProSeries) {
+} else {
+  // ✔️ Якщо серіал НЕ PRO — одразу запускаємо відео
+  if (proLoader) proLoader.style.display = "none";
   useSource(first.stream_url || "");
 }
 
