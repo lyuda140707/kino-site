@@ -932,22 +932,24 @@ function useSource(url) {
     document.getElementById("seriesImdb").textContent  = first.imdb  || "—";
     document.getElementById("seriesDesc").textContent  = first.description || "Опис відсутній";
 
-    // 🔄 Автоматична заміна джерела на Worker
-    const WORKER_URL = "https://kino-hls.lyuda14070702.workers.dev";
-    
-    data.forEach(r => {
-      if (r.stream_url) {
-        r.stream_url = r.stream_url.replace(
-          "https://kino-video.pages.dev",
-          WORKER_URL
-        );
-      }
-    });
-    
-    first.stream_url = first.stream_url?.replace("https://kino-video.pages.dev", WORKER_URL);
+  
 
     // 🎬 Підбірка рекомендованих серіалів
     loadRecommendedSeries(first.title, first.genre);
+
+        // 🎯 Обгортка для наших HLS-лінків (серіали з kino-video.pages.dev)
+    function wrapMyStream(url) {
+      if (!url) return "";
+
+      const MY_DOMAINS = ["kino-video.pages.dev"];
+      const WORKER_URL = "https://kino-hls-stealth.lyuda14070702.workers.dev";
+
+      if (MY_DOMAINS.some(d => url.includes(d))) {
+        return WORKER_URL + "/proxy?src=" + encodeURIComponent(url);
+      }
+      return url;
+    }
+
 
 // 🧩 Перевірка PRO-доступу
 let hasPro = true;
@@ -1008,8 +1010,8 @@ if (isProSeries) {
       return;
     }
 
-    // ✔️ якщо PRO активний
-    useSource(first.stream_url || "");
+     // ✔️ якщо PRO активний
+    useSource(wrapMyStream(first.stream_url || ""));
 
   } catch (err) {
     console.warn("❌ Помилка перевірки PRO:", err);
@@ -1018,8 +1020,9 @@ if (isProSeries) {
 } else {
   // ✔️ Якщо серіал НЕ PRO — одразу запускаємо відео
   if (proLoader) proLoader.style.display = "none";
-  useSource(first.stream_url || "");
+  useSource(wrapMyStream(first.stream_url || ""));
 }
+
 
 
 
@@ -1113,12 +1116,11 @@ function renderEpisodes(season) {
   // 🔹 Перестворюємо плеєр перед новим сезоном
   ensureVideoPlayer();
 
-  episodes.forEach((ep, idx) => {
-    const WORKER_URL = "https://kino-stealth.lyuda14070702.workers.dev";
+    episodes.forEach((ep, idx) => {
+    const WORKER_URL = "https://kino-hls-stealth.lyuda14070702.workers.dev";
 
     const MY_DOMAINS = [
-      "kino-video.pages.dev",
-      "3bf2950b.kino-video.pages.dev"
+      "kino-video.pages.dev"
     ];
     
     if (MY_DOMAINS.some(domain => (ep.stream_url || "").includes(domain))) {
