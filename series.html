@@ -616,36 +616,29 @@
       </div>
       <video id="seriesPlayer" controls playsinline muted preload="metadata" crossorigin="anonymous"></video>
       <script>
-// 🕒 Запам’ятовуємо останній переглянутий серіал або мультсеріал
+// 🕒 Запам’ятовуємо останній переглянутий серіал або мультсеріал (з урахуванням конкретної серії)
 const typeName = location.pathname.includes("multseries") ? "Мультсеріал" : "Серіал";
 
 const playerEl = document.getElementById("seriesPlayer");
 playerEl.addEventListener("timeupdate", () => {
   const currentTime = playerEl.currentTime;
   if (currentTime > 30) { // зберігаємо лише якщо подивились більше 30 сек
-    const title = document.getElementById("seriesTitle")?.textContent.trim();
+    const title  = document.getElementById("seriesTitle")?.textContent.trim();
     const poster = document.getElementById("seriesPoster")?.src || "";
     const lastData = { 
-      id: title, 
-      title, 
-      poster, 
-      time: currentTime, 
+      id: title,
+      title,
+      poster,
+      time: currentTime,
       type: typeName,
-      url: location.href
+      url: location.href,
+      // 🔑 додаємо унікальне джерело (конкретна серія / плейліст)
+      source: playerEl.currentSrc || ""
     };
     localStorage.setItem("lastWatched", JSON.stringify(lastData));
   }
 });
 
-// ▶️ Відновлюємо позицію при повторному відкритті
-document.addEventListener("DOMContentLoaded", () => {
-  const title = document.getElementById("seriesTitle")?.textContent.trim();
-  const last = JSON.parse(localStorage.getItem("lastWatched") || "null");
-  if (last && last.title === title && last.type === typeName) {
-    const player = document.getElementById("seriesPlayer");
-    player.currentTime = last.time;
-  }
-});
 </script>
 
       <div id="bigPlayOverlay"><div><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
@@ -823,17 +816,28 @@ function useSource(url) {
         }
       });
 
-      hls.loadSource(url);
+            hls.loadSource(url);
       hls.attachMedia(player);
 
-      // Коли HLS готовий — відновлюємо час перегляду
+      // Коли HLS готовий — відновлюємо час тільки для ТОЇ Ж САМОЇ серії
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        const title = document.getElementById("seriesTitle")?.textContent.trim();
-        const last = JSON.parse(localStorage.getItem("lastWatched") || "null");
-        if (last && last.title === title && last.time > 1) {
-          player.currentTime = last.time;
+        try {
+          const raw  = localStorage.getItem("lastWatched") || "null";
+          const last = JSON.parse(raw);
+          if (
+            last &&
+            last.type === typeName &&      // той самий тип (серіал / мультсеріал)
+            last.source &&                 // збережене джерело
+            last.source === url &&         // і воно збігається з поточним URL серії
+            last.time > 1
+          ) {
+            player.currentTime = last.time;
+          }
+        } catch (e) {
+          console.warn("Помилка відновлення позиції:", e);
         }
       });
+
 
       // Автовідновлення при помилках
       hls.on(Hls.Events.ERROR, (ev, data) => {
