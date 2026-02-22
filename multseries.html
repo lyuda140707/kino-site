@@ -572,6 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const player = document.getElementById("seriesPlayer");
   const overlay = document.getElementById("bigPlayOverlay");
   let hls = null;
+  const HLS_PROXY_BASE = "https://kino-hls-proxy.lyuda14070702.workers.dev/?url=";
 
 function useSource(url) {
 
@@ -598,6 +599,7 @@ function useSource(url) {
 
   // === HLS (.m3u8) ===
   if (url.includes(".m3u8")) {
+    const proxiedM3U8 = HLS_PROXY_BASE + encodeURIComponent(url);
 
     if (window.Hls && Hls.isSupported()) {
 
@@ -619,7 +621,7 @@ function useSource(url) {
         }
       });
 
-      hls.loadSource(url);
+      hls.loadSource(proxiedM3U8);
       hls.attachMedia(player);
 
       // ⏳ Чекаємо, поки HLS готовий
@@ -653,7 +655,7 @@ function useSource(url) {
     } 
     else if (player.canPlayType("application/vnd.apple.mpegurl")) {
       // для iPhone
-      player.src = url;
+      player.src = proxiedM3U8;
     }
 
     return;
