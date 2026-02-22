@@ -886,7 +886,7 @@ function useSource(url) {
       return;
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await window.supabaseClient
     .from("films_site")
     .select("*, episode_label")
     .eq("type", "Серіал")
@@ -1414,7 +1414,7 @@ async function loadRecommendedSeries(title, genre) {
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
   const keyword = (title || "").split(" ")[0] || "";
-  const { data, error } = await supabase
+  const { data, error } = await window.supabaseClient
     .from("films_site")
     .select("id, title, poster, genre")
     .ilike("type", "Серіал")
@@ -1474,6 +1474,6 @@ window.addEventListener("pageshow", (e) => {
   }
 });
 </script>
-<script src="/pull-refresh.js"></script>
+
 </body>
 </html>
