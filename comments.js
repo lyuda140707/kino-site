@@ -11,8 +11,8 @@
   const filmId = params.get("id") || params.get("title") || params.get("name");
 
   async function loadComments() {
-    const { data, error } = await supabase
-      .from("comments")
+    const { data, error } = await window.supabaseClient
+      .from("comments"
       .select("*")
       .eq("film_id", filmId)
       .order("created_at", { ascending: false });
@@ -49,7 +49,7 @@
     sendBtn.disabled = true;
     sendBtn.textContent = "⏳ Надсилається...";
 
-    const { error } = await supabase
+    const { error } = await window.supabaseClient
       .from("comments")
       .insert([{ film_id: filmId, username, text }]);
 
