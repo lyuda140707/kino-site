@@ -708,7 +708,7 @@ function useSource(url) {
   }
 
   // 🟢 Виправлена вибірка
-  const { data, error } = await supabase
+  const { data, error } = await window.supabaseClient
   .from("films_site")
   .select("*")
   .eq("type", "Мультсеріал")           // 🔹 точна перевірка типу
@@ -1049,8 +1049,8 @@ async function loadRecommendedCartoons(title, genre) {
   list.innerHTML = "<p style='color:#777'>Завантаження...</p>";
 
   const keyword = (title || "").split(" ")[0] || "";
-  const { data, error } = await supabase
-    .from("films_site")
+  const { data, error } = await window.supabaseClient
+  .from("films_site")
     .select("id, title, poster, genre")
     .eq("type", "Мультсеріал")
     .or(`title.ilike.%${keyword}%,genre.ilike.%${genre}%`)
