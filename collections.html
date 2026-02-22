@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- ✅ Іконки сайту для всіх пристроїв -->
+
+  <!-- ✅ Іконки сайту для всіх пристроїв -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#00fff2">
 
@@ -13,218 +14,154 @@
 
   <!-- iOS підтримка -->
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="/icon-512.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/icon-512.png">
 
   <title>🎞️ Збірки фільмів — KinoSite</title>
   <link rel="stylesheet" href="style.css" />
+
+  <style>
+    main.container {
+      padding: 40px 20px;
+      color: #fff;
+      text-align: center;
+    }
+    h1 {
+      font-size: 26px;
+      margin-bottom: 30px;
+    }
+
+    .collections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .collection-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid #222;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      cursor: pointer;
+    }
+    .collection-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 15px rgba(0,255,255,0.3);
+    }
+
+    .collection-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      filter: brightness(0.7);
+      transition: 0.3s;
+    }
+    .collection-card:hover img {
+      transform: scale(1.05);
+      filter: brightness(0.9);
+    }
+
+    .collection-card .overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      text-align: center;
+      padding: 15px 10px;
+    }
+    .collection-card h3 {
+      font-size: 15px;
+      color: #00ffff;
+      margin: 0;
+      text-shadow: 0 0 5px #000;
+    }
+  </style>
 </head>
+
 <body>
-<div id="header-placeholder"></div>
-<script src="header.js"></script>
+  <div id="header-placeholder"></div>
+  <script src="header.js"></script>
 
-<!-- Підключення хедера -->
-<div id="header-placeholder"></div>
-<script>
-  // 🟢 Функція для активації пошуку після завантаження хедера
-  function bindHeaderSearch() {
-    const input = document.getElementById("search-input");
-    if (!input) return;
+  <main class="container">
+    <h1>🎬 Збірки фільмів</h1>
+    <div class="collections-grid" id="collectionsList"></div>
+  </main>
 
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const query = input.value.trim();
-        if (query.length > 1) {
-          localStorage.setItem("searchQuery", query);
-          window.location.href = "/search.html";
-        }
-      }
+  <footer>© 2025 KinoSite • Усі права захищені</footer>
+
+  <!-- ✅ Supabase (НЕ створюємо const supabase!) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+
+  <script>
+    // === Збірки з картинками ===
+    const collections = [
+      { name: "Фантастика, що вражає уяву", image: "https://i.ibb.co/VWY8nn61/scifi15.webp" },
+      { name: "Найстрашніші фільми жахів", image: "https://i.ibb.co/pv6wccjj/scifi15.webp" },
+      { name: "Обов’язкові до перегляду фільми", image: "https://i.ibb.co/PvCGhKjL/1713462630-fb1.jpg" },
+      { name: "Комедії, що піднімуть настрій", image: "https://i.ibb.co/hFWBWM0v/6bbc5621a1a672e81b175a0a7a24f7f30c2851e2.jpg" },
+      { name: "Адреналін і швидкість — про гонки", image: "https://i.ibb.co/F4WQK9LK/6bbc5621a1a672e81b175a0a7a24f7f30c2851e2.jpg" },
+      { name: "Фільми про танці та музику", image: "https://i.ibb.co/JRggh25r/1713462630-fb1.jpg" },
+      { name: "Новорічний і різдвяний настрій", image: "https://i.ibb.co/pvshtVR4/6bbc5621a1a672e81b175a0a7a24f7f30c2851e2.jpg" },
+      { name: "Фільми про виживання", image: "https://i.ibb.co/rVhrhGL/1713462630-fb1.jpg" },
+      { name: "Історії, засновані на реальних подіях", image: "https://i.ibb.co/t10sdsf/1713462630-fb1.jpg" },
+      { name: "Кіно про собак 🐾", image: "https://i.ibb.co/QjN961jd/A-Dogs-Purpose.jpg" },
+      { name: "Мафія, гангстери та бандити", image: "https://i.ibb.co/CpbbzDxf/1-141.jpg" },
+      { name: "Шпигуни, агенти й спецоперації", image: "https://i.ibb.co/0RBJCCYZ/filmy-pro-shpionov.jpg" },
+      { name: "Маніяки, психопати та трилери", image: "https://i.ibb.co/4q2fZ6h/filmy-pro-maniyakiv-ta-seriynyh-vbyvts.jpg" },
+      { name: "Штучний інтелект і технології майбутнього", image: "https://i.ibb.co/xk641yh/1548421719-5129.jpg" },
+      { name: "Життя за ґратами — фільми про тюрму", image: "https://images.kinorium.com/movie/shot/343839/w1500_84762.jpg" },
+      { name: "Пограбування, афери та трюки", image: "https://s0.tchkcdn.com/g-tsj697un37rL8RMSM24hew/1/400750/660x480/f/0/60c_malysh_na_drajve.jpeg" },
+      { name: "Апокаліпсис і кінець світу", image: "https://i.ibb.co/zWmYm5kr/97419831-p05cfmmj.jpg" },
+      { name: "Фільми про кохання 💞", image: "https://i.ibb.co/Q7y7FG63/fc759596-2efd-4b0a-a261-a25889a8.jpg" },
+      { name: "Фільми про космос", image: "https://i.ibb.co/hxvnSk70/osuh4f1beo7xm9s6ryer.jpg" },
+      { name: "Улюблені фільми Disney", image: "https://i.ibb.co/q3Q8wcxR/content-disney-plus.jpg" },
+    ];
+
+    const list = document.getElementById("collectionsList");
+
+    collections.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "collection-card";
+      div.innerHTML = `
+        <img src="${item.image}" alt="${item.name}">
+        <div class="overlay">
+          <h3>${item.name}</h3>
+        </div>
+      `;
+      div.addEventListener("click", () => openCollection(item.name));
+      list.appendChild(div);
     });
-  }
 
-  // 🟢 Завантажуємо хедер і підключаємо пошук після вставки
-  fetch("header.html")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("header-placeholder").innerHTML = html;
-      bindHeaderSearch(); // активуємо пошук
-    })
-    .catch(err => console.error("Помилка хедера:", err));
-</script>
+    // Відкриваємо сторінку збірки
+    function openCollection(name) {
+      // Якщо у тебе роут працює як /collection?name=... — залишаємо так
+      window.location.href = `/collection?name=${encodeURIComponent(name)}`;
+    }
+  </script>
 
+  <script src="auth.js"></script>
 
-<main class="container">
-  <h1>🎬 Збірки фільмів</h1>
+  <div id="footer-placeholder"></div>
+  <script>
+    fetch("footer.html")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("footer-placeholder").innerHTML = html;
+        const s = document.createElement("script");
+        s.src = "footer.js";
+        document.body.appendChild(s);
+      });
+  </script>
 
-  <div class="collections-grid" id="collectionsList"></div>
-</main>
+  <!-- ❌ тимчасово вимкнено, бо у тебе вони не знаходяться (MIME text/html) -->
+  <!-- <script src="sw-register.js"></script> -->
+  <!-- <script src="pull-refresh.js"></script> -->
 
-<footer>© 2025 KinoSite • Усі права захищені</footer>
-
-<!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-  // === Збірки з картинками ===
-const collections = [
-  { name: "Фантастика, що вражає уяву", image: "https://i.ibb.co/VWY8nn61/scifi15.webp" },
-  { name: "Найстрашніші фільми жахів", image: "https://i.ibb.co/pv6wccjj/scifi15.webp" },
-  { name: "Обов’язкові до перегляду фільми", image: "https://i.ibb.co/PvCGhKjL/1713462630-fb1.jpg" },
-  { name: "Комедії, що піднімуть настрій", image: "https://i.ibb.co/hFWBWM0v/6bbc5621a1a672e81b175a0a7a24f7f30c2851e2.jpg" },
-  { name: "Адреналін і швидкість — про гонки", image: "https://i.ibb.co/F4WQK9LK/6bbc5621a1a672e81b175a0a7a24f7f30c2851e2.jpg" },
-  { name: "Фільми про танці та музику", image: "https://i.ibb.co/JRggh25r/1713462630-fb1.jpg" },
-  { name: "Новорічний і різдвяний настрій", image: "https://i.ibb.co/pvshtVR4/6bbc5621a1a672e81b175a0a7a24f7f30c2851e2.jpg" },
-  { name: "Фільми про виживання", image: "https://i.ibb.co/rVhrhGL/1713462630-fb1.jpg" },
-  { name: "Історії, засновані на реальних подіях", image: "https://i.ibb.co/t10sdsf/1713462630-fb1.jpg" },
-  { name: "Кіно про собак 🐾", image: "https://i.ibb.co/QjN961jd/A-Dogs-Purpose.jpg" },
-  { name: "Мафія, гангстери та бандити", image: "https://i.ibb.co/CpbbzDxf/1-141.jpg" },
-  { name: "Шпигуни, агенти й спецоперації", image: "https://i.ibb.co/0RBJCCYZ/filmy-pro-shpionov.jpg" },
-  { name: "Маніяки, психопати та трилери", image: "https://i.ibb.co/4q2fZ6h/filmy-pro-maniyakiv-ta-seriynyh-vbyvts.jpg" },
-  { name: "Штучний інтелект і технології майбутнього", image: "https://i.ibb.co/xk641yh/1548421719-5129.jpg" },
-  { name: "Життя за ґратами — фільми про тюрму", image: "https://images.kinorium.com/movie/shot/343839/w1500_84762.jpg" },
-  { name: "Пограбування, афери та трюки", image: "https://s0.tchkcdn.com/g-tsj697un37rL8RMSM24hew/1/400750/660x480/f/0/60c_malysh_na_drajve.jpeg" },
-  { name: "Апокаліпсис і кінець світу", image: "https://i.ibb.co/zWmYm5kr/97419831-p05cfmmj.jpg" },
-  { name: "Фільми про кохання 💞", image: "https://i.ibb.co/Q7y7FG63/fc759596-2efd-4b0a-a261-a25889a8.jpg" },
-  { name: "Фільми про космос", image: "https://i.ibb.co/hxvnSk70/osuh4f1beo7xm9s6ryer.jpg" },
-  { name: "Улюблені фільми Disney", image: "https://i.ibb.co/q3Q8wcxR/content-disney-plus.jpg" },
-];
-
-
-  const list = document.getElementById("collectionsList");
-
- collections.forEach(item => {
-  const div = document.createElement("div");
-  div.className = "collection-card";
-  div.innerHTML = `
-    <img src="${item.image}" alt="${item.name}">
-    <div class="overlay">
-      <h3>${item.name}</h3>
-    </div>
-  `;
-  div.addEventListener("click", () => openCollection(item.name));
-  list.appendChild(div);
-});
-
-
-  // Відкриваємо сторінку збірки
-  function openCollection(name) {
-    // Підтримка обох варіантів — з .html і без
-    const target = window.location.hostname.includes("pages.dev")
-      ? `/collection?name=${encodeURIComponent(name)}`
-      : `collection.html?name=${encodeURIComponent(name)}`;
-    window.location.href = target;
-  }
-
-</script>
-
-<style>
-  main.container {
-    padding: 40px 20px;
-    color: #fff;
-    text-align: center;
-  }
-  h1 {
-    font-size: 26px;
-    margin-bottom: 30px;
-  }
-  .collections-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-  
-  .collection-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0 15px rgba(0,255,255,0.3);
-  }
- 
-  .collection-card button {
-    background: linear-gradient(90deg, #00bcd4, #0066ff);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  .collection-card button:hover {
-    background: linear-gradient(90deg, #00e5ff, #008cff);
-  }
-
-.collection-card button {
-  background: linear-gradient(90deg, #00bcd4, #0066ff);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 14px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.collection-card button:hover {
-  background: linear-gradient(90deg, #00e5ff, #008cff);
-}
-.collection-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid #222;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  cursor: pointer;
-}
-
-.collection-card img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  filter: brightness(0.7);
-  transition: 0.3s;
-}
-
-.collection-card:hover img {
-  transform: scale(1.05);
-  filter: brightness(0.9);
-}
-
-.collection-card .overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-  text-align: center;
-  padding: 15px 10px;
-}
-
-.collection-card h3 {
-  font-size: 15px;
-  color: #00ffff;
-  margin: 0;
-  text-shadow: 0 0 5px #000;
-}
-
-</style>
-<script src="auth.js"></script>
-<div id="footer-placeholder"></div>
-<script>
-  fetch("footer.html")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("footer-placeholder").innerHTML = html;
-      // після того як футер з’явився у DOM — підключаємо логіку
-      const s = document.createElement("script");
-      s.src = "footer.js";
-      document.body.appendChild(s);
-    });
-</script> <!-- 🟢 ось цього закриваючого тегу не вистачало! -->
-
-<script src="/sw-register.js"></script> <!-- ✅ Service Worker -->
-<script src="seo.js"></script>
-<script src="/pull-refresh.js"></script>
-</body>
-
+  <script src="seo.js"></script>
 </body>
 </html>
