@@ -623,6 +623,7 @@
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
     window.supabaseClient =
       window.supabaseClient || window.supabase.createClient(supabaseUrl, supabaseKey);
+    const supabase = window.supabaseClient;
 
     let hls = null;                   // поточний Hls-інстанс (щоб коректно руйнувати)
     let currentSource = "movie";      // 'movie' або 'trailer'
@@ -1388,7 +1389,7 @@ async function loadRecommendedFilms(title, genre) {
 
 
 <!-- Підключення логіки коментарів -->
-<script src="comments.js"></script>
+<script src="comments.js?v=2"></script>
 
   
 <script src="auth.js"></script>
