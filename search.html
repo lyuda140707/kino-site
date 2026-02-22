@@ -3,106 +3,106 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- ✅ Іконки сайту для всіх пристроїв -->
+
+  <!-- ✅ PWA / Icons -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#00fff2">
 
-  <!-- Android favicon / PWA icons -->
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 
-  <!-- iOS підтримка -->
+  <!-- iOS / mobile -->
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="/icon-512.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/icon-512.png">
 
   <title>🔍 Пошук — KinoSite</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-  /* === 🔍 Компактні картки лише на сторінці пошуку === */
-  .search-page .film-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* було ~220–250px */
-    gap: 12px;
-  }
-
-  .search-page .film {
-    width: auto;           /* прибираємо фіксовану ширину картки */
-    max-width: none;
-    padding: 10px;
-    border-radius: 12px;
-  }
-
-  .search-page .film .poster img {
-    width: 100%;
-    height: 210px;         /* було 300–350px */
-    object-fit: cover;
-    border-radius: 10px;
-    display: block;
-  }
-
-  .search-page .film .title {
-    font-size: 14px;       /* було 16–18px */
-    line-height: 1.25;
-    margin-top: 6px;
-  }
-
-  .search-page .film .meta {
-    font-size: 12px;       /* було 13–14px+ */
-    opacity: 0.85;
-  }
-
-  /* Бейдж PRO — трохи менший */
-  .search-page .film .badge.plus {
-    transform: scale(0.9);
-    transform-origin: top right;
-  }
-
-  /* На дуже вузьких екранах — ще компактніше */
-  @media (max-width: 420px) {
-    .search-page .film-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-    .search-page .film .poster img { height: 180px; }
-    .search-page .film .title { font-size: 13px; }
-    .search-page .film .meta { font-size: 11.5px; }
-  }
-</style>
-
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* === 🔍 Компактні картки лише на сторінці пошуку === */
+    .search-page .film-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .search-page .film {
+      width: auto;
+      max-width: none;
+      padding: 10px;
+      border-radius: 12px;
+    }
+
+    .search-page .film .poster img {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .search-page .film .title {
+      font-size: 14px;
+      line-height: 1.25;
+      margin-top: 6px;
+    }
+
+    .search-page .film .meta {
+      font-size: 12px;
+      opacity: 0.85;
+    }
+
+    .search-page .film .badge.plus {
+      transform: scale(0.9);
+      transform-origin: top right;
+    }
+
+    @media (max-width: 420px) {
+      .search-page .film-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .search-page .film .poster img { height: 180px; }
+      .search-page .film .title { font-size: 13px; }
+      .search-page .film .meta { font-size: 11.5px; }
+    }
+  </style>
 </head>
+
 <body class="search-page">
   <div id="header-placeholder"></div>
+
   <script>
-  // 🟢 Функція, яка активує пошук після вставки хедера
-  function bindHeaderSearch() {
-    const input = document.getElementById("search-input");
-    if (!input) return;
+    // 🟢 Функція, яка активує пошук після вставки хедера
+    function bindHeaderSearch() {
+      const input = document.getElementById("search-input");
+      if (!input) return;
 
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const query = input.value.trim();
-        if (query.length > 1) {
-          localStorage.setItem("searchQuery", query);
-          window.location.href = "/search.html";
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const query = input.value.trim();
+          if (query.length > 1) {
+            localStorage.setItem("searchQuery", query);
+            window.location.href = "/search.html";
+          }
         }
-      }
-    });
-  }
+      });
+    }
 
-  // 🟢 Завантажуємо хедер і одразу активуємо пошук
-  fetch("header.html")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("header-placeholder").innerHTML = html;
-      bindHeaderSearch(); // Підключаємо пошук після вставки
-    })
-    .catch(err => console.error("Помилка завантаження хедера:", err));
-</script>
-
+    // 🟢 Завантажуємо хедер і одразу активуємо пошук
+    fetch("header.html")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("header-placeholder").innerHTML = html;
+        bindHeaderSearch();
+      })
+      .catch(err => console.error("Помилка завантаження хедера:", err));
+  </script>
 
   <main class="container" style="padding: 20px;">
     <h1 style="text-align:center;color:#00fff2;">🔍 Результати пошуку</h1>
@@ -111,50 +111,56 @@
 
   <footer>© 2025 KinoSite • Усі права захищені</footer>
 
-  <!-- SUPABASE -->
+  <!-- ✅ Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    // ✅ ВАЖЛИВО: НЕ "supabase", а "supabaseClient" — щоб не було already declared
     const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     async function runSearch() {
       const box = document.getElementById("search-results");
-      const query = localStorage.getItem("searchQuery") || "";
+      const query = (localStorage.getItem("searchQuery") || "").trim();
+
       if (!query) {
         box.innerHTML = "<p style='color:#aaa;'>Введіть запит у поле пошуку.</p>";
         return;
       }
 
-      box.innerHTML = `<p style='color:#aaa;'>Пошук: <b>${query}</b>...</p>`;
+      box.innerHTML = `<p style='color:#aaa;'>Пошук: <b>${query.replaceAll("<","&lt;")}</b>...</p>`;
 
-     // 🧠 Розумний пошук: якщо є кілька слів — шукаємо фразу цілком
-    const words = query.split(/\s+/).filter(w => w.length > 1);
-    let orParts = [];
-    
-    if (query.includes(" ")) {
-      // 🔹 Якщо користувач ввів фразу (наприклад, "На вершині")
-      orParts.push(`title.ilike.%${query}%`);
-      orParts.push(`main_title.ilike.%${query}%`);
-      orParts.push(`genre.ilike.%${query}%`);
-      orParts.push(`description.ilike.%${query}%`); // шукає ще й по опису
-    } else {
-      // 🔹 Якщо одне слово — шукаємо по кожному окремо
-      words.forEach(word => {
-        orParts.push(`title.ilike.%${word}%`);
-        orParts.push(`main_title.ilike.%${word}%`);
-        orParts.push(`genre.ilike.%${word}%`);
-        orParts.push(`description.ilike.%${word}%`);
-      });
-    }
+      // 🧠 Розумний пошук
+      const words = query.split(/\s+/).filter(w => w.length > 1);
+      const orParts = [];
 
-      
-      const { data, error } = await supabase
+      if (query.includes(" ")) {
+        // фраза
+        orParts.push(`title.ilike.%${query}%`);
+        orParts.push(`main_title.ilike.%${query}%`);
+        orParts.push(`genre.ilike.%${query}%`);
+        orParts.push(`description.ilike.%${query}%`);
+      } else {
+        // одне слово або набір без пробілів
+        words.forEach(word => {
+          orParts.push(`title.ilike.%${word}%`);
+          orParts.push(`main_title.ilike.%${word}%`);
+          orParts.push(`genre.ilike.%${word}%`);
+          orParts.push(`description.ilike.%${word}%`);
+        });
+      }
+
+      // Якщо раптом words пустий (наприклад, 1 символ) — підстрахуємось
+      if (!orParts.length) {
+        box.innerHTML = "<p style='color:#aaa;'>Запит надто короткий.</p>";
+        return;
+      }
+
+      const { data, error } = await supabaseClient
         .from("films_site")
         .select("id, title, main_title, poster, genre, year, type, imdb, pro_access")
-        .or(orParts.join(','))
+        .or(orParts.join(","))
         .order("id", { ascending: false });
-
 
       if (error) {
         console.error("❌ Помилка пошуку:", error);
@@ -169,9 +175,8 @@
 
       // 🔹 Унікальні за комбінацією title + main_title (щоб показувало різні сезони)
       const unique = Array.from(
-        new Map(data.map(f => [`${f.title}_${f.main_title || ''}`, f])).values()
+        new Map(data.map(f => [`${f.title}_${f.main_title || ""}`, f])).values()
       );
-
 
       box.innerHTML = "";
       unique.forEach(f => {
@@ -179,47 +184,56 @@
         card.className = "film";
         card.innerHTML = `
           <div class="poster">
-            <img src="${f.poster || 'https://via.placeholder.com/200x300?text=No+Image'}" alt="${f.title}">
-            ${String(f.pro_access || '').toUpperCase() === 'PRO' ? '<span class="badge plus">PRO</span>' : ''}
+            <img src="${f.poster || "https://via.placeholder.com/200x300?text=No+Image"}" alt="${(f.title || "").replaceAll('"',"&quot;")}">
+            ${String(f.pro_access || "").toUpperCase() === "PRO" ? '<span class="badge plus">PRO</span>' : ""}
           </div>
-          <div class="title">${f.title}</div>
+          <div class="title">${(f.title || "Без назви")}</div>
           <div class="meta">
-            <span>${f.type || ''}</span> • 
-            <span>${f.genre || ''}</span> • 
-            <span>${f.year || ''}</span>
+            <span>${f.type || ""}</span> •
+            <span>${f.genre || ""}</span> •
+            <span>${f.year || ""}</span>
           </div>
         `;
+
         card.addEventListener("click", () => {
           if (f.type === "Серіал") {
             window.location.href = "series.html?title=" + encodeURIComponent(f.title);
           } else if (f.type === "Мультсеріал") {
             window.location.href = "multseries.html?title=" + encodeURIComponent(f.title);
           } else {
-            window.location.href = "film.html?id=" + f.id;
+            window.location.href = "film.html?id=" + encodeURIComponent(f.id);
           }
         });
+
         box.appendChild(card);
       });
     }
 
     document.addEventListener("DOMContentLoaded", runSearch);
+
+    // ✅ Service Worker реєстрація без sw-register.js (щоб не ловити MIME type text/html)
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      });
+    }
   </script>
 
+  <!-- auth.js залишаємо -->
   <script src="auth.js"></script>
-<div id="footer-placeholder"></div>
-<script>
-  fetch("footer.html")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("footer-placeholder").innerHTML = html;
-      // після того як футер з’явився у DOM — підключаємо логіку
-      const s = document.createElement("script");
-      s.src = "footer.js";
-      document.body.appendChild(s);
-    });
-</script>
-<script src="/sw-register.js"></script> <!-- ✅ Service Worker -->
-<script src="seo.js"></script>
-<script src="/pull-refresh.js"></script>
+
+  <div id="footer-placeholder"></div>
+  <script>
+    fetch("footer.html")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("footer-placeholder").innerHTML = html;
+        const s = document.createElement("script");
+        s.src = "footer.js";
+        document.body.appendChild(s);
+      });
+  </script>
+
+  <script src="seo.js"></script>
 </body>
 </html>
