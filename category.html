@@ -16,7 +16,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="/icon-512.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/icon-512.png">
-const supabaseUrl
+
   
   <title>Relax Kino — Категорія</title>
   <link rel="stylesheet" href="style.css" />
@@ -224,6 +224,11 @@ const supabaseUrl
 
 console.log("✅ Supabase підключено");
 
+  window.supabaseClient = window.supabaseClient || window.supabase.createClient(
+  "https://zerlqvbmqszomlondlte.supabase.co",
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE"
+);
+
   const params = new URLSearchParams(window.location.search);
   const type = (params.get("type") || "Фільм").trim();
   const genre = (params.get("genre") || "").trim();
@@ -377,7 +382,7 @@ function renderPagination(totalItems) {
 
 // === Заповнення списку років ===
 async function fillYearOptions() {
-  const { data, error } = await supabase
+  const { data, error } = await window.supabaseClient
     .from("films_site")
     .select("year")
     .order("year", { ascending: false });
