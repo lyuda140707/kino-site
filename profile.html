@@ -1,1122 +1,688 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- ✅ Іконки сайту для всіх пристроїв -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ✅ PWA / Icons -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#00fff2">
 
-  <!-- Android favicon / PWA icons -->
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 
-  <!-- iOS підтримка -->
+  <!-- iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes"><!-- ✅ щоб прибрати попередження -->
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="/icon-512.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/icon-512.png">
 
-<title>Мій кабінет — KinoSite</title>
+  <title>Мій кабінет — KinoSite</title>
 
-<!-- ✅ Безпечні політики -->
-<meta http-equiv="Content-Security-Policy"
-      content="default-src * 'self' data: blob: https: http:;
-               script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org https://oauth.telegram.org https://cdn.jsdelivr.net;
-               frame-src https://oauth.telegram.org https://kino-site.top;
-               connect-src *;
-               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-               font-src https://fonts.gstatic.com;">
+  <!-- ✅ CSP у meta (як запасний варіант)
+       ⚠️ Якщо у тебе CSP заданий у Cloudflare _headers — він ПЕРЕБ’Є meta -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src * 'self' data: blob: https: http:;
+                 script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org https://oauth.telegram.org https://cdn.jsdelivr.net;
+                 frame-src https://oauth.telegram.org https://kino-site.top;
+                 connect-src *;
+                 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+                 font-src https://fonts.gstatic.com;">
 
-<link rel="stylesheet" href="style.css" />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
-<style>
-.pro-actions {
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  margin-top:12px;
-}
-.pro-actions .btn {
-  background:transparent;
-  border:1px solid rgba(0,255,255,0.3);
-  color:#00fff2;
-}
-.pro-actions .btn:hover {
-  background:rgba(0,255,255,0.1);
-}
+  <style>
+    .pro-actions {display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+    .pro-actions .btn {background:transparent;border:1px solid rgba(0,255,255,0.3);color:#00fff2;}
+    .pro-actions .btn:hover {background:rgba(0,255,255,0.1);}
 
-body {
-  background: #0b0c10;
-  color: #e6e6e6;
-  font-family: "Poppins", sans-serif;
-  margin: 0;
-  padding: 0;
-}
+    body {background:#0b0c10;color:#e6e6e6;font-family:"Poppins",sans-serif;margin:0;padding:0;}
 
-/* === Основний контейнер === */
-.profile-wrap {
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 0 16px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 20px;
-}
+    .profile-wrap {
+      max-width: 1000px; margin: 40px auto; padding: 0 16px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px;
+    }
 
-/* === Картки === */
-.card {
-  background: #111318;
-  border: 1px solid rgba(0, 255, 255, 0.08);
-  border-radius: 14px;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.05);
-  padding: 18px 20px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 16px rgba(0, 255, 255, 0.2);
-}
+    .card {
+      background:#111318;border:1px solid rgba(0,255,255,0.08);border-radius:14px;
+      box-shadow:0 0 10px rgba(0,255,255,0.05);padding:18px 20px;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .card:hover {transform: translateY(-2px); box-shadow:0 0 16px rgba(0,255,255,0.2);}
 
-h1 {
-  grid-column: 1 / -1;
-  text-align: center;
-  color: #00fff2;
-  font-weight: 600;
-  font-size: 26px;
-  margin-bottom: 4px;
-}
+    h1 {grid-column:1 / -1;text-align:center;color:#00fff2;font-weight:600;font-size:26px;margin-bottom:4px;}
+    h3 {color:#00fff2;margin-top:0;font-size:18px;}
 
-h3 {
-  color: #00fff2;
-  margin-top: 0;
-  font-size: 18px;
-}
+    .btn {padding:9px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:600;transition:transform .2s ease, box-shadow .2s ease;}
+    .btn-primary {background:linear-gradient(45deg,#00fff2,#4a00e0);color:#fff;}
+    .btn-ghost {background:transparent;border:1px solid rgba(0,255,255,0.3);color:#00fff2;}
+    .btn:hover {transform:scale(1.03);box-shadow:0 0 10px rgba(0,255,255,0.25);}
 
-/* === Кнопки === */
-.btn {
-  padding: 9px 12px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.btn-primary {
-  background: linear-gradient(45deg, #00fff2, #4a00e0);
-  color: #fff;
-}
-.btn-ghost {
-  background: transparent;
-  border: 1px solid rgba(0, 255, 255, 0.3);
-  color: #00fff2;
-}
-.btn:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 10px rgba(0,255,255,0.25);
-}
+    #user-card {text-align:center;}
+    #user-card h3 {font-size:20px;}
+    #user-card .muted {color:#9aa0a6;font-size:13px;}
+    .profile-actions {margin-top:10px;display:flex;flex-direction:column;gap:8px;}
 
-/* === Профіль === */
-#user-card {
-  text-align: center;
-}
-#user-card h3 {
-  font-size: 20px;
-}
-#user-card .muted {
-  color: #9aa0a6;
-  font-size: 13px;
-}
-.profile-actions {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+    .bookmark-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;margin-top:10px;}
+    .bookmark-card {background:#0d0f14;border:1px solid rgba(0,255,255,0.15);border-radius:10px;overflow:hidden;cursor:pointer;transition:.2s;}
+    .bookmark-card:hover {transform:scale(1.05);box-shadow:0 0 12px rgba(0,255,255,0.25);}
+    .bookmark-card img {width:100%;height:190px;object-fit:cover;}
+    .bookmark-card p {margin:8px;text-align:center;font-size:13.5px;color:#eaeaea;}
 
-/* === Закладки === */
-.bookmark-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 14px;
-  margin-top: 10px;
-}
-.bookmark-card {
-  background: #0d0f14;
-  border: 1px solid rgba(0,255,255,0.15);
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.bookmark-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(0,255,255,0.25);
-}
-.bookmark-card img {
-  width: 100%;
-  height: 190px;
-  object-fit: cover;
-}
-.bookmark-card p {
-  margin: 8px;
-  text-align: center;
-  font-size: 13.5px;
-  color: #eaeaea;
-}
+    .message-item {background:#0e1015;border:1px solid rgba(0,255,255,0.1);border-radius:10px;padding:10px 12px;margin-bottom:8px;}
+    #messages-card {position:relative;}
+    .message-header {display:flex;justify-content:space-between;align-items:center;}
+    .message-body {margin-top:6px;color:#ddd;font-size:14px;}
+    .msg-delete {background:transparent;border:1px solid rgba(255,77,77,0.4);color:#ff6b6b;border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer;}
+    .msg-delete:hover {background:rgba(255,77,77,0.15);}
 
-/* === Повідомлення === */
-.message-item {
-  background: #0e1015;
-  border: 1px solid rgba(0,255,255,0.1);
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 8px;
-}
-/* позиціонування для бейджа */
-#messages-card {
-  position: relative;
-}
-.message-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.message-body {
-  margin-top: 6px;
-  color: #ddd;
-  font-size: 14px;
-}
-.msg-delete {
-  background: transparent;
-  border: 1px solid rgba(255,77,77,0.4);
-  color: #ff6b6b;
-  border-radius: 6px;
-  padding: 3px 8px;
-  font-size: 12px;
-  cursor: pointer;
-}
-.msg-delete:hover {
-  background: rgba(255,77,77,0.15);
-}
+    .msg-btn-badge {
+      position:absolute;top:-6px;right:-6px;background:linear-gradient(45deg,#00fff2,#4a00e0);color:#fff;border-radius:50%;
+      width:18px;height:18px;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;
+      box-shadow:0 0 8px rgba(0,255,255,0.4);animation:pulseBadge 1.5s infinite;
+    }
+    @keyframes pulseBadge {0%{transform:scale(1);opacity:1;}50%{transform:scale(1.2);opacity:.7;}100%{transform:scale(1);opacity:1;}}
 
-/* === Футер === */
-footer {
-  grid-column: 1 / -1;
-  text-align: center;
-  color: #888;
-  margin: 28px 0;
-  font-size: 14px;
-}
-/* === 🆕 Індикатор нових повідомлень (бейдж) === */
-.new-badge {
-  position: absolute;
-  top: 6px;
-  right: 12px;
-  background: linear-gradient(45deg, #00fff2, #4a00e0);
-  color: #fff;
-  border-radius: 50%;
-  width: 22px;
-  height: 22px;
-  font-size: 12px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 10px rgba(0,255,255,0.4);
-  animation: pulseBadge 1.5s infinite;
-}
+    /* Modal */
+    .modal {display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;}
+    .modal-content {
+      background:#111318;border:1px solid rgba(0,255,255,0.2);border-radius:14px;padding:24px;max-width:400px;color:#e6e6e6;
+      text-align:center;box-shadow:0 0 25px rgba(0,255,255,0.3);animation:fadeIn .3s ease;
+    }
+    .modal-actions {display:flex;justify-content:center;gap:10px;margin-top:20px;}
+    @keyframes fadeIn {from{transform:scale(.9);opacity:0;}to{transform:scale(1);opacity:1;}}
 
-@keyframes pulseBadge {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.7; }
-  100% { transform: scale(1); opacity: 1; }
-}
-/* === 🔔 Бейдж на кнопці "Повідомлення" === */
-.msg-btn-badge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: linear-gradient(45deg, #00fff2, #4a00e0);
-  color: #fff;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  font-size: 11px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 8px rgba(0,255,255,0.4);
-  animation: pulseBadge 1.5s infinite;
-}
-/* === 💬 МОДАЛКА === */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 9999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  align-items: center;
-  justify-content: center;
-}
-.modal-content {
-  background: #111318;
-  border: 1px solid rgba(0,255,255,0.2);
-  border-radius: 14px;
-  padding: 24px;
-  max-width: 400px;
-  color: #e6e6e6;
-  text-align: center;
-  box-shadow: 0 0 25px rgba(0,255,255,0.3);
-  animation: fadeIn 0.3s ease;
-}
-.modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
-}
-@keyframes fadeIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-.pro-actions #btn-paid-tg,
-.pro-actions #btn-paid-web {
-  display: none; /* без !important */
-}
-</style>
-
+    .pro-actions #btn-paid-tg, .pro-actions #btn-paid-web {display:none;}
+  </style>
 </head>
+
 <body>
-<div id="header-placeholder"></div>
-<script src="header.js"></script>
-
-<!-- Хедер -->
-<div id="header-placeholder"></div>
-<script>
-  // 🟢 Функція для активації пошуку після вставки хедера
-  function bindHeaderSearch() {
-    const input = document.getElementById("search-input");
-    if (!input) return;
-
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const query = input.value.trim();
-        if (query.length > 1) {
-          localStorage.setItem("searchQuery", query);
-          window.location.href = "/search.html";
+  <div id="header-placeholder"></div>
+  <script>
+    // ✅ Завантажуємо header.html і активуємо пошук після вставки
+    function bindHeaderSearch() {
+      const input = document.getElementById("search-input");
+      if (!input) return;
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const query = input.value.trim();
+          if (query.length > 1) {
+            localStorage.setItem("searchQuery", query);
+            window.location.href = "/search.html";
+          }
         }
-      }
-    });
-  }
+      });
+    }
 
-  // 🟢 Завантажуємо header.html і активуємо пошук після вставки
-  fetch("header.html")
-    .then(r => r.text())
-    .then(html => {
-      document.getElementById("header-placeholder").innerHTML = html;
-      bindHeaderSearch(); // активуємо пошук
-    })
-    .catch(err => console.error("Помилка завантаження хедера:", err));
-</script>
-
-
-<main class="profile-wrap">
-  <h1>Мій кабінет</h1>
-
-  <!-- 🧩 Блок користувача -->
-  <div class="card" id="user-card" style="display:none;">
-  <h3 id="hello-line">Вітаю!</h3>
-  <p id="auth-type" class="muted"></p> <!-- 🆕 ДОДАЙ ЦЕ -->
-  <p class="muted">Статус: <span id="pro-status">—</span></p>
-  <button class="btn btn-ghost" id="logout-btn">Вийти</button>
-
-  <!-- 🔹 Додаткові дії користувача -->
-  <div class="profile-actions">
-  <button id="messages" class="btn btn-ghost">📩 Повідомлення</button>
-</div>
-</div>
-<!-- 🧩 Оплата та підтвердження -->
-<div class="pro-actions" style="margin-top:14px;">
-  <div id="pro-status-text" class="muted">Перевіряю статус...</div>
-  <button id="get-pro" class="btn btn-primary">💎 Отримати PRO</button>
-  <!-- Кнопки -->
-  <button id="btn-paid-tg" class="btn btn-ghost" style="display:none;">
-    ✅ Я оплатив(ла) — через Telegram
-  </button>
-  <button id="btn-paid-web" class="btn btn-ghost" style="display:none;">
-    ✅ Я оплатив(ла) — без Telegram
-  </button>
-</div>
-<!-- ▶️ Продовжити перегляд -->
-<div class="card" id="continue-watch-card" style="position:relative;">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-    <h3 style="margin:0;color:#00fff2;display:flex;align-items:center;gap:8px;">
-      <span style="font-size:20px;">▶️</span> Продовжити перегляд
-    </h3>
-    <button id="clearLastWatch"
-      style="background:transparent;border:none;color:#888;font-size:13px;
-             cursor:pointer;transition:color .2s;">
-      🗑 Очистити
-    </button>
-  </div>
-  <div id="continue-watch-grid" class="bookmark-grid"></div>
-</div>
-
-<script>
-function renderContinueWatchingInProfile() {
-  const grid = document.getElementById("continue-watch-grid");
-  const data = JSON.parse(localStorage.getItem("lastWatched") || "null");
-
-  if (!grid) return;
-
-  if (!data) {
-    grid.innerHTML = "<p style='color:#9aa0a6;text-align:center;width:100%;margin:6px 0 2px;'>Поки що немає переглянутих 🎞️</p>";
-    return;
-  }
-
-  const time = Math.floor(data.time / 60);
-  const typeIcon =
-    data.type === "Серіал" ? "📺" :
-    data.type === "Мультсеріал" ? "🧸" :
-    "🎬";
-
-  // використовуємо однаковий стиль картки з закладок
-  grid.innerHTML = `
-    <div class="bookmark-card" onclick="window.location.href='${data.url || `film.html?id=${data.id}`}'">
-      <img src="${data.poster}" alt="${data.title}">
-      <p>${typeIcon} ${data.title}</p>
-      <small style="color:#9aa0a6;display:block;text-align:center;margin-bottom:6px;">
-        Продовжити з ${time} хв
-      </small>
-    </div>
-  `;
-}
-
-// 🗑 Кнопка очищення історії
-document.getElementById("clearLastWatch")?.addEventListener("click", () => {
-  if (!confirm("Очистити історію перегляду?")) return;
-  localStorage.removeItem("lastWatched");
-  renderContinueWatchingInProfile();
-});
-
-window.addEventListener("DOMContentLoaded", renderContinueWatchingInProfile);
-</script>
-
-
-
-  
-<!-- ⭐ Мої закладки у кабінеті -->
-<div class="card" id="favorites-card">
-  <div class="fav-head">
-    <h3 style="margin:0;color:#00fff2;">⭐ Мої закладки</h3>
-    <button id="favClearBtn" class="fav-clear">🗑 Очистити все</button>
-  </div>
-  <div id="favoritesList" class="bookmark-grid"></div>
-</div>
-<!-- 📩 Повідомлення від адміністрації -->
-<div class="card" id="messages-card" style="display:none;">
-  <h3 style="margin:0 0 10px;color:#00fff2;">📩 Повідомлення</h3>
-  <div id="messagesList"></div>
-</div>
-
-  <!-- 📨 Авторизація Email -->
-  <div class="card" id="auth-card">
-    <h3>Увійти через Email</h3>
-    <div style="display:flex;flex-direction:column;gap:8px;max-width:320px;">
-      <input id="email-input" class="input" type="email" placeholder="email@example.com" />
-      <button class="btn btn-primary" id="email-login-btn">Надіслати посилання для входу</button>
-    </div>
-  </div>
-
-  <!-- 🤖 Авторизація Telegram -->
-  <div class="card" id="telegram-card">
-    <h3>Увійти через Telegram</h3>
-    <p class="muted">
-      Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
-    </p>
-<script>
-  // 🔹 Ця функція має бути ДО віджета Telegram
-function onTelegramAuth(user) {
-  console.log("✅ Telegram авторизував користувача:", user);
-
-  if (!user?.id) return console.warn("Помилка Telegram авторизації!");
-
-  try {
-    // Зберігаємо користувача
-    localStorage.setItem("telegram_user", JSON.stringify(user));
-    localStorage.setItem("auth_time", Date.now());
-
-    // Показуємо гарне повідомлення
-    const msg = document.getElementById("login-message");
-    msg.style.display = "block";
-    msg.style.opacity = "1";
-
-    // Зникає через 1.5 секунди та перезавантажує сторінку
-    setTimeout(() => {
-      msg.style.opacity = "0";
-    }, 1500);
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
-  } catch (e) {
-    console.error("Помилка збереження Telegram користувача:", e);
-  }
-}
-
-
-</script>
-
-<div id="telegram-widget">
-  <script async src="https://telegram.org/js/telegram-widget.js?22"
-    data-telegram-login="RelaxBoxUA_bot"
-    data-size="large"
-    data-userpic="false"
-    data-request-access="write"
-    data-onauth="onTelegramAuth(user)">
+    fetch("header.html")
+      .then(r => r.text())
+      .then(html => { document.getElementById("header-placeholder").innerHTML = html; bindHeaderSearch(); })
+      .catch(err => console.error("Помилка завантаження хедера:", err));
   </script>
-</div>
 
-<script>
-document.addEventListener("click", (e) => {
-  const tgFrame = document.querySelector("#telegram-widget iframe");
-  if (!tgFrame) return;
+  <main class="profile-wrap">
+    <h1>Мій кабінет</h1>
 
-  const isClickedInsideTG = e.target === tgFrame || tgFrame.contains(e.target);
-  if (isClickedInsideTG) {
-    console.log("👆 Натиснули на Telegram Login — відкриваю Telegram...");
+    <!-- 🧩 Блок користувача -->
+    <div class="card" id="user-card" style="display:none;">
+      <h3 id="hello-line">Вітаю!</h3>
+      <p id="auth-type" class="muted"></p>
+      <p class="muted">Статус: <span id="pro-status">—</span></p>
+      <button class="btn btn-ghost" id="logout-btn">Вийти</button>
 
-    // Перевіряємо, чи це мобільний пристрій
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    // Показуємо коротке повідомлення перед відкриттям Telegram
-    const msg = document.createElement("div");
-    msg.textContent = "📲 Відкривається Telegram для підтвердження...";
-    msg.style.position = "fixed";
-    msg.style.top = "20px";
-    msg.style.left = "50%";
-    msg.style.transform = "translateX(-50%)";
-    msg.style.background = "linear-gradient(145deg, #00fff2, #00b5b0)";
-    msg.style.color = "#000";
-    msg.style.fontWeight = "600";
-    msg.style.padding = "10px 20px";
-    msg.style.borderRadius = "12px";
-    msg.style.boxShadow = "0 0 20px rgba(0,255,255,0.5)";
-    msg.style.zIndex = "9999";
-    document.body.appendChild(msg);
-
-    setTimeout(() => {
-      msg.remove();
-      if (isMobile) {
-        // 📱 відкриває безпосередньо Telegram-додаток
-        window.location.href = "tg://resolve?domain=RelaxBoxUA_bot";
-      } else {
-        // 💻 відкриває web.telegram.org
-        window.open("https://t.me/RelaxBoxUA_bot", "_blank");
-      }
-    }, 800);
-  }
-});
-</script>
-
-
-  </div>
-</main>
-
-<footer style="text-align:center;color:#8a8f98;margin:32px 0">© 2025 KinoSite</footer>
-<script>
-// === ⭐ Закладки в кабінеті ===
-function getLocalBookmarks() {
-  try { return JSON.parse(localStorage.getItem("bookmarks") || "[]"); }
-  catch { return []; }
-}
-
-function renderBookmarksInProfile() {
-  const card = document.getElementById("favorites-card");
-  const listEl = document.getElementById("favoritesList");
-  if (!card || !listEl) return;
-
-  const list = Array.isArray(getLocalBookmarks()) ? getLocalBookmarks() : [];
-  listEl.innerHTML = "";
-
-  if (!list.length) {
-    listEl.innerHTML = "<p style='color:#9aa0a6;text-align:center;width:100%;margin:6px 0 2px;'>Поки що порожньо 🕯️</p>";
-  } else {
-    list.forEach(item => {
-      const id = item?.id ?? "";
-      const title = item?.title || "Без назви";
-      const poster = item?.poster || "https://via.placeholder.com/150x210?text=No+Image";
-      // 👇 Інтелектуально визначаємо type, якщо його нема
-      const type = item?.type
-        || (id ? "Фільм" : "")                             // якщо є id — майже точно фільм
-        || (title?.toLowerCase().includes("мульт") ? "Мультсеріал" : "Серіал"); // інакше серіал/мульт
-
-      // Куди вести по кліку
-      let href = `film.html?id=${encodeURIComponent(id)}`;
-      if (type === "Серіал") href = `series.html?title=${encodeURIComponent(title)}`;
-      if (type === "Мультсеріал") href = `multseries.html?title=${encodeURIComponent(title)}`;
-
-      const div = document.createElement("div");
-      div.className = "bookmark-card";
-      div.innerHTML = `
-        <img src="${poster}" alt="${title}">
-        <p>${title}</p>
-      `;
-      div.onclick = () => {
-        // якщо випадково сторінку відкриває без .html — додаємо її
-        if (!href.endsWith(".html") && !href.includes(".html?")) {
-          if (href.includes("series")) href = "series.html" + href.split("series")[1];
-          else if (href.includes("multseries")) href = "multseries.html" + href.split("multseries")[1];
-          else if (href.includes("film")) href = "film.html" + href.split("film")[1];
-        }
-        window.location.href = href;
-      };
-
-      listEl.appendChild(div);
-    });
-  }
-
-  card.style.display = "block";
-}
-
-document.getElementById("favClearBtn")?.addEventListener("click", () => {
-  if (!confirm("Видалити всі закладки?")) return;
-  localStorage.removeItem("bookmarks");
-  renderBookmarksInProfile();
-});
-
-window.addEventListener("DOMContentLoaded", renderBookmarksInProfile);
-renderBookmarksInProfile();
-</script>
-
-
-<!-- ✅ Підключення Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-  // ===== Вхід через Email
-  document.getElementById("email-login-btn").onclick = async () => {
-    const email = document.getElementById("email-input").value.trim();
-    if (!email) return alert("Введіть email");
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    alert(error ? "Помилка: " + error.message : "Перевірте пошту, щоб увійти!");
-  };
-  // ✅ Коли користувач повернувся по лінку з пошти — підхоплюємо сесію і показуємо кабінет
-window.addEventListener("DOMContentLoaded", async () => {
-  const { data, error } = await supabase.auth.getUser();
-  const user = data?.user || null;
-
-  if (user) {
-    // збережемо мінімальні дані користувача локально
-    localStorage.setItem("email_user", JSON.stringify({ id: user.id, email: user.email }));
-
-    // показати кабінет / сховати форми входу
-    document.getElementById("auth-card").style.display = "none";
-    document.getElementById("telegram-card").style.display = "none";
-    document.getElementById("user-card").style.display = "block";
-    document.getElementById("hello-line").innerText = `Вітаю, ${user.email}`;
-    document.getElementById("auth-type").innerText = "🔑 Вхід через Email";
-
-    // оновити статус PRO та кнопки, якщо функції вже завантажені
-    if (typeof checkProStatus === "function") checkProStatus();
-    if (typeof updateProUI === "function") updateProUI();
-  }
-});
-
-// ✅ Реагуємо на будь-яку зміну стану (щоб кабінет з’явився одразу після підтвердження e-mail)
-supabase.auth.onAuthStateChange(async (event, session) => {
-  if (session?.user) {
-    localStorage.setItem("email_user", JSON.stringify({ id: session.user.id, email: session.user.email }));
-    document.getElementById("auth-card").style.display = "none";
-    document.getElementById("telegram-card").style.display = "none";
-    document.getElementById("user-card").style.display = "block";
-    document.getElementById("hello-line").innerText = `Вітаю, ${session.user.email}`;
-    document.getElementById("auth-type").innerText = "🔑 Вхід через Email";
-    if (typeof checkProStatus === "function") checkProStatus();
-    if (typeof updateProUI === "function") updateProUI();
-  }
-});
-
-
-  // ===== Вихід
-  document.getElementById("logout-btn").onclick = async () => {
-    try { await supabase.auth.signOut(); } catch(e) { console.warn(e); }
-    localStorage.removeItem("telegram_user");
-    localStorage.removeItem("email_user");
-    localStorage.removeItem("pro_payment_started");
-    location.reload();
-  };
-
-
-  // ===== Основна функція обробки користувача
-  async function handleTelegramUser(user) {
-  document.getElementById("auth-card").style.display = "none";
-  document.getElementById("telegram-card").style.display = "none";
-  document.getElementById("user-card").style.display = "block";
-
-  document.getElementById("hello-line").innerText =
-    `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
-  // 🆕 показуємо тип входу — Telegram
-  const typeLine = document.getElementById("auth-type");
-  if (typeLine) typeLine.innerText = "🤖 Вхід через Telegram";
-
-
-    try {
-      const res = await fetch(`${window.APPS_SCRIPT_URL}?user_id=${encodeURIComponent(user.id)}`);
-      const json = await res.json();
-      
-    } catch (err) {
-      console.error(err);
-      document.getElementById("pro-status").innerText = "⚠️ Помилка перевірки PRO";
-    }
-       await tryBindWebToTg(user);
-       await checkProStatus();
-       localStorage.removeItem("pro_cache");
-      // ✅ Завантажити повідомлення користувача
-      loadMessagesForUser(user.id);
-  }
-function getWebId() {
-  let webId = localStorage.getItem("web_id");
-  if (!webId) {
-    // 🧩 Створюємо постійний ідентифікатор для браузера
-    const base = btoa(navigator.userAgent + navigator.language + "kino-site");
-    webId = "WEB-" + base.slice(0, 12);
-    localStorage.setItem("web_id", webId);
-  }
-  return webId;
-}
-// 🔍 Перевірка статусу PRO
-async function checkProStatus() {
-  const tgUser = localStorage.getItem("telegram_user");
-  const emailUser = localStorage.getItem("email_user");
-
-  let idParam = "";
-  let paramType = "";
-
-  if (tgUser) {
-    idParam = JSON.parse(tgUser).id;
-    paramType = "user_id";
-  } else if (emailUser) {
-    idParam = getWebId();  // Використовуємо web_id
-    paramType = "user_id"; // шукаємо як звичайний ID
-  } else {
-    idParam = getWebId();
-    paramType = "web_id";
-  }
-
-  if (!idParam) {
-    console.warn("❌ Немає ID для перевірки PRO");
-    document.getElementById("pro-status-text").innerText = "🔒 Без PRO";
-    return;
-  }
-
-  const statusEl = document.getElementById("pro-status-text");
-  statusEl.innerText = "⏳ Перевіряю статус...";
-
-  
-  // 🌐 2️⃣ Якщо кешу немає — робимо реальний запит
-  try {
-    const url = `${window.APPS_SCRIPT_URL}?${paramType}=${encodeURIComponent(idParam)}`;
-    const res = await fetch(url);
-    const data = await res.json();
-
-    // Зберігаємо в кеш
-    localStorage.setItem("pro_cache", JSON.stringify({
-      id: idParam,
-      data,
-      time: Date.now()
-    }));
-
-    showProStatus(data);
-  } catch (err) {
-    console.error("❌ Помилка перевірки PRO:", err);
-    statusEl.innerText = "⚠️ Помилка перевірки";
-  }
-}
-
-// 🧩 Функція оновлення інтерфейсу
-function showProStatus(data) {
-  const statusEl = document.getElementById("pro-status-text");
-  const proLabel = document.getElementById("pro-status");
-
-  if (data?.ok && data?.isPro) {
-    const d = data?.expireDate || "невідомо";
-    statusEl.innerHTML = `💎 PRO активний до <b>${d}</b>`;
-    if (proLabel) proLabel.innerHTML = `✅ PRO активний до <b>${d}</b>`;
-    localStorage.removeItem("pro_payment_started");
-  } else {
-    statusEl.innerText = "🔒 Без PRO";
-    if (proLabel) proLabel.innerText = "❌ Без PRO";
-   
-  }
-
-  updateProUI();
-}
-
-async function tryBindWebToTg(tgUser) {
-  if (!tgUser?.id) return;
-  
-  // Спочатку перевіряємо, чи PRO уже активний для цього Telegram ID
-  try {
-    const checkUrl = `${window.APPS_SCRIPT_URL}?user_id=${encodeURIComponent(tgUser.id)}`;
-    const resCheck = await fetch(checkUrl);
-    const jsonCheck = await resCheck.json();
-    
-    // Якщо PRO уже активний — нічого не прив'язуємо, просто показуємо
-    if (jsonCheck?.ok && jsonCheck?.isPro) {
-      console.log("💎 PRO уже активний для цього Telegram користувача:", tgUser.id);
-      await checkProStatus();
-      return;
-    }
-  } catch (err) {
-    console.warn("Не вдалося перевірити TG PRO:", err);
-  }
-
-  // Якщо PRO ще немає, пробуємо зв'язати WEB → TG
-  const webId = localStorage.getItem("web_id");
-  if (!webId) return;
-
-  try {
-    const url = `${window.APPS_SCRIPT_URL}?action=bind_web_to_tg` +
-      `&web_id=${encodeURIComponent(webId)}` +
-      `&tg_id=${encodeURIComponent(tgUser.id)}` +
-      `&tg_name=${encodeURIComponent(tgUser.username || "")}`;
-    const res  = await fetch(url);
-    const json = await res.json();
-    console.log("🔗 Bind WEB → TG:", json);
-  } catch (e) {
-    console.warn("Bind failed:", e);
-  }
-}
-
-
-
-
-  // ===== Перевірка при відкритті сторінки
-  window.addEventListener("DOMContentLoaded", () => {
-    const savedUser = localStorage.getItem("telegram_user");
-    if (savedUser) {
-      try {
-        const user = JSON.parse(savedUser);
-        console.log("🔄 Відновлено користувача з localStorage:", user);
-        document.getElementById("telegram-card").style.display = "none";
-        handleTelegramUser(user);
-      } catch (e) {
-        console.warn("❌ Не вдалося розпарсити користувача:", e);
-      }
-    }
-  });
-// === 📩 Завантаження повідомлень користувача ===
-async function loadMessagesForUser(userId) {
-  const box = document.getElementById("messagesList");
-  if (!box) return;
-  box.innerHTML = `<p class="muted">Завантаження...</p>`;
-
-  const { data, error } = await supabase
-    .from("user_messages")
-    .select("*")
-    .eq("user_id", String(userId))
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error(error);
-    box.innerHTML = `<p class="muted">Помилка завантаження</p>`;
-    return;
-  }
-
-  if (!data?.length) {
-    box.innerHTML = `<p class="muted">Поки що немає повідомлень</p>`;
-    return;
-  }
-
-  const lastCount = Number(localStorage.getItem("last_msg_count") || 0);
-  localStorage.setItem("last_msg_count", data.length);
-
-  const isNew = data.length > lastCount;
-  const msgBtn = document.getElementById("messages");
-const msgCard = document.getElementById("messages-card");
-
-// 🟢 Якщо є нові повідомлення — додаємо бейдж
-if (isNew && msgBtn) {
-  msgBtn.style.position = "relative";
-  const btnBadge = document.createElement("div");
-  btnBadge.className = "msg-btn-badge";
-  msgBtn.appendChild(btnBadge);
-}
-
-// 🟣 При кліку на кнопку — відкривати / закривати блок повідомлень
-if (msgBtn && msgCard) {
-  msgBtn.addEventListener("click", () => {
-    const isVisible = msgCard.style.display === "block";
-    msgCard.style.display = isVisible ? "none" : "block";
-
-    // коли користувач відкрив — прибрати бейдж
-    if (!isVisible) {
-      const badge = msgBtn.querySelector(".msg-btn-badge");
-      if (badge) badge.remove();
-    }
-  });
-}
-
-
-
-  box.innerHTML = "";
-  data.forEach((m) => {
-    const card = document.createElement("div");
-    card.className = "message-item" + (isNew ? " new" : "");
-    card.innerHTML = `
-      <div class="message-header">
-        <b>${m.title || "Повідомлення"}</b>
-        <small style="color:#9aa0a6">${new Date(m.created_at).toLocaleString()}</small>
+      <div class="profile-actions">
+        <button id="messages" class="btn btn-ghost">📩 Повідомлення</button>
       </div>
-      <div class="message-body">${m.body || ""}</div>
-      ${m.from_name ? `<small style="color:#7bd9ff">— ${m.from_name}</small>` : ""}
-      <button class="msg-delete">🗑 Видалити</button>
-    `;
-    card.querySelector(".msg-delete").addEventListener("click", async () => {
-      if (!confirm("Видалити це повідомлення?")) return;
-      await supabase.from("user_messages").delete().eq("id", m.id);
-      card.remove();
-    });
-    box.appendChild(card);
-  });
-}
-</script>
-<script>
-  // 🔗 Новий Apps Script для перевірки PRO
-  window.APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUl7EZMk9KlBUgirrZtCg6sK9POdlrqKVSuJt0NqQ1NHJWj2_-EX_gLLvN0DoykM0qsQ/exec";
-</script>
 
-<script src="auth.js"></script>
-<script>
-/* === 💎 ПРО-оплата через Monobank / Telegram === */
+      <div class="pro-actions" style="margin-top:14px;">
+        <div id="pro-status-text" class="muted">Перевіряю статус...</div>
+        <button id="get-pro" class="btn btn-primary">💎 Отримати PRO</button>
 
-// 🔗 Твої URL-и
-const BACKEND_URL = "https://script.google.com/macros/s/AKfycbxW2_rhnZ2Q8a7BQJJA89Ij_65tKSmf6gr8XmOIE9Au0i_BQVv_6PS0xx5sWgKYQ16J/exec";
+        <button id="btn-paid-tg" class="btn btn-ghost" style="display:none;">
+          ✅ Я оплатив(ла) — через Telegram
+        </button>
+        <button id="btn-paid-web" class="btn btn-ghost" style="display:none;">
+          ✅ Я оплатив(ла) — без Telegram
+        </button>
+      </div>
+    </div>
 
+    <!-- ▶️ Продовжити перегляд -->
+    <div class="card" id="continue-watch-card" style="position:relative;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <h3 style="margin:0;color:#00fff2;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:20px;">▶️</span> Продовжити перегляд
+        </h3>
+        <button id="clearLastWatch" style="background:transparent;border:none;color:#888;font-size:13px;cursor:pointer;transition:color .2s;">
+          🗑 Очистити
+        </button>
+      </div>
+      <div id="continue-watch-grid" class="bookmark-grid"></div>
+    </div>
 
-// 🆔 Отримати Telegram або Web ID
-function getTgId() {
-  const u = localStorage.getItem("telegram_user");
-  try { return u ? JSON.parse(u).id : null; } catch { return null; }
-}
+    <!-- ⭐ Мої закладки -->
+    <div class="card" id="favorites-card">
+      <div class="fav-head">
+        <h3 style="margin:0;color:#00fff2;">⭐ Мої закладки</h3>
+        <button id="favClearBtn" class="fav-clear">🗑 Очистити все</button>
+      </div>
+      <div id="favoritesList" class="bookmark-grid"></div>
+    </div>
 
-function updateProUI() {
-  const btnTg = document.getElementById("btn-paid-tg");
-  const btnWeb = document.getElementById("btn-paid-web");
-  const getProBtn = document.getElementById("get-pro");
-  const statusEl = document.getElementById("pro-status-text");
+    <!-- 📩 Повідомлення -->
+    <div class="card" id="messages-card" style="display:none;">
+      <h3 style="margin:0 0 10px;color:#00fff2;">📩 Повідомлення</h3>
+      <div id="messagesList"></div>
+    </div>
 
-  // 🔹 Ховаємо все спочатку
-  btnTg.style.display = "none";
-  btnWeb.style.display = "none";
-  if (getProBtn) getProBtn.style.display = "inline-block";
+    <!-- 📨 Авторизація Email -->
+    <div class="card" id="auth-card">
+      <h3>Увійти через Email</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;max-width:320px;">
+        <input id="email-input" class="input" type="email" placeholder="email@example.com" />
+        <button class="btn btn-primary" id="email-login-btn">Надіслати посилання для входу</button>
+      </div>
+    </div>
 
-  // 🔹 Якщо PRO уже активний — ховаємо кнопки оплати
-  if (statusEl.innerText.includes("💎 PRO активний")) {
-    getProBtn.style.display = "none";
-    btnTg.style.display = "none";
-    btnWeb.style.display = "none";
-    return;
-  }
+    <!-- 🤖 Авторизація Telegram -->
+    <div class="card" id="telegram-card">
+      <h3>Увійти через Telegram</h3>
+      <p class="muted">
+        Якщо ви використовуєте наш Telegram-бот, цей спосіб автоматично синхронізує ваш PRO-статус.
+      </p>
 
-  // 🔹 Якщо користувач почав оплату
-  if (localStorage.getItem("pro_payment_started") === "true") {
-    const hasTg = !!localStorage.getItem("telegram_user");
-    const hasEmail = !!localStorage.getItem("email_user");
+      <script>
+        // ✅ ця функція має бути ДО віджета
+        function onTelegramAuth(user) {
+          console.log("✅ Telegram авторизував:", user);
+          if (!user?.id) return console.warn("❌ Немає user.id");
 
-    // показуємо тільки відповідну кнопку
-    if (hasTg) {
-      btnTg.style.display = "inline-block";
-      btnWeb.style.display = "none";
-    } else if (hasEmail) {
-      btnWeb.style.display = "inline-block";
-      btnTg.style.display = "none";
-    } else {
-      // якщо невідомо хто — показуємо кнопку для гостей (web)
-      btnWeb.style.display = "inline-block";
+          try {
+            localStorage.setItem("telegram_user", JSON.stringify(user));
+            localStorage.setItem("auth_time", Date.now());
+
+            const msg = document.getElementById("login-message");
+            if (msg) {
+              msg.style.display = "block";
+              msg.style.opacity = "1";
+              setTimeout(() => { msg.style.opacity = "0"; }, 1500);
+            }
+            setTimeout(() => window.location.reload(), 1800);
+          } catch (e) {
+            console.error("Помилка збереження Telegram користувача:", e);
+          }
+        }
+      </script>
+
+      <div id="telegram-widget">
+        <script async src="https://telegram.org/js/telegram-widget.js?22"
+          data-telegram-login="RelaxBoxUA_bot"
+          data-size="large"
+          data-userpic="false"
+          data-request-access="write"
+          data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+    </div>
+  </main>
+
+  <footer style="text-align:center;color:#8a8f98;margin:32px 0">© 2025 KinoSite</footer>
+
+  <script>
+    // ===== Продовжити перегляд
+    function renderContinueWatchingInProfile() {
+      const grid = document.getElementById("continue-watch-grid");
+      const data = JSON.parse(localStorage.getItem("lastWatched") || "null");
+      if (!grid) return;
+
+      if (!data) {
+        grid.innerHTML = "<p style='color:#9aa0a6;text-align:center;width:100%;margin:6px 0 2px;'>Поки що немає переглянутих 🎞️</p>";
+        return;
+      }
+
+      const time = Math.floor((data.time || 0) / 60);
+      const typeIcon = data.type === "Серіал" ? "📺" : data.type === "Мультсеріал" ? "🧸" : "🎬";
+
+      grid.innerHTML = `
+        <div class="bookmark-card" onclick="window.location.href='${data.url || `film.html?id=${encodeURIComponent(data.id || "")}`}'">
+          <img src="${data.poster || "https://via.placeholder.com/300x450?text=No+Image"}" alt="${(data.title||"").replaceAll('"','&quot;')}">
+          <p>${typeIcon} ${data.title || "Без назви"}</p>
+          <small style="color:#9aa0a6;display:block;text-align:center;margin-bottom:6px;">
+            Продовжити з ${time} хв
+          </small>
+        </div>
+      `;
     }
 
-    // ховаємо кнопку "Отримати PRO"
-    getProBtn.style.display = "none";
-  }
-}
-
-
-
-
-
-// 📤 Повідомлення адміну про оплату (через Telegram)
-async function notifyPaymentTG() {
-  const tg_id = getTgId();
-  if (!tg_id) return alert("Спочатку авторизуйтеся через Telegram!");
-  try {
-    const res = await fetch(BACKEND_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id: tg_id, source: "site" })
+    document.getElementById("clearLastWatch")?.addEventListener("click", () => {
+      if (!confirm("Очистити історію перегляду?")) return;
+      localStorage.removeItem("lastWatched");
+      renderContinueWatchingInProfile();
     });
-    if (!res.ok) throw new Error("notify-payment failed");
-    alert("✅ Запит відправлено адміну. Після підтвердження PRO активується.");
-  } catch (e) {
-    console.error(e);
-    alert("❌ Не вдалося надіслати запит. Напишіть адміну.");
-  }
-}
 
-// 📤 Повідомлення адміну (для гостей без Telegram)
-async function notifyPaymentWEB() {
-  const web_id = getWebId();
-  try {
-    const res = await fetch(BACKEND_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ web_id, source: "site" })
+    window.addEventListener("DOMContentLoaded", renderContinueWatchingInProfile);
+  </script>
+
+  <script>
+    // ===== Закладки
+    function getLocalBookmarks() {
+      try { return JSON.parse(localStorage.getItem("bookmarks") || "[]"); }
+      catch { return []; }
+    }
+
+    function renderBookmarksInProfile() {
+      const card = document.getElementById("favorites-card");
+      const listEl = document.getElementById("favoritesList");
+      if (!card || !listEl) return;
+
+      const list = Array.isArray(getLocalBookmarks()) ? getLocalBookmarks() : [];
+      listEl.innerHTML = "";
+
+      if (!list.length) {
+        listEl.innerHTML = "<p style='color:#9aa0a6;text-align:center;width:100%;margin:6px 0 2px;'>Поки що порожньо 🕯️</p>";
+      } else {
+        list.forEach(item => {
+          const id = item?.id ?? "";
+          const title = item?.title || "Без назви";
+          const poster = item?.poster || "https://via.placeholder.com/300x450?text=No+Image";
+          const type = item?.type || (title?.toLowerCase().includes("мульт") ? "Мультсеріал" : "Фільм");
+
+          let href = `film.html?id=${encodeURIComponent(id)}`;
+          if (type === "Серіал") href = `series.html?title=${encodeURIComponent(title)}`;
+          if (type === "Мультсеріал") href = `multseries.html?title=${encodeURIComponent(title)}`;
+
+          const div = document.createElement("div");
+          div.className = "bookmark-card";
+          div.innerHTML = `<img src="${poster}" alt="${title}"><p>${title}</p>`;
+          div.onclick = () => window.location.href = href;
+          listEl.appendChild(div);
+        });
+      }
+
+      card.style.display = "block";
+    }
+
+    document.getElementById("favClearBtn")?.addEventListener("click", () => {
+      if (!confirm("Видалити всі закладки?")) return;
+      localStorage.removeItem("bookmarks");
+      renderBookmarksInProfile();
     });
-    if (!res.ok) throw new Error("notify-payment failed");
-    alert(
-      "✅ Запит відправлено адміну.\nПісля підтвердження PRO активується.\nВаш WEB-ID: " + web_id
-    );
-  } catch (e) {
-    console.error(e);
-    alert("❌ Не вдалося надіслати запит. Спробуйте пізніше.");
-  }
-}
 
+    window.addEventListener("DOMContentLoaded", renderBookmarksInProfile);
+  </script>
 
-// 🔄 Ініціалізація
-window.addEventListener("DOMContentLoaded", () => {
-  updateProUI();
-  document.getElementById("btn-paid-tg").onclick  = notifyPaymentTG;
-  document.getElementById("btn-paid-web").onclick = notifyPaymentWEB;
-  checkProStatus();
-  localStorage.removeItem("pro_cache");
-  
-});
-</script>
-<!-- === 💬 МОДАЛЬНЕ ВІКНО ПРО ОПЛАТУ === -->
-<div id="proModal" class="modal">
-  <div class="modal-content">
-    <h3>💎 Отримати PRO доступ</h3>
-    <p>
-     Після оплати через Monobank обовʼязково натисніть кнопку 
-     <b style="color:#ff4bf2; text-shadow:0 0 6px rgba(255,75,242,0.6);">
-       «Я оплатив(ла)»
-     </b>, щоб адміністратор підтвердив ваш PRO.
-   </p>
-    <div class="modal-actions">
-      <button id="confirmPay" class="btn btn-primary">Перейти до оплати 💳</button>
-      <button id="closeModal" class="btn btn-ghost">Скасувати</button>
+  <!-- ✅ Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ✅ ВАЖЛИВО: тут було const supabase = ... -> тепер supabaseClient (щоб не було already declared)
+    const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
+    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    // ✅ Apps Script (перевірка PRO) — оголошуємо РАНО, щоб не було undefined
+    window.APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUl7EZMk9KlBUgirrZtCg6sK9POdlrqKVSuJt0NqQ1NHJWj2_-EX_gLLvN0DoykM0qsQ/exec";
+
+    // ✅ backend для notify-payment
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbxW2_rhnZ2Q8a7BQJJA89Ij_65tKSmf6gr8XmOIE9Au0i_BQVv_6PS0xx5sWgKYQ16J/exec";
+
+    // ===== Email login
+    document.getElementById("email-login-btn").onclick = async () => {
+      const email = document.getElementById("email-input").value.trim();
+      if (!email) return alert("Введіть email");
+      const { error } = await supabaseClient.auth.signInWithOtp({ email });
+      alert(error ? "Помилка: " + error.message : "Перевірте пошту, щоб увійти!");
+    };
+
+    // ===== Web ID
+    function getWebId() {
+      let webId = localStorage.getItem("web_id");
+      if (!webId) {
+        const base = btoa(navigator.userAgent + navigator.language + "kino-site");
+        webId = "WEB-" + base.slice(0, 12);
+        localStorage.setItem("web_id", webId);
+      }
+      return webId;
+    }
+
+    // ===== UI helpers
+    function updateProUI() {
+      const btnTg = document.getElementById("btn-paid-tg");
+      const btnWeb = document.getElementById("btn-paid-web");
+      const getProBtn = document.getElementById("get-pro");
+      const statusEl = document.getElementById("pro-status-text");
+
+      if (!btnTg || !btnWeb || !getProBtn || !statusEl) return;
+
+      btnTg.style.display = "none";
+      btnWeb.style.display = "none";
+      getProBtn.style.display = "inline-block";
+
+      if (statusEl.innerText.includes("💎 PRO активний")) {
+        getProBtn.style.display = "none";
+        return;
+      }
+
+      if (localStorage.getItem("pro_payment_started") === "true") {
+        const hasTg = !!localStorage.getItem("telegram_user");
+        const hasEmail = !!localStorage.getItem("email_user");
+
+        if (hasTg) btnTg.style.display = "inline-block";
+        else if (hasEmail) btnWeb.style.display = "inline-block";
+        else btnWeb.style.display = "inline-block";
+
+        getProBtn.style.display = "none";
+      }
+    }
+
+    function showProStatus(data) {
+      const statusEl = document.getElementById("pro-status-text");
+      const proLabel = document.getElementById("pro-status");
+      if (!statusEl) return;
+
+      if (data?.ok && data?.isPro) {
+        const d = data?.expireDate || "невідомо";
+        statusEl.innerHTML = `💎 PRO активний до <b>${d}</b>`;
+        if (proLabel) proLabel.innerHTML = `✅ PRO активний до <b>${d}</b>`;
+        localStorage.removeItem("pro_payment_started");
+      } else {
+        statusEl.innerText = "🔒 Без PRO";
+        if (proLabel) proLabel.innerText = "❌ Без PRO";
+      }
+      updateProUI();
+    }
+
+    // ===== PRO status check
+    async function checkProStatus() {
+      const tgUserRaw = localStorage.getItem("telegram_user");
+      const emailUserRaw = localStorage.getItem("email_user");
+
+      let idParam = "";
+      let paramType = "user_id";
+
+      if (tgUserRaw) {
+        try { idParam = JSON.parse(tgUserRaw).id; } catch {}
+        paramType = "user_id";
+      } else if (emailUserRaw) {
+        idParam = getWebId();
+        paramType = "user_id";
+      } else {
+        idParam = getWebId();
+        paramType = "web_id";
+      }
+
+      const statusEl = document.getElementById("pro-status-text");
+      if (!idParam) {
+        if (statusEl) statusEl.innerText = "🔒 Без PRO";
+        return;
+      }
+      if (statusEl) statusEl.innerText = "⏳ Перевіряю статус...";
+
+      try {
+        const url = `${window.APPS_SCRIPT_URL}?${paramType}=${encodeURIComponent(idParam)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        localStorage.setItem("pro_cache", JSON.stringify({ id: idParam, data, time: Date.now() }));
+        showProStatus(data);
+      } catch (err) {
+        console.error("❌ Помилка перевірки PRO:", err);
+        if (statusEl) statusEl.innerText = "⚠️ Помилка перевірки";
+      }
+    }
+
+    // ===== Messages
+    async function loadMessagesForUser(userId) {
+      const box = document.getElementById("messagesList");
+      if (!box) return;
+
+      box.innerHTML = `<p class="muted">Завантаження...</p>`;
+
+      const { data, error } = await supabaseClient
+        .from("user_messages")
+        .select("*")
+        .eq("user_id", String(userId))
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        box.innerHTML = `<p class="muted">Помилка завантаження</p>`;
+        return;
+      }
+
+      if (!data?.length) {
+        box.innerHTML = `<p class="muted">Поки що немає повідомлень</p>`;
+        return;
+      }
+
+      const lastCount = Number(localStorage.getItem("last_msg_count") || 0);
+      localStorage.setItem("last_msg_count", data.length);
+
+      const isNew = data.length > lastCount;
+      const msgBtn = document.getElementById("messages");
+      const msgCard = document.getElementById("messages-card");
+
+      if (isNew && msgBtn) {
+        msgBtn.style.position = "relative";
+        if (!msgBtn.querySelector(".msg-btn-badge")) {
+          const btnBadge = document.createElement("div");
+          btnBadge.className = "msg-btn-badge";
+          btnBadge.textContent = data.length;
+          msgBtn.appendChild(btnBadge);
+        }
+      }
+
+      if (msgBtn && msgCard && !msgBtn.dataset.bound) {
+        msgBtn.dataset.bound = "1";
+        msgBtn.addEventListener("click", () => {
+          const isVisible = msgCard.style.display === "block";
+          msgCard.style.display = isVisible ? "none" : "block";
+          if (!isVisible) {
+            const badge = msgBtn.querySelector(".msg-btn-badge");
+            if (badge) badge.remove();
+          }
+        });
+      }
+
+      box.innerHTML = "";
+      data.forEach((m) => {
+        const card = document.createElement("div");
+        card.className = "message-item";
+        card.innerHTML = `
+          <div class="message-header">
+            <b>${m.title || "Повідомлення"}</b>
+            <small style="color:#9aa0a6">${new Date(m.created_at).toLocaleString()}</small>
+          </div>
+          <div class="message-body">${m.body || ""}</div>
+          ${m.from_name ? `<small style="color:#7bd9ff">— ${m.from_name}</small>` : ""}
+          <button class="msg-delete">🗑 Видалити</button>
+        `;
+        card.querySelector(".msg-delete").addEventListener("click", async () => {
+          if (!confirm("Видалити це повідомлення?")) return;
+          await supabaseClient.from("user_messages").delete().eq("id", m.id);
+          card.remove();
+        });
+        box.appendChild(card);
+      });
+    }
+
+    // ===== Telegram restore / profile show
+    async function handleTelegramUser(user) {
+      document.getElementById("auth-card").style.display = "none";
+      document.getElementById("telegram-card").style.display = "none";
+      document.getElementById("user-card").style.display = "block";
+
+      document.getElementById("hello-line").innerText =
+        `Вітаю, ${user.first_name || ""} ${user.last_name || ""}`.trim();
+      const typeLine = document.getElementById("auth-type");
+      if (typeLine) typeLine.innerText = "🤖 Вхід через Telegram";
+
+      // Перевірка PRO
+      await checkProStatus();
+
+      // Повідомлення
+      loadMessagesForUser(user.id);
+    }
+
+    // ===== Logout
+    document.getElementById("logout-btn").onclick = async () => {
+      try { await supabaseClient.auth.signOut(); } catch(e) { console.warn(e); }
+      localStorage.removeItem("telegram_user");
+      localStorage.removeItem("email_user");
+      localStorage.removeItem("pro_payment_started");
+      location.reload();
+    };
+
+    // ===== Notify payment
+    function getTgId() {
+      const u = localStorage.getItem("telegram_user");
+      try { return u ? JSON.parse(u).id : null; } catch { return null; }
+    }
+
+    async function notifyPaymentTG() {
+      const tg_id = getTgId();
+      if (!tg_id) return alert("Спочатку авторизуйтеся через Telegram!");
+      try {
+        const res = await fetch(BACKEND_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: tg_id, source: "site" })
+        });
+        if (!res.ok) throw new Error("notify-payment failed");
+        alert("✅ Запит відправлено адміну. Після підтвердження PRO активується.");
+      } catch (e) {
+        console.error(e);
+        alert("❌ Не вдалося надіслати запит. Напишіть адміну.");
+      }
+    }
+
+    async function notifyPaymentWEB() {
+      const web_id = getWebId();
+      try {
+        const res = await fetch(BACKEND_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ web_id, source: "site" })
+        });
+        if (!res.ok) throw new Error("notify-payment failed");
+        alert("✅ Запит відправлено адміну.\nПісля підтвердження PRO активується.\nВаш WEB-ID: " + web_id);
+      } catch (e) {
+        console.error(e);
+        alert("❌ Не вдалося надіслати запит. Спробуйте пізніше.");
+      }
+    }
+
+    // ===== Modal оплат
+    function initProModal() {
+      const modal = document.getElementById("proModal");
+      const btnGetPro = document.getElementById("get-pro");
+      const btnConfirmPay = document.getElementById("confirmPay");
+      const btnClose = document.getElementById("closeModal");
+
+      if (!modal || !btnGetPro || !btnConfirmPay || !btnClose) return;
+
+      btnGetPro.addEventListener("click", () => {
+        const hasTg = !!localStorage.getItem("telegram_user");
+        const hasEmail = !!localStorage.getItem("email_user");
+        if (!hasTg && !hasEmail) {
+          alert("⚠️ Спочатку увійдіть через Telegram або Email, щоб отримати PRO.");
+          return;
+        }
+        modal.style.display = "flex";
+      });
+
+      btnClose.addEventListener("click", () => modal.style.display = "none");
+
+      btnConfirmPay.addEventListener("click", () => {
+        modal.style.display = "none";
+        localStorage.setItem("pro_payment_started", "true");
+        updateProUI();
+
+        const monoUrl = "https://send.monobank.ua/jar/8FbfB4fY6S";
+        window.open(monoUrl, "_blank");
+        alert("💳 Оплата відкрилась у новій вкладці.\nПісля переказу натисніть «Я оплатив(ла)»!");
+      });
+
+      window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
+    }
+
+    // ===== Start
+    window.addEventListener("DOMContentLoaded", async () => {
+      // Email: якщо вже зайшов по magic link
+      const { data } = await supabaseClient.auth.getUser();
+      const user = data?.user || null;
+
+      if (user) {
+        localStorage.setItem("email_user", JSON.stringify({ id: user.id, email: user.email }));
+        document.getElementById("auth-card").style.display = "none";
+        document.getElementById("telegram-card").style.display = "none";
+        document.getElementById("user-card").style.display = "block";
+        document.getElementById("hello-line").innerText = `Вітаю, ${user.email}`;
+        document.getElementById("auth-type").innerText = "🔑 Вхід через Email";
+      }
+
+      // Відновлення Telegram
+      const savedTg = localStorage.getItem("telegram_user");
+      if (savedTg) {
+        try { await handleTelegramUser(JSON.parse(savedTg)); } catch (e) { console.warn(e); }
+      }
+
+      // Кнопки "Я оплатив"
+      document.getElementById("btn-paid-tg")?.addEventListener("click", notifyPaymentTG);
+      document.getElementById("btn-paid-web")?.addEventListener("click", notifyPaymentWEB);
+
+      // PRO статус + UI
+      await checkProStatus();
+      updateProUI();
+
+      // Modal init
+      initProModal();
+
+      // Service Worker (без sw-register.js)
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      }
+    });
+  </script>
+
+  <!-- === 💬 МОДАЛЬНЕ ВІКНО ПРО ОПЛАТУ === -->
+  <div id="proModal" class="modal">
+    <div class="modal-content">
+      <h3>💎 Отримати PRO доступ</h3>
+      <p>
+        Після оплати через Monobank обовʼязково натисніть кнопку
+        <b style="color:#ff4bf2; text-shadow:0 0 6px rgba(255,75,242,0.6);">«Я оплатив(ла)»</b>,
+        щоб адміністратор підтвердив ваш PRO.
+      </p>
+      <div class="modal-actions">
+        <button id="confirmPay" class="btn btn-primary">Перейти до оплати 💳</button>
+        <button id="closeModal" class="btn btn-ghost">Скасувати</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-// === 💳 Модалка + Перехід до Monobank ===
-const modal = document.getElementById("proModal");
-const btnGetPro = document.getElementById("get-pro");
-const btnConfirmPay = document.getElementById("confirmPay");
-const btnClose = document.getElementById("closeModal");
+  <!-- 🔹 Повідомлення про авторизацію -->
+  <div id="login-message" style="
+    display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%);
+    background:linear-gradient(145deg,#00fff2,#00b5b0); color:#000; font-weight:600;
+    padding:12px 24px; border-radius:12px; box-shadow:0 0 20px rgba(0,255,255,0.5);
+    z-index:9999; transition:opacity .4s ease;">
+    ✅ Успішна авторизація через Telegram!
+  </div>
 
-// 1️⃣ Клік "Отримати PRO" — перевіряє авторизацію
-btnGetPro.addEventListener("click", () => {
-  const hasTg = !!localStorage.getItem("telegram_user");
-  const hasEmail = !!localStorage.getItem("email_user");
+  <script src="seo.js"></script>
 
-  if (!hasTg && !hasEmail) {
-    alert("⚠️ Спочатку увійдіть через Telegram або Email, щоб отримати PRO.");
-    return;
-  }
-
-  // якщо користувач увійшов — відкриваємо модалку
-  modal.style.display = "flex";
-});
-
-// 2️⃣ Скасувати — закрити модалку
-btnClose.addEventListener("click", () => {
-  modal.style.display = "none";
-});
-
-// 3️⃣ Підтвердження → відкриваємо Monobank і показуємо кнопку "Я оплатив"
-btnConfirmPay.addEventListener("click", () => {
-  modal.style.display = "none";
-
-  // 💾 Запам’ятовуємо, що користувач почав оплату
-  localStorage.setItem("pro_payment_started", "true");
-
-  // 💡 Одразу оновлюємо інтерфейс, щоб показати кнопки "Я оплатив(ла)"
-  updateProUI();
-
-  // 🔗 Відкриваємо Monobank банку у новій вкладці
-  const monoUrl = "https://send.monobank.ua/jar/8FbfB4fY6S";
-  window.open(monoUrl, "_blank");
-
-  alert("💳 Оплата відкрилась у новій вкладці.\nПісля переказу натисніть «Я оплатив(ла)»!");
-});
-
-
-// Закриття при кліку поза модалкою
-window.onclick = (e) => {
-  if (e.target === modal) modal.style.display = "none";
-};
-</script>
-
-<div id="footer-placeholder"></div>
-<script>
-  fetch("footer.html")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("footer-placeholder").innerHTML = html;
-      // після того як футер з’явився у DOM — підключаємо логіку
-      const s = document.createElement("script");
-      s.src = "footer.js";
-      document.body.appendChild(s);
-    });
-</script>
-<!-- 🔹 Повідомлення про авторизацію -->
-<div id="login-message" style="
-  display:none;
-  position:fixed;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:linear-gradient(145deg,#00fff2,#00b5b0);
-  color:#000;
-  font-weight:600;
-  padding:12px 24px;
-  border-radius:12px;
-  box-shadow:0 0 20px rgba(0,255,255,0.5);
-  z-index:9999;
-  transition:opacity 0.4s ease;
-">
-✅ Успішна авторизація через Telegram!
-</div>
-
-<script>
-// 🩵 Автоматичне оновлення після авторизації Telegram (для мобільних)
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) {
-    const tgUser = localStorage.getItem("telegram_user");
-    if (tgUser && !window.sessionStorage.getItem("tgReloaded")) {
-      console.log("🔁 Повернулись із Telegram — перезавантажуємо сторінку");
-      window.sessionStorage.setItem("tgReloaded", "1");
-      window.location.reload();
-    }
-  }
-});
-</script>
-<script src="/sw-register.js"></script> <!-- ✅ Service Worker -->
-<script src="seo.js"></script>
-<script src="/pull-refresh.js"></script>
+  <div id="footer-placeholder"></div>
+  <script>
+    fetch("footer.html")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("footer-placeholder").innerHTML = html;
+        const s = document.createElement("script");
+        s.src = "footer.js";
+        document.body.appendChild(s);
+      });
+  </script>
 </body>
 </html>
