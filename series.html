@@ -952,7 +952,18 @@ function useSource(url) {
       }
       return url;
     }
+function wrapHlsProxy(url) {
+  if (!url) return "";
+  // якщо вже проксований — не чіпаємо
+  if (url.includes("kino-hls-proxy.lyuda14070702.workers.dev")) return url;
 
+  // якщо це HLS або ashdi — загортаємо
+  if (url.includes(".m3u8") || url.includes("ashdi.vip")) {
+    return "https://kino-hls-proxy.lyuda14070702.workers.dev/?url=" + encodeURIComponent(url);
+  }
+
+  return url;
+}
 
 // 🧩 Перевірка PRO-доступу
 let hasPro = true;
@@ -1014,7 +1025,7 @@ if (isProSeries) {
     }
 
      // ✔️ якщо PRO активний
-    useSource(wrapMyStream(first.stream_url || ""));
+    useSource(wrapHlsProxy(wrapMyStream(first.stream_url || "")));
 
   } catch (err) {
     console.warn("❌ Помилка перевірки PRO:", err);
@@ -1023,7 +1034,7 @@ if (isProSeries) {
 } else {
   // ✔️ Якщо серіал НЕ PRO — одразу запускаємо відео
   if (proLoader) proLoader.style.display = "none";
-  useSource(wrapMyStream(first.stream_url || ""));
+  useSource(wrapHlsProxy(wrapMyStream(first.stream_url || "")));
 }
 
 
@@ -1147,7 +1158,7 @@ function renderEpisodes(season) {
       document.getElementById("btnSeasonTrailer")?.classList.remove("active");
 
       ensureVideoPlayer();
-      useSource(currentEpisodeUrl);
+      useSource(wrapHlsProxy(currentEpisodeUrl));
     });
     list.appendChild(btn);
 
@@ -1174,7 +1185,7 @@ function renderEpisodes(season) {
   // === 🟢 Після перемикання сезону автоматично вмикаємо першу серію ===
   if (episodes.length > 0 && currentEpisodeUrl) {
     ensureVideoPlayer();
-    useSource(currentEpisodeUrl);
+    useSource(wrapHlsProxy(currentEpisodeUrl));
 
     const firstBtn = list.querySelector(".ep-btn");
     if (firstBtn) firstBtn.classList.add("active");
@@ -1237,7 +1248,7 @@ btnEpisode?.addEventListener("click", () => {
   btnSeasonTrailer.classList.remove("active");
 
   ensureVideoPlayer();
-  if (currentEpisodeUrl) useSource(currentEpisodeUrl);
+  if (currentEpisodeUrl) useSource(wrapHlsProxy(currentEpisodeUrl));
   else useSource("");
 });
 
