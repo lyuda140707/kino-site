@@ -805,7 +805,7 @@ function getYouTubeId(url) {
     });
 
     const proxyBase = "https://kino-hls-proxy.lyuda14070702.workers.dev/?url=";
-    const proxiedUrl = proxyBase + encodeURIComponent(m3u8Url);
+    const proxiedUrl = proxyBase + encodeURIComponent(url);
     hls.loadSource(proxiedUrl);
     hls.attachMedia(player);
 
