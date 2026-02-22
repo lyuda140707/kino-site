@@ -252,7 +252,7 @@ window.supabaseClient = window.supabaseClient || window.supabase.createClient(
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE"
 );
 
-const supabase = window.supabaseClient; // щоб твій код нижче працював без правок
+const supabase = window.supabaseClient; // щоб твій код нижче не переписувати
 console.log("✅ Supabase підключено");
 
   const params = new URLSearchParams(window.location.search);
