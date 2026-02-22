@@ -804,7 +804,9 @@ function getYouTubeId(url) {
       xhrSetup: (xhr) => { xhr.withCredentials = false; }
     });
 
-    hls.loadSource(url);
+    const proxyBase = "https://kino-hls-proxy.lyuda14070702.workers.dev/?url=";
+    const proxiedUrl = proxyBase + encodeURIComponent(m3u8Url);
+    hls.loadSource(proxiedUrl);
     hls.attachMedia(player);
 
     // чекати поки HLS готовий
