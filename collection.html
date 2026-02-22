@@ -3,364 +3,263 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- ✅ Іконки сайту для всіх пристроїв -->
+
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#00fff2">
 
-  <!-- Android favicon / PWA icons -->
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 
-  <!-- iOS підтримка -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="/icon-512.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/icon-512.png">
 
-  <title>Збірка — KinoSite</title>
+  <title>🎬 Збірка — Relax Kino</title>
   <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-<div id="header-placeholder"></div>
-<script src="header.js"></script>
 
-<div id="header-placeholder"></div>
-<script>
-  // 🟢 Функція для активації пошуку після завантаження хедера
-  function bindHeaderSearch() {
-    const input = document.getElementById("search-input");
-    if (!input) return;
+  <!-- Supabase lib -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Твій єдиний клієнт (ВАЖЛИВО: саме він має створювати window.supabaseClient) -->
+  <script src="supabase-client.js"></script>
 
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const query = input.value.trim();
-        if (query.length > 1) {
-          localStorage.setItem("searchQuery", query);
-          window.location.href = "/search.html";
-        }
-      }
-    });
-  }
+  <style>
+    body { background:#000; color:#fff; font-family:Poppins, sans-serif; }
+    .wrap{max-width:1200px;margin:0 auto;padding:18px}
+    .title{font-size:28px;font-weight:800;color:#00fff2;margin:20px 0 10px;text-shadow:0 0 12px rgba(0,255,255,.25)}
+    .subtitle{color:#aaa;margin-bottom:18px}
 
-  // 🟢 Завантаження хедера + підключення пошуку
-  fetch("header.html")
-    .then(r => r.text())
-    .then(t => {
-      document.getElementById("header-placeholder").innerHTML = t;
-      bindHeaderSearch(); // активуємо пошук після вставки
-    })
-    .catch(err => console.error("Помилка завантаження хедера:", err));
-</script>
-
-
-<main class="container">
-  <h1 id="collectionTitle">🎬 Збірка</h1>
-  <div id="filmsList" class="film-grid"></div>
-</main>
-
-<footer>© 2025 KinoSite</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const supabaseUrl = "https://zerlqvbmqszomlondlte.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplcmxxdmJtcXN6b21sb25kbHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMzg3NzQsImV4cCI6MjA3MDkxNDc3NH0.8wUBYIeQRC6KVp6vdzv0oqofIf4PeZyzbV5GcD0vxTE";
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-
-
-
-// === 🧠 Розумний автоматичний підбір фільмів по збірці ===
-// Використовує жанр + ключові слова опису + НАЗВУ (найважливіше)
-// Показує до 30 фільмів
-// Автоматично оновлюється при додаванні нових у Supabase
-
-async function loadCollectionSmart() {
-  const params = new URLSearchParams(window.location.search);
-  const name = params.get("name")?.trim();
-  const container = document.getElementById("filmsList");
-  const title = document.getElementById("collectionTitle");
-
-  title.textContent = name;
-
-  // 1️⃣ Завантаження всіх фільмів
-  const { data: films, error } = await supabase
-    .from("films_site")
-    .select("*")
-    .order("id", { ascending: false });
-
-  if (error || !films?.length) {
-    container.innerHTML = "<p style='color:white;'>Помилка завантаження.</p>";
-    return;
-  }
-
-  // === 2️⃣ Правила для кожної збірки ===
-  const rules = {
-    "Фантастика, що вражає уяву": {
-      genre: ["фантаст", "sci", "sci-fi", "фентезі"],
-      keywords: [
-        "майбут", "космос", "галак", "чужопланет", "робот", "штучн",
-        "телепат", "телепорт", "кіборг", "вірус", "екзоскелет", "алгоритм"
-      ]
-    },
-
-    "Найстрашніші фільми жахів": {
-      genre: ["жах", "хорор"],
-      keywords: ["вбив", "страх", "демон", "одержим", "привид", "монстр", "заклят"]
-    },
-
-    "Обов’язкові до перегляду фільми": {
-      genre: ["драма", "біограф", "істор"],
-      keywords: ["реальн", "правдив", "емоцій", "психолог", "боротьб"]
-    },
-
-    "Комедії, що піднімуть настрій": {
-      genre: ["комед"],
-      keywords: ["кумед", "весел", "легка", "ірон", "фан", "гумор"]
-    },
-
-    "Адреналін і швидкість — про гонки": {
-      genre: ["екшн"],
-      keywords: ["гонк", "драйв", "швидк", "перего", "рейс", "форсаж"]
-    },
-
-    "Фільми про танці та музику": {
-      genre: ["мюзикл", "концерт", "біограф", "документал"],
-      keywords: [
-        "танц", "ритм", "балет", "музик", "вокал", "спів", "реп",
-        "hip hop", "dj", "рок", "гурт", "група", "саундтрек",
-        "гітара", "піаніно", "скрипк"
-      ]
-    },
-
-    "Новорічний і різдвяний настрій": {
-      keywords: ["різдв", "новор", "санта", "янгол", "ялинк", "зим"]
-    },
-
-    "Фільми про виживання": {
-      keywords: ["виживан", "боротьб", "загублен", "екстрим", "катастроф"]
-    },
-
-    "Історії, засновані на реальних подіях": {
-      genre: ["істор", "біограф"],
-      keywords: ["реальн", "свідчен", "правдив"]
-    },
-
-    "Кіно про собак 🐾": {
-      keywords: ["собак", "пес", "dog", "лабрадор", "вівчарк"]
-    },
-
-    "Мафія, гангстери та бандити": {
-      genre: ["кримінал"],
-      keywords: ["маф", "ганг", "банд", "картель", "нарко"]
-    },
-
-    "Шпигуни, агенти й спецоперації": {
-      genre: ["екшн", "трилер"],
-      keywords: ["агент", "шпиг", "розвід", "спец", "операц"]
-    },
-
-    "Маніяки, психопати та трилери": {
-      genre: ["трилер", "детектив"],
-      keywords: ["маніяк", "псих", "вбивц", "розслідув"]
-    },
-
-    "Штучний інтелект і технології майбутнього": {
-      keywords: ["ai", "штучн", "технолог", "робот", "алгоритм"]
-    },
-
-    "Життя за ґратами — фільми про тюрму": {
-      keywords: ["тюрм", "ув'язн", "в'язниц", "втеч", "зона"]
-    },
-
-    "Пограбування, афери та трюки": {
-      keywords: ["пограб", "афер", "грабіж", "злод", "шахра"]
-    },
-
-    "Апокаліпсис і кінець світу": {
-      keywords: ["апокал", "зомбі", "катастроф", "пандем"]
-    },
-
-    "Фільми про кохання 💞": {
-      genre: ["роман", "мелодрам"],
-      keywords: ["кохан", "романс", "закохан", "серце"]
-    },
-
-    "Фільми про космос": {
-      keywords: ["космос", "орбіта", "галактик", "астронавт"]
-    },
-
-    "Улюблені фільми Disney": {
-      keywords: ["мульт", "дитяч", "сімейн", "анімован", "пригод"]
+    .film-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+      gap:16px;
     }
-  };
+    .film-card{
+      background:#111;border:1px solid rgba(0,255,255,0.15);
+      border-radius:12px; overflow:hidden; cursor:pointer;
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .film-card:hover{transform:scale(1.03);box-shadow:0 0 18px rgba(0,255,255,.15)}
+    .film-card img{width:100%;height:260px;object-fit:cover;display:block}
+    .film-card h3{margin:10px;font-size:14px;color:#fff;text-align:center;line-height:1.25}
+    .badge-pro{
+      position:absolute;top:10px;right:10px;
+      background:rgba(0,0,0,.75); color:#00fff2;
+      padding:4px 8px;border-radius:8px;font-size:12px;font-weight:800;
+      border:1px solid rgba(0,255,255,.35); backdrop-filter:blur(4px);
+    }
 
-  const rule = rules[name];
-  if (!rule) {
-    container.innerHTML = "<p style='color:white;'>Категорія не знайдена.</p>";
-    return;
-  }
+    #pagination{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:20px 0 35px}
+    .page-btn{
+      background:linear-gradient(145deg,#0b0b0b,#151515);
+      border:1px solid rgba(0,255,255,.35);
+      color:#00fff2;border-radius:10px;padding:8px 14px;
+      font-size:14px;font-weight:700;cursor:pointer;transition:.2s;
+      box-shadow:0 0 8px rgba(0,255,255,.18)
+    }
+    .page-btn:hover{background:linear-gradient(145deg,#00fff2,#00b5b0);color:#000;transform:scale(1.06)}
+    .page-btn.active{background:linear-gradient(145deg,#00fff2,#00b5b0);color:#000}
+    .page-btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
 
-  // === 3️⃣ Правильна нормалізація ===
-  const normalize = (str) =>
-    (str || "")
-      .toLowerCase()
-      .replace(/[^\p{L}\p{N}\s\-']/gu, " ");
+    footer{text-align:center;color:#777;padding:18px 0}
+  </style>
+</head>
 
-  // === 4️⃣ Розумний фільтр
-  let result = films.filter((film) => {
-    if (!film.type || film.type.toLowerCase() !== "фільм") return false;
+<body>
+  <div id="header-placeholder"></div>
+  <script src="header.js"></script>
 
-    const g = normalize(film.genre);
-    const d = normalize(film.description);
-    const t = normalize(film.title);
+  <div class="wrap">
+    <div class="title" id="collectionTitle">🎬 Збірка</div>
+    <div class="subtitle" id="collectionSubtitle">Завантаження...</div>
 
-    let score = 0;
+    <div class="film-grid" id="filmGrid"></div>
+    <div id="pagination"></div>
 
-    rule.genre?.forEach((word) => {
-      if (g.includes(word)) score += 3;
-    });
+    <footer>© 2025 Relax Kino</footer>
+  </div>
 
-    rule.keywords?.forEach((word) => {
-      if (d.includes(word)) score += 2;
-      if (g.includes(word)) score += 1;
-      if (t.includes(word)) score += 3; // НАЗВА — головний фактор
-    });
+  <!-- якщо файлів немає — ТРИМАЙ ВИМКНЕНИМИ -->
+  <!-- <script src="/sw-register.js"></script> -->
+  <!-- <script src="/pull-refresh.js"></script> -->
 
-    return score >= 3;
-  });
+  <script src="auth.js"></script>
+  <script src="seo.js"></script>
 
-  // === 5️⃣ Унікалізація
-  const uniqueMap = new Map();
-  result.forEach((film) => {
-    const key = (film.title?.toLowerCase() || "") + "_" + (film.year || "");
-    if (!uniqueMap.has(key)) uniqueMap.set(key, film);
-  });
+  <script>
+    console.log("✅ Сторінка збірки завантажена");
+    if (!window.supabaseClient) {
+      console.error("❌ supabaseClient не ініціалізований. Перевір supabase-client.js");
+    }
 
-  result = Array.from(uniqueMap.values());
+    const params = new URLSearchParams(location.search);
+    const name = decodeURIComponent(params.get("name") || params.get("collection") || "");
 
-  // === 6️⃣ Перемішуємо і беремо до 30
-  result = result.sort(() => Math.random() - 0.5).slice(0, 30);
+    const titleEl = document.getElementById("collectionTitle");
+    const subEl   = document.getElementById("collectionSubtitle");
+    const grid    = document.getElementById("filmGrid");
+    const pagEl   = document.getElementById("pagination");
 
-  // === 7️⃣ Виводимо картки
-  container.innerHTML = "";
-  result.forEach((film) => {
-    const card = document.createElement("div");
-    card.className = "film";
-    card.innerHTML = `
-      <div class='poster'>
-        <img src="${film.poster}">
-      </div>
-      <div class='title'>${film.title}</div>
-      <div class='meta'>${film.genre} • ${film.year}</div>
-    `;
-    card.onclick = () =>
-      (window.location.href = "film.html?id=" + film.id);
+    titleEl.textContent = name ? `🎬 ${name}` : "🎬 Збірка";
 
-    container.appendChild(card);
-  });
-}
+    let currentPage = 1;
+    const perPage = 30;
+    let allItems = [];
 
-document.addEventListener("DOMContentLoaded", loadCollectionSmart);
+    function renderPagination(total) {
+      const totalPages = Math.ceil(total / perPage);
+      pagEl.innerHTML = "";
+      if (totalPages <= 1) return;
 
+      const makeBtn = (label, page, opts={}) => {
+        const b = document.createElement("button");
+        b.className = "page-btn";
+        b.textContent = label;
+        if (opts.active) b.classList.add("active");
+        if (opts.disabled) b.disabled = true;
+        b.onclick = () => {
+          if (b.disabled) return;
+          currentPage = page;
+          renderCards();
+          window.scrollTo({top:0,behavior:"smooth"});
+        };
+        return b;
+      };
 
-</script>
-<style>
-/* === СІТКА ФІЛЬМІВ === */
-.film-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 20px;
-  padding: 30px 20px;
-  justify-items: center;
-}
+      pagEl.appendChild(makeBtn("◀", Math.max(1, currentPage-1), {disabled: currentPage===1}));
 
-/* === КАРТКА ФІЛЬМУ === */
-.film {
-  position: relative;
-  background: rgba(10,10,10,0.8);
-  border-radius: 16px;
-  overflow: hidden;
-  cursor: pointer;
-  border: 1px solid rgba(0,255,255,0.1);
-  width: 160px;
-  transition: all 0.25s ease;
-  box-shadow: 0 0 15px rgba(0,255,255,0.05);
-}
+      const visible = 5;
+      let start = Math.max(1, currentPage - Math.floor(visible/2));
+      let end = Math.min(totalPages, start + visible - 1);
+      if (end - start + 1 < visible) start = Math.max(1, end - visible + 1);
 
-.film:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 20px rgba(0,255,255,0.3);
-}
+      for (let p=start; p<=end; p++) pagEl.appendChild(makeBtn(String(p), p, {active: p===currentPage}));
 
-/* === ПОСТЕР === */
-.film .poster img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  border-radius: 14px;
-  filter: brightness(0.9);
-  transition: 0.3s;
-}
+      pagEl.appendChild(makeBtn("▶", Math.min(totalPages, currentPage+1), {disabled: currentPage===totalPages}));
+    }
 
-.film:hover .poster img {
-  filter: brightness(1);
-}
+    function openItem(item){
+      if ((item.type || "").toLowerCase().includes("серіал")) {
+        // Серіал / Мультсеріал
+        if ((item.type || "") === "Мультсеріал") {
+          location.href = "/multseries.html?title=" + encodeURIComponent(item.title);
+        } else {
+          location.href = "/series.html?title=" + encodeURIComponent(item.title);
+        }
+      } else {
+        // Фільм
+        location.href = "/film.html?id=" + item.id;
+      }
+    }
 
-/* === НАЗВА === */
-.film .title {
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  margin: 8px 6px 4px;
-  text-shadow: 0 0 6px rgba(0,255,255,0.25);
-}
+    function renderCards(){
+      grid.innerHTML = "";
+      if (!allItems.length) {
+        grid.innerHTML = `<p style="color:#aaa;text-align:center;width:100%;">Нічого не знайдено</p>`;
+        pagEl.innerHTML = "";
+        return;
+      }
 
-/* === ЖАНР / РІК === */
-.film .meta {
-  color: #aaa;
-  font-size: 12px;
-  text-align: center;
-  margin-bottom: 10px;
-}
+      const start = (currentPage-1) * perPage;
+      const pageItems = allItems.slice(start, start + perPage);
 
-/* === БЕЙДЖ PRO === */
-.badge.plus {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: linear-gradient(90deg, #ff00cc, #3333ff);
-  padding: 2px 6px;
-  font-size: 10px;
-  border-radius: 6px;
-  color: #fff;
-  box-shadow: 0 0 6px rgba(255,0,200,0.6);
-}
+      pageItems.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "film-card";
+        const poster = item.poster || "https://via.placeholder.com/200x280?text=No+Image";
 
-/* === ГРАДІЄНТ ПІД ФОНОМ === */
-body {
-  background: radial-gradient(circle at top, #0a0a0a, #000);
-}
-</style>
-<script src="auth.js"></script>
-<div id="footer-placeholder"></div>
-<script>
-  fetch("footer.html")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("footer-placeholder").innerHTML = html;
-      // після того як футер з’явився у DOM — підключаємо логіку
-      const s = document.createElement("script");
-      s.src = "footer.js";
-      document.body.appendChild(s);
-    });
-</script> <!-- 🟢 ось цього закриваючого тегу не вистачало! -->
+        card.innerHTML = `
+          <div style="position:relative;">
+            <img src="${poster}" alt="${item.title || ''}">
+            ${String(item.pro_access || "").toUpperCase() === "PRO"
+              ? `<div class="badge-pro">PRO</div>` : ""}
+          </div>
+          <h3>${item.title || ""}</h3>
+        `;
+        card.onclick = () => openItem(item);
+        grid.appendChild(card);
+      });
 
-<script src="/sw-register.js"></script> <!-- ✅ Service Worker -->
-<script src="seo.js"></script>
-<script src="/pull-refresh.js"></script>
+      renderPagination(allItems.length);
+    }
 
+    async function loadCollection(){
+      if (!window.supabaseClient) {
+        subEl.textContent = "❌ Supabase не підключився (перевір supabase-client.js)";
+        return;
+      }
 
+      if (!name) {
+        subEl.textContent = "❌ Не передано назву збірки";
+        return;
+      }
+
+      subEl.textContent = "Завантаження...";
+
+      // 1) беремо список фільмів/серіалів цієї збірки
+      // ⚠️ підлаштуй назву таблиці/поля під свої (як у тебе реально в Supabase)
+      // Я залишила логіку: collections_table: name + items (ids або titles)
+      const { data, error } = await window.supabaseClient
+        .from("collections")
+        .select("*")
+        .eq("name", name)
+        .limit(1);
+
+      if (error || !data || !data.length){
+        subEl.textContent = "❌ Збірку не знайдено";
+        console.error(error);
+        return;
+      }
+
+      const col = data[0];
+      subEl.textContent = col.description ? col.description : " ";
+
+      // 2) Тут 2 варіанти. Ти можеш зберігати:
+      // A) масив ID: col.items_ids
+      // B) масив назв: col.items_titles
+      // Я зробила універсально: якщо є items_ids — фільтруємо по id, інакше по title.
+      const ids = Array.isArray(col.items_ids) ? col.items_ids : null;
+      const titles = Array.isArray(col.items_titles) ? col.items_titles : null;
+
+      let q = window.supabaseClient.from("films_site").select("id,title,poster,type,pro_access,genre,year,imdb");
+
+      if (ids && ids.length) {
+        q = q.in("id", ids);
+      } else if (titles && titles.length) {
+        q = q.in("title", titles);
+      } else {
+        // якщо у тебе інша структура — напиши, і я піджену запит
+        grid.innerHTML = `<p style="color:#aaa;text-align:center;">⚠️ У збірці немає items_ids або items_titles</p>`;
+        return;
+      }
+
+      const { data: items, error: err2 } = await q;
+      if (err2 || !items){
+        console.error(err2);
+        grid.innerHTML = `<p style="color:#ff6b6b;text-align:center;">Помилка завантаження фільмів</p>`;
+        return;
+      }
+
+      // Сортуємо як прийшли (або за imdb/роком — скажеш)
+      allItems = items;
+
+      currentPage = 1;
+      renderCards();
+    }
+
+    loadCollection();
+  </script>
+
+  <div id="footer-placeholder"></div>
+  <script>
+    fetch("footer.html")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("footer-placeholder").innerHTML = html;
+        const s = document.createElement("script");
+        s.src = "footer.js";
+        document.body.appendChild(s);
+      });
+  </script>
 </body>
 </html>
